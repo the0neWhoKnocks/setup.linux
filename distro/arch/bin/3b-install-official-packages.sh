@@ -1,5 +1,8 @@
 #!/usr/bin/bash
 
+# `gtk3-demos` brings in `gtk3-icon-browser` which allows for searching for icons, but the YAD one shows more icon info
+# 
+
 args=(
   # 3D
   blender
@@ -20,6 +23,7 @@ args=(
   zsh
   # Gaming
   discord
+  steam
   # Image
   flameshot
   gimp
@@ -37,11 +41,12 @@ args=(
   btop
   filelight
   fzf
+  gtk3-demos
   lsd
   mc
   p7zip
   speedtest-cli
-  # Video
+  # Video production
   audacity
   mkvtoolnix-gui
   obs-studio
