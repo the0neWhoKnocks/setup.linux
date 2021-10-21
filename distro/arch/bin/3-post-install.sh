@@ -11,9 +11,85 @@ DIALOG_KEY=$RANDOM
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
 
+function loadListItems {
+  # echo "${1}"
+  # cat "${1}"
+  # echo "TRUE blah 'badf as df adsf'"
+  # return ($( \
+  #   cat "${1}" \
+  # ))
+  # listItems=('TRUE' blah 'asd fasd fa sdf')
+  
+  listItems=()
+  # local fileData=$(cat "${1}")
+  
+  # IFS=""
+  
+  # while IFS="" read -r p || [ -n "$line" ]; do
+  #   printf '%s\n' "$line"
+  # done < "${1}"
+  while read line; do
+    if [[ "${line}" == *"# "* ]]; then
+      listItems+=(FALSE)
+      listItems+=("$(echo "${line}" | awk -F '#\\s' '{ printf "[ %s ]\n", $2 }')")
+      listItems+=('')
+    elif [[ "${line}" == *" | "* ]]; then
+      listItems+=(TRUE)
+      listItems+=("$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $1 }')")
+      listItems+=("$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $2 }')")
+    fi
+    # listItems+=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
+    # echo "-- $line --"
+  done < "${1}"
+  # exit
+  
+  # for line in "${fileData}"; do
+  #   if [[ "${line}" == *" | "* ]]; then
+  #     echo "-- ${line} --"
+  #     listItems+=TRUE
+  #     listItems+="$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $1 }')"
+  #     listItems+="$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $2 }')"
+  #   fi
+  #   # listItems+=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
+  #   # temp=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
+  #   # echo "${line}" | awk '{ split($0, temp, "\\s\\|\\s"); print temp[0], temp[1] }'
+  #   # echo "${temp[0]}"
+  #   # echo "${temp[1]}"
+  #   # echo "${line}"
+  # done
+  # exit
+  # 
+  # listItems=($( \
+  #   cat "${1}" | \
+  #   awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'
+  # ))
+}
+
+# listItems=$(
+#   cat "packages--official.txt" | \
+#   awk -F '\\s\\|\\s' '{ printf "TRUE %s \"%s\"\n", $1, $2 }'
+# )
+# echo "${listItems}" | yad --plug=$DIALOG_KEY --tabnum=1 \
+# listItems=$(loadListItems 'packages--official.txt')
+
+# for var in "${listItems[@]}"; do
+#   echo "-- ${var}"
+# done
+# exit
+
+# echo "${listItems[@]}"
+# exit
+loadListItems 'packages--official.txt'
 yad --plug=$DIALOG_KEY --tabnum=1 \
   --image="emblem-package" \
   --text="Choose official packages to install." \
+  --list \
+  --grid-lines=both \
+    --column='':CHK \
+    --column=Package \
+    --column=Description \
+    --checklist \
+    "${listItems[@]}" \
   1> "${FILE__CONFIG__PACKAGES__OFFICIAL}" &
 
 yad --plug=$DIALOG_KEY --tabnum=2 \
@@ -49,17 +125,19 @@ yad --plug=$DIALOG_KEY --tabnum=7 \
 yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
+  --width=800 \
+  --height=500 \
   --center \
   --notebook \
     --key=$DIALOG_KEY \
     --tab="Official Packages" \
-    --tab="AUR Packages" \
-    --tab="User Scripts" \
-    --tab="Settings" \
-    --tab="Folders" \
-    --tab="Hardware" \
-    --tab="Extras" \
-    --active-tab=${1:-1} 
+    # --tab="AUR Packages" \
+    # --tab="User Scripts" \
+    # --tab="Settings" \
+    # --tab="Folders" \
+    # --tab="Hardware" \
+    # --tab="Extras" \
+    # --active-tab=${1:-1} 
 
 # # from within <REPO>/distro/arch/bin
 # ./dist/user-script.sh --install "${PWD}/dist/backup.sh"

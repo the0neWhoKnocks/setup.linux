@@ -1,0 +1,49 @@
+# 3D
+blender | Open-source 3D creation suite.
+# Browsers
+chromium | Open-source Browser (what Chrome is built on).
+firefox | Open-source Browser (oveseen by Mozilla Corp.).
+# Development
+diff-so-fancy | A CLI util for more readable diffs.
+docker | A set of platform as a service products that use OS-level virtualization to deliver software in packages called containers.
+docker-compose | A tool for defining and running multi-container Docker applications.
+filezilla | Open-source, cross-platform FTP application that supports FTP, FTPS, and SFTP.
+meld | A visual diff and merge tool targeted at developers.
+notepadqq | A Notepad++-like editor for the Linux desktop.
+tilix | A feature-rich tiling terminal emulator following the GNOME human interface design guidelines.
+virtualbox | Open-source software for virtualizing the x86 computing architecture.
+virtualbox-host-modules-arch | Virtualbox host kernel modules for Arch Kernel.
+virtualbox-guest-iso | Provides mouse pointer integration, shared folders, better video support, seamless windows, generic host/guest communication channels, time synchronization, shared clipboards, and automated logins for Virtualbox.
+zsh | Z shell is a Unix shell that can be used as an interactive login shell and as a command interpreter for shell scripting.
+# Gaming
+discord | App that allows Users to communicate via voice/video calls, text messaging, media and files in private chats or as part of community servers.
+steam | A video game digital distribution service by Valve.
+# Image
+flameshot | Powerful yet simple to use screenshot software.
+gimp | GNU Image Manipulation Program.
+inkscape | Open-source vector graphics editor.
+krita | App for image creation and image manipulation.
+# Music player
+qmmp | Open-source Qt-based multimedia player (Winamp replacement).
+# UI
+cairo-dock | A desktop interface that takes the shape of docks, desklets, panel.
+cairo-dock-plug-ins | A collection of views, applets, animations, and effects.
+cairo-dock-plug-ins-extras | A collection of third-party applets.
+# Utils
+baobab | Disk Usage Analyzer, formerly known as Baobab, is a graphical disk usage analyzer for the GNOME desktop environment.
+bat | CLI util that comes with syntax highlighting, git integration, and works as is a drop-in cat command replacement.
+btop | CLI resource monitor that shows usage and stats for processor, memory, disks, network and processes.
+filelight | App to visualize the disk usage on your computer.
+fzf | CLI fuzzy finder.
+gtk3-demos | Brings in 'gtk3-icon-browser' which allows to easily search for icons.
+lsd | (LSDeluxe) A rewrite of GNU 'ls' with a lot of added features like colors, icons, tree-view, and more formatting options.
+mc | (Midnight Commander) A CLI based file manager.
+p7zip | A CLI port of 7-Zip for POSIX systems.
+speedtest-cli | CLI util to measure internet connection performance metrics like download, upload, latency and packet loss natively without relying on a web browser.
+# Video production
+audacity | Multi-track audio editor and recorder.
+mkvtoolnix-gui | A GUI for 'mkvmerge', 'mkvinfo', and 'mkvpropedit'.
+obs-studio | Open-source solution for game recording and live streaming.
+peek | App to capture specific parts of screen, and can output '.apng', '.gif', '.mp4', and '.webm'.
+# Video player
+vlc | Multimedia player that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols.
