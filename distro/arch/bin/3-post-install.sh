@@ -12,22 +12,7 @@ DIALOG_KEY=$RANDOM
 mkdir -p "${DIR__CONFIGS}"
 
 function loadListItems {
-  # echo "${1}"
-  # cat "${1}"
-  # echo "TRUE blah 'badf as df adsf'"
-  # return ($( \
-  #   cat "${1}" \
-  # ))
-  # listItems=('TRUE' blah 'asd fasd fa sdf')
-  
   listItems=()
-  # local fileData=$(cat "${1}")
-  
-  # IFS=""
-  
-  # while IFS="" read -r p || [ -n "$line" ]; do
-  #   printf '%s\n' "$line"
-  # done < "${1}"
   while read line; do
     if [[ "${line}" == *"# "* ]]; then
       listItems+=(FALSE)
@@ -38,47 +23,9 @@ function loadListItems {
       listItems+=("$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $1 }')")
       listItems+=("$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $2 }')")
     fi
-    # listItems+=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
-    # echo "-- $line --"
   done < "${1}"
-  # exit
-  
-  # for line in "${fileData}"; do
-  #   if [[ "${line}" == *" | "* ]]; then
-  #     echo "-- ${line} --"
-  #     listItems+=TRUE
-  #     listItems+="$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $1 }')"
-  #     listItems+="$(echo "${line}" | awk -F '\\s\\|\\s' '{ print $2 }')"
-  #   fi
-  #   # listItems+=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
-  #   # temp=($(echo "${line}" | awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'))
-  #   # echo "${line}" | awk '{ split($0, temp, "\\s\\|\\s"); print temp[0], temp[1] }'
-  #   # echo "${temp[0]}"
-  #   # echo "${temp[1]}"
-  #   # echo "${line}"
-  # done
-  # exit
-  # 
-  # listItems=($( \
-  #   cat "${1}" | \
-  #   awk -F '\\s\\|\\s' '{ printf "TRUE \"%s\" \"%s\"\n", $1, $2 }'
-  # ))
 }
 
-# listItems=$(
-#   cat "packages--official.txt" | \
-#   awk -F '\\s\\|\\s' '{ printf "TRUE %s \"%s\"\n", $1, $2 }'
-# )
-# echo "${listItems}" | yad --plug=$DIALOG_KEY --tabnum=1 \
-# listItems=$(loadListItems 'packages--official.txt')
-
-# for var in "${listItems[@]}"; do
-#   echo "-- ${var}"
-# done
-# exit
-
-# echo "${listItems[@]}"
-# exit
 loadListItems 'packages--official.txt'
 yad --plug=$DIALOG_KEY --tabnum=1 \
   --image="emblem-package" \
