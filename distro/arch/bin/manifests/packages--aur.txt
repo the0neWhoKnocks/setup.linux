@@ -1,0 +1,20 @@
+# Browsers
+TRUE  | google-chrome         | Google's Chrome Browser
+# Development
+TRUE  | virtualbox-ext-oracle | Determines and installs the proper 'virtualbox-host-modules' for your Linux kernel (otherwise you can just manually install the proper version yourself).
+# Music file manipulation
+TRUE  | puddletag             | Configurable tag editor for music files
+# System snapshots
+TRUE  | timeshift             | An App that provides functionality similar to System Restore on Windows, or Time Machine on Mac OS.
+# Utils
+TRUE  | ascii-image-converter | A CLI tool that converts images into ASCII art.
+TRUE  | p7zip-gui             | A GUI for the 7zip file archiver.
+TRUE  | qview                 | A lightweight image viewer designed with minimalism and practicality in mind.
+# Video productions
+TRUE  | subtitleedit          | GUI editor for multiple subtitle formats.
+# Extras
+FALSE | cmatrix               | A program that shows the Matrix scrolling lines in the terminal.
+FALSE | figlet-fonts          | Fonts used by 'figlet'.
+FALSE | figlet-fonts-extra    | More fonts for 'figlet'.
+FALSE | hollywood             | A util that splits your console into a multiple panes of technobabble, perfectly suitable for any Hollywood geek melodrama.
+FALSE | shell-color-scripts   | A collection of ASCII art scripts that display your current CLI colors.
