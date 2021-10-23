@@ -128,15 +128,15 @@ function openConfigDialog {
       --window-icon=drive-harddisk \
       --title="Configure Shares" \
       --text="${previousError}" \
-      --button="Exit:${EXIT_CODE__CANCELED}" \
-      --button="Re-Scan Network:${EXIT_CODE__RESCAN}" \
-      --button="Save:${EXIT_CODE__SUCCESS}" \
       --form \
         --field="Username" "${SHARE__USER:-}" \
         --field="Password" "${SHARE__PASS:-}" \
         --field="Server IP":CBE "${ipOpts}" \
         --field="Mount Directory":DIR "${SHARE__MOUNT_DIR:-$DEFAULT__MOUNT_DIR}" \
-        --field="Share Name" "${SHARE__SHARE_NAME:-}"
+        --field="Share Name" "${SHARE__SHARE_NAME:-}" \
+      --button="Exit:${EXIT_CODE__CANCELED}" \
+      --button="Re-Scan Network:${EXIT_CODE__RESCAN}" \
+      --button="Save:${EXIT_CODE__SUCCESS}" \
   )
   handleError "You canceled out of adding config data."
   
@@ -272,7 +272,7 @@ function openGUI {
       --field="$(guiBtn 'Mount' 'package-install' 'Mount your shares')" "bash -c mountShares" \
       --field="$(guiBtn 'Un-Mount' 'package-remove' 'Un-mount your shares')" "bash -c unMountShares" \
       --field="$(guiBtn 'Config' 'preferences-system' 'Configure this App')" "bash -c openConfigDialog" \
-      --field="$(guiBtn 'Exit' 'emblem-error' 'Exit App')" "bash -c closeDialog"
+      --field="$(guiBtn 'Exit' 'emblem-error' 'Exit App')" "bash -c closeDialog" \
 }
 export -f openGUI
 
