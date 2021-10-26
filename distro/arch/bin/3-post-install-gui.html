@@ -79,6 +79,11 @@
         height: 1.4em;
       }
       
+      .tabs select {
+        font-size: inherit;
+        padding: 0.25em 0.5em;
+      }
+      
       .tabs-nav {
         height: 40px;
         font-size: 0.8em;
@@ -215,6 +220,20 @@
       }
       .folder-tree label input {
         margin-right: 0.75em;
+      }
+      
+      .combo-box {
+        font-size: 1.2em;
+        padding: 0.25em 0.25em 0.25em 0.75em;
+        border: solid 1px;
+        display: flex;
+        align-items: center;
+      }
+      .combo-box label {
+        min-width: 20%;
+      }
+      .combo-box select {
+        width: 100%;
       }
       
       .btm-nav {
@@ -377,7 +396,7 @@
         {
           label: 'Folders',
           icon: 'folders',
-          desc: 'Add commonly used folder structure.',
+          desc: 'Add common folders within your Home folder.',
           items: [
             ['folder-tree', [
               'Backups',
@@ -601,7 +620,7 @@
               case 'combo-box': {
                 const { label, options } = data;
                 tabMarkup += `
-                  <div>
+                  <div class="combo-box">
                     <label>${label}</label>
                     <select>
                       ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
