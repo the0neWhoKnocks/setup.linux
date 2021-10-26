@@ -184,7 +184,9 @@
       }
       
       .folder-tree {
-        padding: 0;
+        font-family: monospace;
+        padding: 1em;
+        border: solid 1px;
         margin: 0;
       }
       .folder-tree,
@@ -192,17 +194,27 @@
         list-style: none;
       }
       .folder-tree ul {
-        padding-left: 1.75em;
+        padding-left: 0.5em;
       }
       .folder-tree label {
+        height: 1.2em;
         font-size: 1.25em;
-        vertical-align: middle;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
       }
-      .folder-tree li::marker {
+      .folder-tree label:hover {
+        background: rgba(var(--color--fg), 0.1);
+      }
+      .folder-tree ul li label::before {
         content: '├─';
       }
-      .folder-tree li:last-of-type::marker {
+      .folder-tree ul li:last-of-type label::before {
         content: '└─';
+      }
+      .folder-tree label input {
+        margin-right: 0.75em;
       }
       
       .btm-nav {
@@ -387,7 +399,7 @@
           items: [
             ['radiolist', {
               'GPU': [
-                [true, 'None:'],
+                [true, 'None (Integrated):'],
                 [false, 'AMD:'],
                 [false, 'Nvidia:nvidia nvidia-settings'],
               ],
