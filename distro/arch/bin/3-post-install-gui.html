@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color--bg: 51, 51, 51; /* #333 */
+          --color--fg: 238, 238, 238; /* #eee */
+        }
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --color--bg: 238, 238, 238; /* #eee */
+          --color--fg: 51, 51, 51; /* #333 */
+        }
+      }
+    
+      html, body {
+        width: 100%;
+        height: 100%;
+        color: rgb(var(--color--fg));
+        font-size: 18px;
+        padding: 0;
+        margin: 0;
+        background: rgb(var(--color--bg));
+      }
+      body {
+        overflow: hidden;
+      }
+      
+      button {
+        color: rgb(var(--color--fg));
+        font-size: inherit;
+        border: solid 1px;
+        border-radius: 0.25em;
+        background: rgb(var(--color--bg));
+      }
+    
+      form {
+        height: 100%;
+        padding: 1em;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .tabs {
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .tabs::after {
+        content: '';
+        height: 3em;
+        background: linear-gradient(rgba(var(--color--bg), 0), rgb(var(--color--bg)));
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+      }
+      
+      .tabs [type="checkbox"],
+      .tabs [type="radio"] {
+        width: 1.4em;
+        height: 1.4em;
+      }
+      
+      .tabs-nav {
+        height: 40px;
+        font-size: 0.8em;
+        overflow-x: auto;
+        display: flex;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .tabs-nav::after {
+        content: '';
+        height: 1px;
+        background: rgb(var(--color--fg));
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1;
+      }
+      .tabs-nav__btn {
+        height: 100%;
+        white-space: nowrap;
+        padding: 0.5em 1em;
+        border-bottom: none;
+        border-radius: 0.5em 0.5em 0 0;
+        margin: 0;
+        position: relative;
+        z-index: 0;
+        opacity: 0.4;
+      }
+      .tabs-nav__btn * {
+        pointer-events: none;
+      }
+      .tabs-nav__btn.current {
+        z-index: 2;
+        opacity: 1;
+      }
+      .tabs-nav__icon {
+        width: 1em;
+        height: 1em;
+        display: inline-block;
+        background: cyan;
+      }
+      
+      .tab {
+        --tabs-nav-height: 40px;
+        
+        height: calc(100% - var(--tabs-nav-height));
+        display: flex;
+        flex-direction: column;
+      }
+      .tab:not(.current) {
+        display: none;
+      }
+      .tab__desc {
+        padding: 1em 0;
+      }
+      .tab__body {
+        padding-bottom: 1.5em;
+        overflow-y: auto;
+      }
+      
+      fieldset {
+        border: solid 1px rgba(var(--color--fg), 0.5);
+      }
+      fieldset:not(:first-of-type) {
+        margin-top: 1em;
+      }
+      
+      legend {
+        width: 100%;
+        color: rgb(var(--color--bg));
+        font-size: 1.2em;
+        padding: 0.25em 0.5em;
+        border-radius: 0.25em 0.25em 0 0;
+        margin: 0;
+        background: rgba(var(--color--fg), 0.5);
+      }
+      
+      .item-row {
+        width: 100%;
+        display: flex;
+      }
+      .item-row * {
+        padding: 0.5em;
+        border: solid 1px rgba(var(--color--fg), 0.5);
+      }
+      .item-row__check {
+        flex-shrink: 0;
+      }
+      .item-row__item {
+        min-width: 30%;
+      }
+      .item-row__desc {
+        width: 100%;
+        color: rgba(var(--color--fg), 0.5);
+      }
+      
+      .folder-tree {
+        padding: 0;
+        margin: 0;
+      }
+      .folder-tree,
+      .folder-tree ul {
+        list-style: none;
+      }
+      .folder-tree ul {
+        padding-left: 1.75em;
+      }
+      .folder-tree label {
+        font-size: 1.25em;
+        vertical-align: middle;
+      }
+      .folder-tree li::marker {
+        content: '├─';
+      }
+      .folder-tree li:last-of-type::marker {
+        content: '└─';
+      }
+      
+      .btm-nav {
+        display: flex;
+      }
+      .btm-nav button {
+        width: 100%;
+        padding: 0.5em;
+      }
+    </style>
+    
+    <script>
+      const guiData = [
+        {
+          label: 'Official Packages',
+          icon: 'emblem-package',
+          desc: 'Choose official packages to install.',
+          items: [
+            ['checklist', {
+              '3d': [
+                [true, 'blender', 'Open-source 3D creation suite.'],
+              ],
+              'Browsers': [
+                [true, 'chromium', 'Open-source Browser (what Chrome is built on).'],
+                [true, 'firefox', 'Open-source Browser (oveseen by Mozilla Corp.).'],
+              ],
+              'Development': [
+                [true, 'diff-so-fancy', 'A CLI util for more readable diffs.'],
+                [true, 'docker', 'A set of platform as a service products that use OS-level virtualization to deliver software in packages called containers.'],
+                [true, 'docker-compose', 'A tool for defining and running multi-container Docker applications.'],
+                [true, 'filezilla', 'Open-source, cross-platform FTP application that supports FTP, FTPS, and SFTP.'],
+                [true, 'meld', 'A visual diff and merge tool targeted at developers.'],
+                [true, 'notepadqq', 'A Notepad++-like editor for the Linux desktop.'],
+                [true, 'tilix', 'A feature-rich tiling terminal emulator following the GNOME human interface design guidelines.'],
+                [true, 'virtualbox', 'Open-source software for virtualizing the x86 computing architecture.'],
+                [true, 'virtualbox-host-modules-arch', 'Virtualbox host kernel modules for Arch Kernel.'],
+                [true, 'virtualbox-guest-iso', 'Provides mouse pointer integration, shared folders, better video support, seamless windows, generic host/guest communication channels, time synchronization, shared clipboards, and automated logins for Virtualbox.'],
+                [true, 'zsh', 'Z shell is a Unix shell that can be used as an interactive login shell and as a command interpreter for shell scripting.'],
+              ],
+              'Gaming': [
+                [true, 'discord', 'App that allows Users to communicate via voice/video calls, text messaging, media and files in private chats or as part of community servers.'],
+                [true, 'steam', 'A video game digital distribution service by Valve.'],
+              ],
+              'Image': [
+                [true, 'flameshot', 'Powerful yet simple to use screenshot software.'],
+                [true, 'gimp', 'GNU Image Manipulation Program.'],
+                [true, 'inkscape', 'Open-source vector graphics editor.'],
+                [true, 'krita', 'App for image creation and image manipulation.'],
+              ],
+              'Music Player': [
+                [true, 'qmmp', 'Open-source Qt-based multimedia player (Winamp replacement).'],
+              ],
+              'UI': [
+                [true, 'cairo-dock', 'A desktop interface that takes the shape of docks, desklets, panel.'],
+                [true, 'cairo-dock-plug-ins', 'A collection of views, applets, animations, and effects.'],
+                [true, 'cairo-dock-plug-ins-extra', 'A collection of third-party applets.'],
+              ],
+              'Utils': [
+                [true, 'baobab', 'Disk Usage Analyzer, formerly known as Baobab, is a graphical disk usage analyzer for the GNOME desktop environment.'],
+                [true, 'bat', 'CLI util that comes with syntax highlighting, git integration, and works as is a drop-in cat command replacement.'],
+                [true, 'btop', 'CLI resource monitor that shows usage and stats for processor, memory, disks, network and processes.'],
+                [true, 'filelight', 'App to visualize the disk usage on your computer.'],
+                [true, 'fzf', 'CLI fuzzy finder.'],
+                [true, 'gtk3-demos', "Brings in 'gtk3-icon-browser' which allows to easily search for icons."],
+                [true, 'lsd', "(LSDeluxe) A rewrite of GNU 'ls' with a lot of added features like colors, icons, tree-view, and more formatting options."],
+                [true, 'mc', '(Midnight Commander) A CLI based file manager.'],
+                [true, 'p7zip', 'A CLI port of 7-Zip for POSIX systems.'],
+                [true, 'speedtest-cli', 'CLI util to measure internet connection performance metrics like download, upload, latency and packet loss natively without relying on a web browser.'],
+              ],
+              'Video Player': [
+                [true, 'vlc', 'Multimedia player that plays most multimedia files as well as DVDs, Audio CDs, VCDs, and various streaming protocols.'],
+              ],
+              'Video Production': [
+                [true, 'audacity', 'Multi-track audio editor and recorder.'],
+                [true, 'mkvtoolnix-gui', "A GUI for 'mkvmerge', 'mkvinfo', and 'mkvpropedit'."],
+                [true, 'obs-studio', 'Open-source solution for game recording and live streaming.'],
+                [true, 'peek', "App to capture specific parts of screen, and can output '.apng', '.gif', '.mp4', and '.webm'."],
+              ],
+              'Extras': [
+                [false, 'figlet', 'A CLI tool that generates ASCII text banners in a variety of typefaces.'],
+                [false, 'lolcat', "Adds rainbow colors to a command's output."],
+                [false, 'neofetch', 'A CLI util that displays system information.'],
+              ],
+            }],
+          ],
+        },
+        {
+          label: 'AUR Packages',
+          icon: 'x-package-repository',
+          desc: 'Choose AUR packages to install.',
+          items: [
+            ['checklist', {
+              'Browsers': [
+                [true, 'google-chrome', "Google's Chrome Browser"],
+              ],
+              'Development': [
+                [true, 'virtualbox-ext-oracle', "Determines and installs the proper 'virtualbox-host-modules' for your Linux kernel (otherwise you can just manually install the proper version yourself)."],
+              ],
+              'Music file manipulation': [
+                [true, 'puddletag', 'Configurable tag editor for music files'],
+              ],
+              'System snapshots': [
+                [true, 'timeshift', 'An App that provides functionality similar to System Restore on Windows, or Time Machine on Mac OS.'],
+              ],
+              'Utils': [
+                [true, 'ascii-image-converter', 'A CLI tool that converts images into ASCII art.'],
+                [true, 'p7zip-gui', 'A GUI for the 7zip file archiver.'],
+                [true, 'qview', 'A lightweight image viewer designed with minimalism and practicality in mind.'],
+              ],
+              'Video productions': [
+                [true, 'subtitleedit', 'GUI editor for multiple subtitle formats.'],
+              ],
+              'Extras': [
+                [false, 'cmatrix', 'A program that shows the Matrix scrolling lines in the terminal.'],
+                [false, 'figlet-fonts', "Fonts used by 'figlet'."],
+                [false, 'figlet-fonts-extra', "More fonts for 'figlet'."],
+                [false, 'hollywood', 'A util that splits your console into a multiple panes of technobabble, perfectly suitable for any Hollywood geek melodrama.'],
+                [false, 'shell-color-scripts', 'A collection of ASCII art scripts that display your current CLI colors.'],
+              ],
+            }],
+          ],
+        },
+        {
+          label: 'User Scripts',
+          icon: 'applications-utilities',
+          desc: 'Choose which User scripts to install.',
+          items: [
+            ['checklist', [
+              [true, 'backup.sh', 'Util that allows a User to specify what folders/files to zip up and drop on the Desktop.'],
+              [true, 'lan-shares.sh', 'Util to configure and un/mount Network shares.'],
+              [true, 'user-script.sh', "Util that allows for 'un/installing' a script as a Launcher."],
+            ]],
+          ],
+        },
+        {
+          label: 'Settings',
+          icon: 'applications-system',
+          desc: 'Configure your Desktop.',
+          items: [
+            ['combo-box', {
+              label: 'Dock',
+              options: [
+                'cairo-dock',
+                'plank',
+                'latte-dock',
+              ],
+            }],
+            ['combo-box', {
+              label: 'Wallpaper',
+              options: [
+                'Milky Way',
+                'Shell',
+                'Pastel Hills',
+                'Elarun',
+              ],
+            }],
+          ],
+        },
+        {
+          label: 'Folders',
+          icon: 'folder-publicshare',
+          desc: 'Add commonly used folder structure.',
+          items: [
+            ['folder-tree', [
+              'Backups',
+              ['Projects', [
+                '3D',
+                'Code',
+                'Img',
+                'Vid',
+              ]],
+              'Torrents',
+              'VirtualBox ISOs',
+            ]],
+          ],
+        },
+        {
+          label: 'Hardware',
+          icon: 'audio-card',
+          desc: 'If you have dedicated hardware, you may need to install these packages.',
+          items: [
+            ['radiolist', {
+              'GPU': [
+                [true, 'None:'],
+                [false, 'AMD:'],
+                [false, 'Nvidia:nvidia nvidia-settings'],
+              ],
+            }],
+          ],
+        },
+      ];
+    </script>
+  </head>
+  <body>
+    <form>
+      <div class="tabs">
+        <nav class="tabs-nav"></nav>
+      </div>
+      <nav class="btm-nav">
+        <button type="button" data-type="cancel">Cancel</button>
+        <button type="button" data-type="save">Save</button>
+      </nav>
+    </form>
+    
+    <script>
+      try {
+        const form = document.querySelector('form');
+        const tabsEl = form.querySelector('.tabs');
+        const tabsNav = form.querySelector('.tabs-nav');
+        
+        function sendToStdOut(output) {
+          console.log(`\n${output}`);
+        }
+        
+        guiData.forEach(({ desc, icon, items, label }, ndx) => {
+          let tabMarkup = '';
+          
+          items.forEach(([type, data]) => {  
+            switch (type) {
+              case 'checklist':
+              case 'radiolist': {
+                const genItemsMarkup = (arr, group) => {
+                  return arr.map(([checked, item, desc], ndx) => {
+                    let val = item;
+                    let label = item;
+                    if (item.includes(':')) {
+                      const itemVals = item.split(':');
+                      val = itemVals[1];
+                      label = itemVals[0];
+                    }
+                    
+                    const value = group && val ? `${group} | ${val}` : val;
+                    const descMarkup = desc
+                      ? `<span class="item-row__desc">${desc}</span>`
+                      : '';
+                    let inputType = 'checkbox';
+                    let inputName = `in${ndx}`;
+                    
+                    if (type === 'radiolist') {
+                      inputType = 'radio';
+                      inputName = group;
+                    }
+                    
+                    return `
+                      <label class="item-row">
+                        <span class="item-row__check">
+                          <input type="${inputType}" name="${inputName}" value="${value}" ${checked && 'checked'} />
+                        </span>
+                        <code class="item-row__item">${label}</code>
+                        ${descMarkup}
+                      </label>
+                    `;
+                  }).join('');
+                };
+                
+                if (Array.isArray(data)) {
+                  tabMarkup += genItemsMarkup(data);
+                }
+                else {
+                  Object.keys(data).forEach((group) => {
+                    const groupItems = data[group];
+                    tabMarkup += `
+                      <fieldset>
+                        <legend>${group}</legend>
+                        <div class="items-group">${genItemsMarkup(groupItems, group)}</div>
+                      </fieldset>
+                    `;
+                  });
+                }
+                break;
+              }
+              
+              case 'combo-box': {
+                const { label, options } = data;
+                tabMarkup += `
+                  <div>
+                    <label>${label}</label>
+                    <select>
+                      ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                  </div>
+                `;
+                break;
+              }
+              
+              case 'folder-tree': {
+                const iterate = (folders, parent='~') => {
+                  const _class = parent === '~' ? 'folder-tree' : '';
+                  
+                  const markup = folders.map((folder) => {
+                    let _folder = folder;
+                    let nested = '';
+                    let labelData = '';
+                    
+                    if (Array.isArray(folder)) {
+                      _folder = folder[0];
+                      nested = iterate(folder[1], `${parent}/${_folder}`);
+                      labelData = `data-is-parent="true"`;
+                    }
+                    
+                    return `<li><label ${labelData}><input type="checkbox" value="${parent}/${_folder}" checked />${_folder}</label>${nested}</li>`;
+                  }).join('');
+                  
+                  return `<ul class="${_class}">${markup}</ul>`;
+                };
+                tabMarkup += iterate(data);
+                break;
+              }
+            }  
+          });
+          
+          const current = ndx === 0 ? 'current' : '';
+          tabsNav.insertAdjacentHTML('beforeend', `
+            <button type="button" class="tabs-nav__btn ${current}" data-type="tab" data-ndx="${ndx}">
+              <span class="tabs-nav__icon" title="${icon}"></span>
+              ${label}
+            </button>
+          `);
+          tabsEl.insertAdjacentHTML('beforeend', `
+            <div class="tab ${current}" data-ndx="${ndx}">
+              <div class="tab__desc">${desc}</div>
+              <div class="tab__body">
+                ${tabMarkup}
+              </div>
+            </div>
+          `);
+        });
+        
+        form.addEventListener('click', (ev) => {
+          const el = ev.target;
+          
+          if (el.nodeName === 'BUTTON') {
+            ev.preventDefault();
+            
+            switch (el.dataset.type) {
+              case 'cancel': 
+                sendToStdOut('[CLOSE]');
+                break;
+              
+              case 'save': {
+                const fD = new FormData(form);
+                let groupName = '';
+                let parsed = '';
+                [...fD.values()].forEach((rawVal, ndx) => {
+                  const [group, val] = rawVal.split(' | ');
+                  
+                  if (groupName !== group) {
+                    groupName = group;
+                    if (ndx > 0) parsed += '\n';
+                    parsed += `[ ${groupName} ]\n`;
+                  }
+                  
+                  parsed += `${val}\n`;
+                });
+                sendToStdOut(`[FILE:"temp.ini"]\n${parsed}`);
+                sendToStdOut('[CLOSE]');
+                break;
+              }
+              
+              case 'tab': {
+                const tabNdx = el.dataset.ndx;
+                [...tabsEl.querySelectorAll('[data-ndx]')].forEach((el) => {
+                  const { ndx } = el.dataset;
+                  if (ndx === tabNdx) el.classList.add('current');
+                  else el.classList.remove('current');
+                });
+                break;
+              }
+            }
+          }
+          else if (el.nodeName === 'LABEL' && el.dataset.isParent) {
+            const checked = el.querySelector('input').checked;
+            const nestedChecks = [...el.nextSibling.querySelectorAll('[type="checkbox"]')];
+            nestedChecks.forEach((el) => {
+              el.checked = !checked;
+            });
+          }
+        });
+      }
+      catch (err) { alert(err); }
+    </script>
+  </body>
+</html>

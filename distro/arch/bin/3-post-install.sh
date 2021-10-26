@@ -1,122 +1,48 @@
 #!/usr/bin/env bash
 
 DIR__CONFIGS="${HOME}/.config/post-install"
-FILE__CONFIG__HARDWARE="${DIR__CONFIGS}/hardware.conf"
-FILE__CONFIG__PACKAGES__AUR="${DIR__CONFIGS}/packages--aur.conf"
-FILE__CONFIG__PACKAGES__OFFICIAL="${DIR__CONFIGS}/packages--official.conf"
-FILE__CONFIG__SETTINGS="${DIR__CONFIGS}/settings.conf"
-FILE__CONFIG__USER_SCRIPTS="${DIR__CONFIGS}/user-scripts.conf"
-DIALOG_KEY=$RANDOM
 
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
 
-function loadListItems {
-  listItems=()
-  while read line; do
-    if [[ "${line}" == *"# "* ]]; then
-      listItems+=(FALSE)
-      listItems+=("$(echo "${line}" | awk -F '#\\s' '{ printf "[ %s ]\n", $2 }')")
-      listItems+=('')
-    elif [[ "${line}" == *" | "* ]]; then
-      listItems+=("$(echo "${line}" | awk -F '\\s+\\|\\s+' '{ print $1 }')")
-      listItems+=("$(echo "${line}" | awk -F '\\s+\\|\\s+' '{ print $2 }')")
-      listItems+=("$(echo "${line}" | awk -F '\\s+\\|\\s+' '{ print $3 }')")
-    fi
-  done < "${1}"
+#!/usr/bin/env bash
+
+GUI=$(cat ./3-post-install-gui.html)
+outputFile=''
+
+function closeDialog {
+  # NOTE: 'YAD_PID' is not set when using 'html'
+  pkill yad
 }
 
-loadListItems './manifests/packages--official.txt'
-yad --plug=$DIALOG_KEY --tabnum=1 \
-  --image="emblem-package" \
-  --text="Choose official packages to install." \
-  --list \
-  --grid-lines=both \
-    --column='':CHK \
-    --column=Package \
-    --column=Description \
-    --checklist \
-    "${listItems[@]}" \
-  1> "${FILE__CONFIG__PACKAGES__OFFICIAL}" &
-
-loadListItems './manifests/packages--aur.txt'
-yad --plug=$DIALOG_KEY --tabnum=2 \
-  --image="x-package-repository" \
-  --text="Choose AUR packages to install." \
-  --list \
-  --grid-lines=both \
-    --column='':CHK \
-    --column=Package \
-    --column=Description \
-    --checklist \
-    "${listItems[@]}" \
-  1> "${FILE__CONFIG__PACKAGES__AUR}" &
-
-loadListItems './manifests/scripts--user.txt'
-yad --plug=$DIALOG_KEY --tabnum=3 \
-  --image="applications-utilities" \
-  --text="Choose which User scripts to install." \
-  --list \
-  --grid-lines=both \
-    --column='':CHK \
-    --column=Script \
-    --column=Description \
-    --checklist \
-    "${listItems[@]}" \
-  1> "${FILE__CONFIG__USER_SCRIPTS}" &
-
-yad --plug=$DIALOG_KEY --tabnum=4 \
-  --image="applications-system" \
-  --text="Configure your Desktop." \
-  --form \
-    --field="Dock":CB "cairo-dock!plank!latte-dock" \
-    --field="Wallpaper":CB "Milky Way!Shell!Pastel Hills!Elarun" \
-  1> "${FILE__CONFIG__SETTINGS}" &
-
-yad --plug=$DIALOG_KEY --tabnum=5 \
-  --image="folder-publicshare" \
-  --text="Add commonly used folder structure." \
-  --list \
-  --grid-lines=both \
-    --column='':CHK \
-    --column=Folder \
-    --checklist \
-    TRUE 'Backups' \
-    TRUE 'Projects' \
-    TRUE '  ├─  3D' \
-    TRUE '  ├─  Code' \
-    TRUE '  ├─  Img' \
-    TRUE '  └─  Vid' \
-    TRUE 'Torrents' \
-    TRUE 'VirtualBox ISOs' \
-  1> "${FILE__CONFIG__SETTINGS}" &
-
-yad --plug=$DIALOG_KEY --tabnum=6 \
-  --image="audio-card" \
-  --text="If you have dedicated hardware, you may need to install these packages." \
-  --list \
-    --radiolist \
-    --column='':RD \
-    --column=Device \
-    FALSE 'GPU | AMD' \
-    FALSE 'GPU | Nvidia' \
-  1> "${FILE__CONFIG__HARDWARE}" &
-
-yad \
+# NOTE: Reason for 'JSC_SIGNAL_FOR_GC' https://bugs.webkit.org/show_bug.cgi?id=223069
+echo "$GUI" | JSC_SIGNAL_FOR_GC=30 stdbuf -oL -eL yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
   --width=800 \
   --height=500 \
   --center \
-  --notebook \
-    --key=$DIALOG_KEY \
-    --tab="Official Packages" \
-    --tab="AUR Packages" \
-    --tab="User Scripts" \
-    --tab="Settings" \
-    --tab="Folders" \
-    --tab="Hardware" \
-    --active-tab=${1:-1} 
+  --html \
+    --print-uri \
+  --no-buttons \
+2>&1 | while read -r line; do
+  if [[ "${line}" != *"CONSOLE LOG"* ]]; then
+    if [[ "${line}" == "[CLOSE]" ]]; then
+      closeDialog
+    elif [[ "${line}" == *"[FILE:"* ]]; then
+      outputFile=$(echo "${line}" | awk -F'"' '{ print $2 }')
+      outputFile="${DIR__CONFIGS}/${outputFile}"
+      touch "${outputFile}"
+      echo "" > "${outputFile}"
+    elif [[ "${outputFile}" != '' ]]; then
+      echo "$line" >> "${outputFile}"
+    fi
+  fi
+done
+
+# TEMP: just verifying
+echo "${DIR__CONFIGS}"
+ls -la "${DIR__CONFIGS}"
 
 # # from within <REPO>/distro/arch/bin
 # ./dist/user-script.sh --install "${PWD}/dist/backup.sh"
