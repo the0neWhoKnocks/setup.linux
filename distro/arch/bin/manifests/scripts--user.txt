@@ -1,3 +1,0 @@
-TRUE  | backup.sh      | Util that allows a User to specify what folders/files to zip up and drop on the Desktop.
-TRUE  | lan-shares.sh  | Util to configure and un/mount Network shares.
-TRUE  | user-script.sh | Util that allows for 'un/installing' a script as a Launcher.
