@@ -706,7 +706,7 @@
           
           output.push('sudo reboot', '');
           
-          return output.join('\n');
+          return `#!/usr/bin/env bash\n\n${output.join('\n')}`;
         };
         
         let checkNdx = 0;
