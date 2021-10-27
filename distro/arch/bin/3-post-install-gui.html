@@ -603,6 +603,7 @@
           const flatPkgs = [];
           const userScripts = [];
           const folders = [];
+          const hardwareSteps = [];
           const output = [];
           
           [...fD.values()].forEach((rawVal, ndx) => {
@@ -628,7 +629,30 @@
               case 'folders': folders.push(val); break;
               case 'hardware': {
                 switch (itemKey) {
-                  case 'gpu': officalPkgs.push(val); break;
+                  case 'gpu': {
+                    officalPkgs.push(val);
+                    
+                    if (val.includes('nvidia')) {
+                      const HOOKS_DIR = '/etc/pacman.d/hooks';
+                      hardwareSteps.push(
+                        '# Add pacman hook to compile module on kernel upgrades',
+                        `sudo mkdir -p "${HOOKS_DIR}"`,
+                        `sudo cp "\${PWD}/../hooks/nvidia.hook" "${HOOKS_DIR}/"`,
+                        '',
+                        '# Blacklist the Nouveau driver (the default open-source driver)',
+                        'sudo bash -c "echo blacklist nouveau > /etc/modprobe.d/blacklist-nvidia-nouveau.conf"',
+                        '',
+                        '# Add GPU config for XOrg Server',
+                        'sudo cp "\${PWD}/../confs/20-nvidia.conf" "/etc/X11/xorg.conf.d/"',
+                        '',
+                        '# Load driver on boot',
+                        'sudo sed -i "/^MODULES=(/s/)$/ nvidia nvidia_modeset nvidia_uvm nvidia_drm)/" /etc/mkinitcpio.conf',
+                        'sudo mkinitcpio -P linux',
+                      );
+                    }
+                    
+                    break;
+                  }
                 }
                 
                 break;
@@ -674,8 +698,13 @@
             );
           }
           
-          // TODO: add extra steps when GPU is dedicated
+          if (hardwareSteps.length) {
+            output.push(...hardwareSteps, '');
+          }
+          
           // TODO: copy over User settings
+          
+          output.push('sudo reboot', '');
           
           return output.join('\n');
         };
