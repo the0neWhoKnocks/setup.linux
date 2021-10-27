@@ -5,8 +5,6 @@ DIR__CONFIGS="${HOME}/.config/post-install"
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
 
-#!/usr/bin/env bash
-
 GUI=$(cat ./3-post-install-gui.html)
 outputFile=''
 
