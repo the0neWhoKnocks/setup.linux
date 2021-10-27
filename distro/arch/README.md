@@ -53,3 +53,9 @@ cd /tmp && git clone https://github.com/the0neWhoKnocks/setup.linux.git && cd se
 
 ./1-set-up-arch.sh
 ```
+
+---
+
+## Development
+
+To more quickly test layout and functionality of the GUI you can just load up `file://<REPO_PATH>/distro/arch/bin/3-post-install-gui.html` in a Browser and set the responsive layout (in DevTools) to `890 x 600` (or whatever the dimensions are in `3-post-install-gui.sh`).

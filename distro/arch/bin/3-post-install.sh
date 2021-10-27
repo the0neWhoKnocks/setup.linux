@@ -19,7 +19,7 @@ function closeDialog {
 echo "$GUI" | JSC_SIGNAL_FOR_GC=30 stdbuf -oL -eL yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
-  --width=800 \
+  --width=900 \
   --height=500 \
   --center \
   --html \
@@ -35,6 +35,10 @@ echo "$GUI" | JSC_SIGNAL_FOR_GC=30 stdbuf -oL -eL yad \
       touch "${outputFile}"
       echo "" > "${outputFile}"
     elif [[ "${outputFile}" != '' ]]; then
+      if [[ "${line}" == *'${PWD}'* ]]; then
+        line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
+      fi
+      
       echo "$line" >> "${outputFile}"
     fi
   fi
@@ -43,6 +47,7 @@ done
 # TEMP: just verifying
 echo "${DIR__CONFIGS}"
 ls -la "${DIR__CONFIGS}"
+
 
 # # from within <REPO>/distro/arch/bin
 # ./dist/user-script.sh --install "${PWD}/dist/backup.sh"
@@ -54,13 +59,6 @@ ls -la "${DIR__CONFIGS}"
 # ./dist/user-script.sh --install "${PWD}/dist/user-script.sh"
 # ./dist/user-script.sh --uninstall "user-script"
 
-# Settings
-# - Desktop
-#   - wallpaper
-#   - dock
-# - GPU
-#   - amd
-#   - nvidia
 
 # For KDE, current wallpaper is referenced in `~/.config/plasma-org.kde.plasma.desktop-appletsrc`
 # ```

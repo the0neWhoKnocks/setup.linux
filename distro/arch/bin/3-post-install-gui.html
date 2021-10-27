@@ -251,11 +251,18 @@
         {
           label: 'Official Packages',
           icon: 'package',
+          id: 'official',
           desc: 'Choose official packages to install.',
           items: [
             ['checklist', {
               '3d': [
                 [true, 'blender', 'Open-source 3D creation suite.'],
+              ],
+              'Audio Converter': [
+                [true, 'soundkonverter', 'A GUI to convert various audio formats.'],
+              ],
+              'Audio Player': [
+                [true, 'qmmp', 'Open-source Qt-based multimedia player (Winamp replacement).'],
               ],
               'Browsers': [
                 [true, 'chromium', 'Open-source Browser (what Chrome is built on).'],
@@ -284,13 +291,8 @@
                 [true, 'inkscape', 'Open-source vector graphics editor.'],
                 [true, 'krita', 'App for image creation and image manipulation.'],
               ],
-              'Music Player': [
-                [true, 'qmmp', 'Open-source Qt-based multimedia player (Winamp replacement).'],
-              ],
-              'UI': [
-                [true, 'cairo-dock', 'A desktop interface that takes the shape of docks, desklets, panel.'],
-                [true, 'cairo-dock-plug-ins', 'A collection of views, applets, animations, and effects.'],
-                [true, 'cairo-dock-plug-ins-extra', 'A collection of third-party applets.'],
+              'Packages': [
+                [true, 'flatpak', 'Linux application sandboxing and distribution framework.'],
               ],
               'Utils': [
                 [true, 'baobab', 'Disk Usage Analyzer, formerly known as Baobab, is a graphical disk usage analyzer for the GNOME desktop environment.'],
@@ -309,6 +311,7 @@
               ],
               'Video Production': [
                 [true, 'audacity', 'Multi-track audio editor and recorder.'],
+                [true, 'handbrake', 'A GUI for ffmpeg to allow easy video transcoding.'],
                 [true, 'mkvtoolnix-gui', "A GUI for 'mkvmerge', 'mkvinfo', and 'mkvpropedit'."],
                 [true, 'obs-studio', 'Open-source solution for game recording and live streaming.'],
                 [true, 'peek', "App to capture specific parts of screen, and can output '.apng', '.gif', '.mp4', and '.webm'."],
@@ -324,6 +327,7 @@
         {
           label: 'AUR Packages',
           icon: 'package-blue',
+          id: 'aur',
           desc: 'Choose AUR packages to install.',
           items: [
             ['checklist', {
@@ -336,6 +340,9 @@
               'Music file manipulation': [
                 [true, 'puddletag', 'Configurable tag editor for music files'],
               ],
+              'Packages': [
+                [true, 'pamac-all', 'A GUI that allows for searching, installing, and uninstalling official packages, AURs, Flatpaks, and Snaps.'],
+              ],
               'System snapshots': [
                 [true, 'timeshift', 'An App that provides functionality similar to System Restore on Windows, or Time Machine on Mac OS.'],
               ],
@@ -344,7 +351,7 @@
                 [true, 'p7zip-gui', 'A GUI for the 7zip file archiver.'],
                 [true, 'qview', 'A lightweight image viewer designed with minimalism and practicality in mind.'],
               ],
-              'Video productions': [
+              'Video Production': [
                 [true, 'subtitleedit', 'GUI editor for multiple subtitle formats.'],
               ],
               'Extras': [
@@ -358,8 +365,25 @@
           ],
         },
         {
+          label: 'Flatpaks',
+          icon: 'package-pink',
+          id: 'flat',
+          desc: 'Choose Flatpak packages to install.',
+          items: [
+            ['checklist', {
+              'Development': [
+                [true, 'atom', 'Hackable IDE'],
+              ],
+              'Extras': [
+                [false, 'bottles', 'A GUI to manage Wine and Proton software.'],
+              ],
+            }],
+          ],
+        },
+        {
           label: 'User Scripts',
           icon: 'toolbox',
+          id: 'scripts',
           desc: 'Choose which User scripts to install.',
           items: [
             ['checklist', [
@@ -372,18 +396,21 @@
         {
           label: 'Settings',
           icon: 'settings',
+          id: 'settings',
           desc: 'Configure your Desktop.',
           items: [
             ['combo-box', {
               label: 'Dock',
+              id: 'dock',
               options: [
-                'cairo-dock',
+                'cairo-dock:cairo-dock cairo-dock-plug-ins cairo-dock-plug-ins-extra',
                 'plank',
                 'latte-dock',
               ],
             }],
             ['combo-box', {
               label: 'Wallpaper',
+              id: 'wallpaper',
               options: [
                 'Milky Way',
                 'Shell',
@@ -396,6 +423,7 @@
         {
           label: 'Folders',
           icon: 'folders',
+          id: 'folders',
           desc: 'Add common folders within your Home folder.',
           items: [
             ['folder-tree', [
@@ -414,10 +442,11 @@
         {
           label: 'Hardware',
           icon: 'hardware',
+          id: 'hardware',
           desc: 'If you have dedicated hardware, you may need to install these packages.',
           items: [
             ['radiolist', {
-              'GPU': [
+              'GPU:gpu': [
                 [true, 'None (Integrated):'],
                 [false, 'AMD:'],
                 [false, 'Nvidia:nvidia nvidia-settings'],
@@ -445,6 +474,14 @@
         <path style="fill: #71a4f0;" d="M160.096 189.804 229.998 230l200-115-69.9-40.202-133.441 39.481z"></path>
         <path style="fill: #96bee6;" d="m160.096 289.803-60.183-34.604v-100l58.011 4.531 2.172 30.074z"></path>
         <path style="fill: #76c9f8;" d="M99.913 155.199 299.907 40.193l60.191 34.605-200.002 115.006z"></path>
+      </symbol>
+      <symbol id="ui__package-pink" viewBox="0 0 460 460" xmlns="http://www.w3.org/2000/svg">
+        <path style="fill: #fa66ef;" d="m200.002 210 30 250 200-115V115z"></path>
+        <path style="fill: #e000d0;" d="M230.001 200v260l-200-115V115z"></path>
+        <path style="fill: #f071e7;" d="m29.998 115 69.915 40.199 132.46-38.919 67.534-76.087L229.998 0z"></path>
+        <path style="fill: #f071e7;" d="M160.096 189.804 229.998 230l200-115-69.9-40.202-133.441 39.481z"></path>
+        <path style="fill: #e196e6;" d="m160.096 289.803-60.183-34.604v-100l58.011 4.531 2.172 30.074z"></path>
+        <path style="fill: #e6aae2;" d="M99.913 155.199 299.907 40.193l60.191 34.605-200.002 115.006z"></path>
       </symbol>
       <symbol id="ui__toolbox" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
         <path style="fill:#2969b0" d="M11.77 281.823h488.46v64.736H11.77z"/>
@@ -559,14 +596,101 @@
           </svg>
         `;
         
-        guiData.forEach(({ desc, icon, items, label }, ndx) => {
+        const transformFormData = () => {
+          const fD = new FormData(form);
+          const officalPkgs = [];
+          const aurPkgs = [];
+          const flatPkgs = [];
+          const userScripts = [];
+          const folders = [];
+          const output = [];
+          
+          [...fD.values()].forEach((rawVal, ndx) => {
+            const [tab, val] = rawVal.split('|');
+            const [tabKey, itemKey] = tab.split(':');
+            
+            switch (tabKey) {
+              case 'official': officalPkgs.push(val); break;
+              case 'aur': aurPkgs.push(val); break;
+              case 'flat': flatPkgs.push(val); break;
+              case 'scripts': userScripts.push(val); break;
+              case 'settings': {
+                switch (itemKey) {
+                  case 'dock': officalPkgs.push(val); break;
+                  case 'wallpaper': {
+                    // TODO: figure out if this is possible
+                    break;
+                  }
+                }
+                
+                break;
+              }
+              case 'folders': folders.push(val); break;
+              case 'hardware': {
+                switch (itemKey) {
+                  case 'gpu': officalPkgs.push(val); break;
+                }
+                
+                break;
+              }
+            }
+          });
+          
+          if (officalPkgs.length) {
+            output.push(
+              '# update all installed packages (including kernel)',
+              'sudo pacman -Syu',
+              '# install packages',
+              `sudo pacman -S --needed ${officalPkgs.sort().join(' ')}`,
+              '',
+            );
+          }
+          
+          if (aurPkgs.length) {
+            output.push(
+              `yay -S --noredownload ${aurPkgs.sort().join(' ')}`,
+              '',
+            );
+          }
+          
+          if (flatPkgs.length) {
+            output.push(
+              `flatpak install --assumeyes flathub ${flatPkgs.sort().join(' ')}`,
+              '',
+            );
+          }
+          
+          if (userScripts.length) {
+            userScripts.forEach((script) => {
+              output.push(`"\${PWD}/dist/user-script.sh" --install "\${PWD}/dist/${script}"`);
+            });
+            output.push('');
+          }
+          
+          if (folders.length) {
+            output.push(
+              `mkdir -p ${folders.map(folder => `"${folder}"`).join(' ')}`,
+              '',
+            );
+          }
+          
+          // TODO: add extra steps when GPU is dedicated
+          // TODO: copy over User settings
+          
+          return output.join('\n');
+        };
+        
+        let checkNdx = 0;
+        let comboNdx = 0;
+        let folderNdx = 0;
+        guiData.forEach(({ desc, icon, id, items, label }, ndx) => {
           let tabMarkup = '';
           
           items.forEach(([type, data]) => {  
             switch (type) {
               case 'checklist':
               case 'radiolist': {
-                const genItemsMarkup = (arr, group) => {
+                const genItemsMarkup = (arr, group, groupKey='') => {
                   return arr.map(([checked, item, desc], ndx) => {
                     let val = item;
                     let label = item;
@@ -575,23 +699,26 @@
                       val = itemVals[1];
                       label = itemVals[0];
                     }
+                    val = `${id}${groupKey}|${val}`;
                     
-                    const value = group && val ? `${group} | ${val}` : val;
                     const descMarkup = desc
                       ? `<span class="item-row__desc">${desc}</span>`
                       : '';
                     let inputType = 'checkbox';
-                    let inputName = `in${ndx}`;
+                    let inputName = `check${checkNdx}`;
                     
                     if (type === 'radiolist') {
                       inputType = 'radio';
                       inputName = group;
                     }
+                    else {
+                      checkNdx += 1;
+                    }
                     
                     return `
                       <label class="item-row">
                         <span class="item-row__check">
-                          <input type="${inputType}" name="${inputName}" value="${value}" ${checked && 'checked'} />
+                          <input type="${inputType}" name="${inputName}" value="${val}" ${checked && 'checked'} />
                         </span>
                         <code class="item-row__item">${label}</code>
                         ${descMarkup}
@@ -606,10 +733,18 @@
                 else {
                   Object.keys(data).forEach((group) => {
                     const groupItems = data[group];
+                    let groupLabel = group;
+                    let groupKey = '';
+                    if (group.includes(':')) {
+                      const g = group.split(':');
+                      groupLabel = g[0];
+                      groupKey = `:${g[1]}`;
+                    }
+                    
                     tabMarkup += `
                       <fieldset>
-                        <legend>${group}</legend>
-                        <div class="items-group">${genItemsMarkup(groupItems, group)}</div>
+                        <legend>${groupLabel}</legend>
+                        <div class="items-group">${genItemsMarkup(groupItems, groupLabel, groupKey)}</div>
                       </fieldset>
                     `;
                   });
@@ -618,15 +753,30 @@
               }
               
               case 'combo-box': {
-                const { label, options } = data;
+                const { id: cbId, label, options } = data;
+                
                 tabMarkup += `
                   <div class="combo-box">
                     <label>${label}</label>
-                    <select>
-                      ${options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    <select name="cb${comboNdx}">
+                      ${options.map(opt => {
+                        let val = opt;
+                        let label = opt;
+                        if (opt.includes(':')) {
+                          const optVals = opt.split(':');
+                          val = optVals[1];
+                          label = optVals[0];
+                        }
+                        val = (cbId !== undefined)
+                          ? `${id}:${cbId}|${val}`
+                          : `${id}|${val}`;
+                        
+                        return `<option value="${val}">${label}</option>`;
+                      }).join('')}
                     </select>
                   </div>
                 `;
+                comboNdx += 1;
                 break;
               }
               
@@ -645,7 +795,11 @@
                       labelData = `data-is-parent="true"`;
                     }
                     
-                    return `<li><label ${labelData}><input type="checkbox" value="${parent}/${_folder}" checked />${_folder}</label>${nested}</li>`;
+                    const val = `${id}|${parent}/${_folder}`;
+                    const name = `fldr${folderNdx}`;
+                    folderNdx += 1;
+                    
+                    return `<li><label ${labelData}><input type="checkbox" name="${name}" value="${val}" checked />${_folder}</label>${nested}</li>`;
                   }).join('');
                   
                   return `<ul class="${_class}">${markup}</ul>`;
@@ -686,21 +840,7 @@
                 break;
               
               case 'save': {
-                const fD = new FormData(form);
-                let groupName = '';
-                let parsed = '';
-                [...fD.values()].forEach((rawVal, ndx) => {
-                  const [group, val] = rawVal.split(' | ');
-                  
-                  if (groupName !== group) {
-                    groupName = group;
-                    if (ndx > 0) parsed += '\n';
-                    parsed += `[ ${groupName} ]\n`;
-                  }
-                  
-                  parsed += `${val}\n`;
-                });
-                sendToStdOut(`[FILE:"temp.ini"]\n${parsed}`);
+                sendToStdOut(`[FILE:"install.sh"]\n${transformFormData()}`);
                 sendToStdOut('[CLOSE]');
                 break;
               }
