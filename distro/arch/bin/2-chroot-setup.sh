@@ -80,7 +80,8 @@ systemctl enable NetworkManager.service
 
 # create Swap
 SWAP_FILE_PATH="/swapfile"
-fallocate -l 4G "${SWAP_FILE_PATH}"
+RAM_SIZE=$(cat /proc/meminfo | grep MemTotal | awk '{ printf("%.0fG\n", $2/1024/1000) }')
+fallocate -l "${RAM_SIZE}" "${SWAP_FILE_PATH}"
 chmod 600 "${SWAP_FILE_PATH}"
 mkswap "${SWAP_FILE_PATH}"
 swapon "${SWAP_FILE_PATH}"
