@@ -37,7 +37,6 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
   getChoice -q "\nSelect Disk to Format:" -o disks -m 4
   SELECTED_DISK="${selectedChoice}"
   
-  # TODO: see if there's a way to automate this
   # just printing the formatting commands since there are no non-interactive commands
   echo;
   echo " ╭─ "
