@@ -403,9 +403,16 @@
               label: 'Dock',
               id: 'dock',
               options: [
-                'cairo-dock:cairo-dock cairo-dock-plug-ins cairo-dock-plug-ins-extra',
-                'plank',
-                'latte-dock',
+                'Cairo:cairo-dock cairo-dock-plug-ins cairo-dock-plug-ins-extra',
+                'Plank:plank',
+                'Latte:latte-dock',
+              ],
+            }],
+            ['combo-box', {
+              label: 'Theme',
+              id: 'theme',
+              options: [
+                'Breeze:breeze',
               ],
             }],
             ['combo-box', {
@@ -605,6 +612,7 @@
           const folders = [];
           const hardwareSteps = [];
           const output = [];
+          let theme;
           
           [...fD.values()].forEach((rawVal, ndx) => {
             const [tab, val] = rawVal.split('|');
@@ -618,6 +626,10 @@
               case 'settings': {
                 switch (itemKey) {
                   case 'dock': officalPkgs.push(val); break;
+                  case 'theme': {
+                    theme = val;
+                    break;
+                  }
                   case 'wallpaper': {
                     break;
                   }
@@ -661,6 +673,9 @@
           
           if (officalPkgs.length) {
             output.push(
+              'echo " ╭───────────────────╮ "',
+              'echo " │ Official Packages │ "',
+              'echo " ╰───────────────────╯ "',
               '# update all installed packages (including kernel)',
               'sudo pacman -Syu',
               '# install packages',
@@ -671,6 +686,9 @@
           
           if (aurPkgs.length) {
             output.push(
+              'echo " ╭──────────────╮ "',
+              'echo " │ AUR Packages │ "',
+              'echo " ╰──────────────╯ "',
               `yay -S --noredownload ${aurPkgs.sort().join(' ')}`,
               '',
             );
@@ -678,19 +696,32 @@
           
           if (flatPkgs.length) {
             output.push(
+              'echo " ╭──────────╮ "',
+              'echo " │ Flatpack │ "',
+              'echo " ╰──────────╯ "',
               `flatpak install --assumeyes flathub ${flatPkgs.sort().join(' ')}`,
               '',
             );
           }
           
           if (userScripts.length) {
+            output.push(
+              'echo " ╭──────────────╮ "',
+              'echo " │ User Scripts │ "',
+              'echo " ╰──────────────╯ "',
+            );
             userScripts.forEach((script) => {
-              output.push(`"\${PWD}/dist/user-script.sh" --install "\${PWD}/dist/${script}"`);
+              output.push(`"\${REPO_BIN}/dist/user-script.sh" --install "\${REPO_BIN}/dist/${script}"`);
             });
             output.push('');
           }
           
           if (folders.length) {
+            output.push(
+              'echo " ╭────────────────╮ "',
+              'echo " │ Common Folders │ "',
+              'echo " ╰────────────────╯ "',
+            );
             output.push(
               `mkdir -p ${folders.map(folder => `"${folder}"`).join(' ')}`,
               '',
@@ -701,11 +732,30 @@
             output.push(...hardwareSteps, '');
           }
           
+          output.push(
+            'echo " ╭──────────────╮ "',
+            'echo " │ Login Screen │ "',
+            'echo " ╰──────────────╯ "',
+            '# NOTE: Might be too heavy-handed (not accounting for existing groups/settings).',
+            'sudo tee -a "/etc/sddm.conf.d/kde_settings.conf" > /dev/null <<EOT',
+            '[General]',
+            'Numlock=on',
+            '',
+            '[Theme]',
+            `Current=${theme}`,
+            `CursorTheme=macOSBigSur`,
+            'EOT',
+            '',
+          );
+          
           output.push('sudo reboot', '');
           
           const head = [
             '#!/usr/bin/env bash',
             '',
+            'echo " ╭────────────────╮ "',
+            'echo " │ Error Handling │ "',
+            'echo " ╰────────────────╯ "',
             '# exit when any command fails',
             'set -e',
             '# keep track of the last executed command',
@@ -713,9 +763,11 @@
             '# echo an error message before exiting',
             `trap 'echo "\\"\${last_command}\\" command failed with exit code $?."' EXIT`,
             '',
+            'REPO_BIN="${PWD}"',
+            '',
           ];
           
-          return `${head.join('\n')}${output.join('\n')}`;
+          return `${head.join('\n')}\n${output.join('\n')}`;
         };
         
         let checkNdx = 0;
