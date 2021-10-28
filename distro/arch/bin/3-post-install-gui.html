@@ -703,7 +703,19 @@
           
           output.push('sudo reboot', '');
           
-          return `#!/usr/bin/env bash\n\n${output.join('\n')}`;
+          const head = [
+            '#!/usr/bin/env bash',
+            '',
+            '# exit when any command fails',
+            'set -e',
+            '# keep track of the last executed command',
+            "trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG",
+            '# echo an error message before exiting',
+            `trap 'echo "\\"\${last_command}\\" command failed with exit code $?."' EXIT`,
+            '',
+          ];
+          
+          return `${head.join('\n')}${output.join('\n')}`;
         };
         
         let checkNdx = 0;
