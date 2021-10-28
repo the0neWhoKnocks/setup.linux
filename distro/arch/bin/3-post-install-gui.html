@@ -619,7 +619,6 @@
                 switch (itemKey) {
                   case 'dock': officalPkgs.push(val); break;
                   case 'wallpaper': {
-                    // TODO: figure out if this is possible
                     break;
                   }
                 }
@@ -701,8 +700,6 @@
           if (hardwareSteps.length) {
             output.push(...hardwareSteps, '');
           }
-          
-          // TODO: copy over User settings
           
           output.push('sudo reboot', '');
           

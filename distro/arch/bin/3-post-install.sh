@@ -14,7 +14,7 @@ function closeDialog {
 }
 
 # NOTE: Reason for 'JSC_SIGNAL_FOR_GC' https://bugs.webkit.org/show_bug.cgi?id=223069
-echo "$GUI" | JSC_SIGNAL_FOR_GC=30 stdbuf -oL -eL yad \
+echo "$GUI" | yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
   --width=900 \
@@ -64,5 +64,3 @@ ls -la "${DIR__CONFIGS}"
 # Image=file:///usr/share/wallpapers/MilkyWay/contents/images/5120x2880.png
 # ```
 # Custom wallpapers are stored in `~/.local/share/wallpapers`
-
-# TODO: if certain extra packages were chosen, print out examples.. or dump a file with examples
