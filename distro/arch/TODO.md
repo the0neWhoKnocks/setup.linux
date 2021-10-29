@@ -21,7 +21,13 @@ Step 3
     - [ ] Add a folder/file picker to pick a location of a backup file to restore.
   - [ ] If certain extra packages were chosen, print out examples.. or dump a file with examples.
 
-Backup
+General
+- [ ] Normalize `dist` scripts so they all have `help` and examples
+
+user-script.sh
+- [ ] Don't `cp` scripts to `/usr/local/bin`, `ln` instead so I can maintain the scripts more easily from the repo.
+
+backup.sh
 - [ ] Allow for choosing output location (local or external)
 - Locations
   - Atom

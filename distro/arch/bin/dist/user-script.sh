@@ -19,6 +19,17 @@ function notify {
   notify-send -t 3000 --icon="${1:-'data-information'}" "${2}"
 }
 
+# NOTE: for `help`
+# # from within <REPO>/distro/arch/bin
+# ./dist/user-script.sh --install "${PWD}/dist/backup.sh"
+# ./dist/user-script.sh --uninstall "backup"
+# 
+# ./dist/user-script.sh --install "${PWD}/dist/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
+# ./dist/user-script.sh --uninstall "lan-shares"
+# 
+# ./dist/user-script.sh --install "${PWD}/dist/user-script.sh"
+# ./dist/user-script.sh --uninstall "user-script"
+
 if [[ "${1}" == '--install' ]]; then
   # parse ordered args
   PATH__SCRIPT="${2}"
