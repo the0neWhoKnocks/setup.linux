@@ -23,3 +23,11 @@ Step 3
 
 Backup
 - [ ] Allow for choosing output location (local or external)
+- Locations
+  - Icons
+    - /usr/share/icons
+    - ~/.icons
+    - ~/.local/share/icons
+  - Wallpapers
+    - /usr/share/wallpapers
+    - ~/.local/share/wallpapers
