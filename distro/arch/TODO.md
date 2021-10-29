@@ -24,10 +24,102 @@ Step 3
 Backup
 - [ ] Allow for choosing output location (local or external)
 - Locations
+  - Atom
+    - ~/.var/app/io.atom.Atom/data (figure out what's needed)
+  - Cairo Dock
+    - ~/.config/cairo-dock
+      - /current_theme
+        - /launchers
+        - /cairo-dock-simple.conf
+        - /cairo-dock.conf
+  - Chromium
+    - ~/.config/chromium/Default 
+  - Dolphin
+    - ~/.config/dolphinrc
+    - ~/.local/share/kxmlgui5/dolphin/dolphinui.rc
+  - Flameshot
+    - ~/.config/flameshot/flameshot.ini 
+  - General
+    - autostart: ~/.config/autostart, ~/.config/autostart-scripts
+  - Gimp
+    - ~/.config/GIMP/<VERSION>/ (lots of files)
+  - Google Chrome
+    - ~/.config/google-chrome/Default
+  - Handbrake
+    - ~/.config/ghb
+      - /preferences.json
+      - /presets.json
+    - ~/.var/app/fr.handbrake.ghb (maybe)
   - Icons
     - /usr/share/icons
     - ~/.icons
     - ~/.local/share/icons
+  - Inkscape
+    - ~/.config/inkscape/preferences.xml
+  - KDE
+    - KWin: ~/.config/kwinrc
+    - Splash screen: ~/.config/ksplashrc
+    - Timezone: ~/.config/ktimezonerc
+  - Keyboard
+    - ~/.xbindkeysrc
+  - Krita
+    - ~/.config/kritarc
+    - ~/.local/share/krita (lot of stuff, layout settings may be in here)
+  - KRunner
+    - ~/.local/share/krunnerstaterc
+  - Latte Dock
+    - ~/.config/latte/My Layout.layout.latte
+    - ~/.config/lattedockrc
+  - LSD
+    - ~/.config/lsd/config.yaml
+  - Notepadqq
+    - ~/.config/Notepadqq/Notepadqq.ini
+  - NVidia
+    - ~/.nvidia-settings-rc
+  - OBS Studio
+    - ~/.config/obs-studio (seems like everything but the `logs` folder)
+  - Plank Dock
+    - ~/.config/plank/*
+  - Plasma
+    - ~/.config/plasmarc
+    - splashscreens: ~/.local/share/plasma/look-and-feel
+    - themes: ~/.local/share/plasma/desktoptheme
+  - Puddletag
+    - ~/.config/puddletag/puddletag.conf
+  - QMMP
+    - ~/.qmmp/*
+  - Sound Konverter
+    - ~/.config/soundkonverterrc
+    - ~/.local/share/soundkonverter/profiles.xml
+  - Steam
+    - ~/.local/share/Steam
+      - library stuff: /appcache/librarycache
+      - music: /music/_database
+      - settings: 
+        - /config/config.vdf
+        - /config/libraryfolders.vdf
+        - /config/loginusers.vdf
+        - /controller_base/ (bunch of misc. files that a User may customize)
+        - /userdata/ (??)
+    - ~/.steam/steam.token
+  - Terminal
+    - ~/.gitconfig
+    - ~/.history
+    - ~/.oh-my-zsh (maybe)
+    - ~/.ssh
+    - ~/.xprofile (not used, but could be)
+    - ~/.zsh_history
+    - ~/.zshrc
+  - User Scripts
+    - Post Install: ~/.config/post-install
+    - Shares: ~/.config/lan-shares
+  - VirtualBox
+    - ~/.config/VirtualBox/VirtualBox.xml
+    - might want to back up isos, but they're huge...
+  - VLC
+    - ~/.config/vlc/vlc-qt-interface.conf
   - Wallpapers
     - /usr/share/wallpapers
     - ~/.local/share/wallpapers
+  - [Unknown]
+    - ~/.config/xsettingsd/xsettingsd.conf (references some theme stuff, not sure what uses it though)
