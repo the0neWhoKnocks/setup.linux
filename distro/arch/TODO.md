@@ -122,4 +122,5 @@ Backup
     - /usr/share/wallpapers
     - ~/.local/share/wallpapers
   - [Unknown]
+    - ~/.config/gtk-3.0/settings.ini (references theme stuff)
     - ~/.config/xsettingsd/xsettingsd.conf (references some theme stuff, not sure what uses it though)
