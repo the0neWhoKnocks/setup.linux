@@ -60,6 +60,13 @@ Backup
     - KWin: ~/.config/kwinrc
     - Splash screen: ~/.config/ksplashrc
     - Timezone: ~/.config/ktimezonerc
+    - Wallpaper: ~/.config/plasma-org.kde.plasma.desktop-appletsrc
+      ```
+      [Containments][<NUMBER>][Wallpaper][org.kde.image][General]
+      Image=file:///usr/share/wallpapers/MilkyWay/contents/images/5120x2880.png
+      # or
+      Image=file:///home/<USER>/.local/share/wallpapers/<FILENAME>.jpg
+      ```
   - Keyboard
     - ~/.xbindkeysrc
   - Krita

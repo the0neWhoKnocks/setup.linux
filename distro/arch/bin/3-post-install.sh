@@ -57,10 +57,3 @@ ls -la "${DIR__CONFIGS}"
 # ./dist/user-script.sh --install "${PWD}/dist/user-script.sh"
 # ./dist/user-script.sh --uninstall "user-script"
 
-
-# For KDE, current wallpaper is referenced in `~/.config/plasma-org.kde.plasma.desktop-appletsrc`
-# ```
-# [Containments][1][Wallpaper][org.kde.image][General]
-# Image=file:///usr/share/wallpapers/MilkyWay/contents/images/5120x2880.png
-# ```
-# Custom wallpapers are stored in `~/.local/share/wallpapers`
