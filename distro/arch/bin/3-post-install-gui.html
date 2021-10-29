@@ -400,6 +400,14 @@
           desc: 'Configure your Desktop.',
           items: [
             ['combo-box', {
+              label: 'Cursors',
+              id: 'cursors',
+              options: [
+                'Mac OS Big Sur:macOSBigSur;cursor-theme-macos-big-sur',
+                'KDE Classic:KDE_Classic',
+              ],
+            }],
+            ['combo-box', {
               label: 'Dock',
               id: 'dock',
               options: [
@@ -613,6 +621,7 @@
           const hardwareSteps = [];
           const output = [];
           let theme;
+          let cursorTheme;
           
           [...fD.values()].forEach((rawVal, ndx) => {
             const [tab, val] = rawVal.split('|');
@@ -625,6 +634,13 @@
               case 'scripts': userScripts.push(val); break;
               case 'settings': {
                 switch (itemKey) {
+                  case 'cursors': {
+                    const c = val.split(';');
+                    cursorTheme = c[0];
+                    const cursorPkgs = c[1];
+                    if (cursorPkgs) aurPkgs.push(cursorPkgs);
+                    break;
+                  }
                   case 'dock': officalPkgs.push(val); break;
                   case 'theme': {
                     theme = val;
@@ -732,21 +748,35 @@
             output.push(...hardwareSteps, '');
           }
           
-          output.push(
-            'echo " ╭──────────────╮ "',
-            'echo " │ Login Screen │ "',
-            'echo " ╰──────────────╯ "',
-            '# NOTE: Might be too heavy-handed (not accounting for existing groups/settings).',
-            'sudo tee -a "/etc/sddm.conf.d/kde_settings.conf" > /dev/null <<EOT',
-            '[General]',
-            'Numlock=on',
-            '',
-            '[Theme]',
-            `Current=${theme}`,
-            `CursorTheme=macOSBigSur`,
-            'EOT',
-            '',
-          );
+          if (theme) {
+            const themeOpts = [`Current=${theme}`];
+            if (cursorTheme) themeOpts.push(`CursorTheme=${cursorTheme}`);
+            
+            output.push(
+              'echo " ╭──────────────╮ "',
+              'echo " │ Login Screen │ "',
+              'echo " ╰──────────────╯ "',
+              '# NOTE: Might be too heavy-handed (not accounting for existing groups/settings).',
+              'sudo tee -a "/etc/sddm.conf.d/kde_settings.conf" > /dev/null <<EOT',
+              '[General]',
+              'Numlock=on',
+              '',
+              '[Theme]',
+              ...themeOpts,
+              'EOT',
+              '',
+            );
+          }
+          
+          if (cursorTheme) {
+            output.push(
+              'echo " ╭──────────────╮ "',
+              'echo " │ Cursor Theme │ "',
+              'echo " ╰──────────────╯ "',
+              `sed -i -E 's/cursorTheme=.*/cursorTheme=${cursorTheme}/' \${HOME}/.config/kcminputrc`,
+              '',
+            );
+          }
           
           output.push('sudo reboot', '');
           
