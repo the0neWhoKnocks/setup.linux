@@ -104,6 +104,12 @@ _finalize_:
 REPO_PATH="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "${REPO_PATH}")"
 
+# change repo remote over to SSH
+(
+  cd "${REPO_PATH}" \
+  && git remote set-url origin git@github.com:the0neWhoKnocks/setup.linux.git \
+)
+
 # copy over repo to new partition
 cp -r "${REPO_PATH}" "/mnt/tmp/"
 
