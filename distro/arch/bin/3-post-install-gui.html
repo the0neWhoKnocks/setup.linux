@@ -873,6 +873,20 @@
               '',
             );
           }
+          
+          if (officalPkgs.includes('tilix')) {
+            output.push(
+              'echo " ╭─────────────╮ "',
+              'echo " │ Tilix patch │ "',
+              'echo " ╰─────────────╯ "',
+              ' tilixPatch="# Fixes VTE error when starting a new terminal\\n"',
+              'tilixPatch+=\'if [ $TILIX_ID ] || [ $VTE_VERSION ]; then\\n\'',
+              'tilixPatch+="  source /etc/profile.d/vte.sh\\n"',
+              'tilixPatch+="fi\\n"',
+              `sed -i "1s|^|\${tilixPatch}|" "${rcFile}"`,
+              '',
+            );
+          }
           output.push('sudo reboot', '');
           
           const head = [
