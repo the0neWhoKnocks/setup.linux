@@ -113,7 +113,7 @@ REPO_NAME="$(basename "${REPO_PATH}")"
 # copy over repo to new partition
 cp -r "${REPO_PATH}" "/mnt/tmp/"
 
-NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
+NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
 
 # run chroot setup
 arch-chroot /mnt "${NEXT_SCRIPT}"
