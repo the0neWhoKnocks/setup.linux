@@ -199,7 +199,7 @@
         list-style: none;
       }
       .folder-tree ul {
-        padding-left: 0.5em;
+        padding-left: 0;
       }
       .folder-tree label {
         height: 1.2em;
@@ -213,10 +213,9 @@
         background: rgba(var(--color--fg), 0.1);
       }
       .folder-tree ul li label::before {
-        content: '├─';
-      }
-      .folder-tree ul li:last-of-type label::before {
-        content: '└─';
+        content: attr(data-branch);
+        white-space: pre;
+        letter-spacing: -0.25em;
       }
       .folder-tree label input {
         margin-right: 0.75em;
@@ -445,7 +444,10 @@
               'Backups',
               ['Projects', [
                 '3D',
-                'Code',
+                ['Code', [
+                  'Apps',
+                  'Scripts',
+                ]],
                 'Img',
                 'Vid',
               ]],
@@ -903,8 +905,11 @@
               case 'folder-tree': {
                 const iterate = (folders, parent='~') => {
                   const _class = parent === '~' ? 'folder-tree' : '';
+                  const nestCount = parent.split('/').length - 2;
                   
-                  const markup = folders.map((folder) => {
+                  const leadingBranch = nestCount > 0 ? Array(nestCount).fill(' │   ').join('') : '';
+                  const markup = folders.map((folder, ndx) => {
+                    const branch = (ndx === folders.length-1) ? ' └── ' : ' ├── ';
                     let _folder = folder;
                     let nested = '';
                     let labelData = '';
@@ -919,7 +924,15 @@
                     const name = `fldr${folderNdx}`;
                     folderNdx += 1;
                     
-                    return `<li><label ${labelData}><input type="checkbox" name="${name}" value="${val}" checked />${_folder}</label>${nested}</li>`;
+                    return `
+                      <li>
+                        <label ${labelData} data-branch="${leadingBranch}${branch}">
+                          <input type="checkbox" name="${name}" value="${val}" checked />
+                          ${_folder}
+                        </label>
+                        ${nested}
+                      </li>
+                    `;
                   }).join('');
                   
                   return `<ul class="${_class}">${markup}</ul>`;
