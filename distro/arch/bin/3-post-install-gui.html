@@ -887,6 +887,22 @@
               '',
             );
           }
+          
+          if (officalPkgs.includes('virtualbox')) {
+            output.push(
+              'echo " ╭─────────────╮ "',
+              'echo " │ Virtual Box │ "',
+              'echo " ╰─────────────╯ "',
+              '# add your user to the VB group (for USB to work)',
+              'sudo gpasswd -a $USER vboxusers',
+              '# load the VB kernel module (may return an error - view troubleshooting)',
+              'sudo modprobe vboxdrv',
+              '# enable/start the VB web service',
+              'sudo systemctl enable vboxweb.service && sudo systemctl start vboxweb.service',
+              '',
+            );
+          }
+          
           output.push('sudo reboot', '');
           
           const head = [
