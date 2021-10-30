@@ -863,6 +863,16 @@
               '',
             );
           }
+          
+          if (officalPkgs.includes('fzf')) {
+            output.push(
+              'echo " ╭──────────────╮ "',
+              'echo " │ fzf defaults │ "',
+              'echo " ╰──────────────╯ "',
+              `printf "\\nexport FZF_DEFAULT_OPTS='--height 50% --border'\\n" >> "${rcFile}"`,
+              '',
+            );
+          }
           output.push('sudo reboot', '');
           
           const head = [
