@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DIR__CONFIGS="${HOME}/.config/post-install"
+REPO_PATH="$(git rev-parse --show-toplevel)"
 
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
@@ -33,8 +34,11 @@ echo "$GUI" | yad \
       touch "${outputFile}"
       echo "" > "${outputFile}"
     elif [[ "${outputFile}" != '' ]]; then
+      # swap out variable references
       if [[ "${line}" == *'${PWD}'* ]]; then
         line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
+      elif [[ "${line}" == *'${REPO_PATH}'* ]]; then
+        line=$(echo "${line}" | sed "s|\${REPO_PATH}|${REPO_PATH}|g")
       fi
       
       echo "$line" >> "${outputFile}"
