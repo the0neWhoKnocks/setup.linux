@@ -851,6 +851,18 @@
             "git config --global alias.co 'checkout'",
             '',
           );
+          
+          if (officalPkgs.includes('cairo-dock')) {
+            output.push(
+              'echo " ╭────────────────╮ "',
+              'echo " │ Cairo Dock fix │ "',
+              'echo " ╰────────────────╯ "',
+              "# There's a bug where it doesn't pick up v5 of KDE, so plugins like the folders plugin ",
+              "# don't fully work. You can fix the issue with",
+              'sudo ln -s /usr/bin/kioclient5 /usr/bin/kioclient',
+              '',
+            );
+          }
           output.push('sudo reboot', '');
           
           const head = [
