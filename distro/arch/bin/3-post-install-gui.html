@@ -793,6 +793,43 @@
             );
           }
           
+          let rcFile = '${HOME}/.bashrc';
+          if (nonStandardItems.length) {
+            nonStandardItems.forEach((item) => {
+              switch (item) {
+                case 'oh-my-zsh': {
+                  rcFile = '${HOME}/.zshrc';
+                  output.push(
+                    'echo " ╭───────────╮ "',
+                    'echo " │ Oh My ZSH │ "',
+                    'echo " ╰───────────╯ "',
+                    '# Install',
+                    'sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"',
+                    'DEFAULT__ZSH_CUSTOM="${HOME}/.oh-my-zsh/custom"',
+                    'ZSH_THEME_PATH="${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/themes/zsh-theme-boom"',
+                    '# Add external plugins',
+                    'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/plugins/zsh-autosuggestions',
+                    'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/plugins/zsh-syntax-highlighting',
+                    `sed '/plugins=(/,/)/c\plugins=(\n  zsh-autosuggestions\n  zsh-syntax-highlighting\n)' "${rcFile}"`,
+                    '# Add my theme',
+                    '( \\',
+                    '  git clone https://github.com/the0neWhoKnocks/zsh-theme-boom.git ${ZSH_THEME_PATH} \\',
+                    '  && cd ${ZSH_THEME_PATH} \\',
+                    '  && git remote set-url origin git@github.com:the0neWhoKnocks/zsh-theme-boom.git \\',
+                    '  && git checkout linux \\',
+                    `  && sed -i -E \'s|ZSH_THEME=".*"|ZSH_THEME="zsh-theme-boom/skin"|\' "${rcFile}" \\`,
+                    '  && sudo cp "${ZSH_THEME_PATH}/fonts/Fantasque Sans Mono Regular Nerd Font Complete Mono Windows Compatible.ttf" /usr/share/fonts/TTF/ \\',
+                    '  && fc-cache -vf \\',
+                    ')',
+                    'neoFetchPatch=\'export SHELL="zsh" # fix for neofetch displaying incorrect Shell\'',
+                    `sed -i "1s|^|\${neoFetchPatch}|" "${rcFile}"`,
+                    '',
+                  );
+                  break;
+                }
+              }
+            });
+          }
           output.push('sudo reboot', '');
           
           const head = [
