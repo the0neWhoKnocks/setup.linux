@@ -843,6 +843,14 @@
             `printf "\\nsource ~/sh/git-functions.sh\\n" >> "${rcFile}"`,
             '',
           );
+          
+          output.push(
+            'echo " ╭─────────────╮ "',
+            'echo " │ Git Aliases │ "',
+            'echo " ╰─────────────╯ "',
+            "git config --global alias.co 'checkout'",
+            '',
+          );
           output.push('sudo reboot', '');
           
           const head = [
