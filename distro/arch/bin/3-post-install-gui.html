@@ -830,6 +830,19 @@
               }
             });
           }
+          
+          output.push(
+            'echo " ╭────────────────╮ "',
+            'echo " │ Custom Scripts │ "',
+            'echo " ╰────────────────╯ "',
+            '( \\',
+            '  git clone https://github.com/the0neWhoKnocks/shell-scripts.git ~/sh \\',
+            '  && cd ~/sh \\',
+            '  && git remote set-url origin git@github.com:the0neWhoKnocks/shell-scripts.git \\',
+            ')',
+            `printf "\\nsource ~/sh/git-functions.sh\\n" >> "${rcFile}"`,
+            '',
+          );
           output.push('sudo reboot', '');
           
           const head = [
