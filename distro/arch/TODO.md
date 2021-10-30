@@ -123,6 +123,14 @@ backup.sh
     - ~/.xprofile (not used, but could be)
     - ~/.zsh_history
     - ~/.zshrc
+  - Tilix
+    ```sh
+    # export
+    dconf dump '/com/gexperts/Tilix/' > ~/tilix-settings.dconf
+
+    # import
+    dconf load '/com/gexperts/Tilix/' < ~/tilix-settings.dconf
+    ```
   - User Scripts
     - Post Install: ~/.config/post-install
     - Shares: ~/.config/lan-shares
