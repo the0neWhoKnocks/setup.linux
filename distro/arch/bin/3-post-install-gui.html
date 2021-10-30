@@ -758,6 +758,18 @@
               `mkdir -p ${folders.map(folder => `"${folder}"`).join(' ')}`,
               '',
             );
+            
+            for (let i=0; i<folders.length; i++) {
+              const currFolder = folders[i];
+              if (currFolder.includes('Code/Scripts')) {
+                output.push(
+                  `cp -r "\${REPO_PATH}" "${currFolder}/"`,
+                  '',
+                );
+                
+                break;
+              }
+            }
           }
           
           if (hardwareSteps.length) {
