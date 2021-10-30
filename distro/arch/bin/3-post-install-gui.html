@@ -248,7 +248,7 @@
       // icons from https://www.svgrepo.com/vectors/
       const guiData = [
         {
-          label: 'Official Packages',
+          label: 'Official',
           icon: 'package',
           id: 'official',
           desc: 'Choose official packages to install.',
@@ -324,7 +324,7 @@
           ],
         },
         {
-          label: 'AUR Packages',
+          label: 'AUR',
           icon: 'package-blue',
           id: 'aur',
           desc: 'Choose AUR packages to install.',
@@ -364,7 +364,7 @@
           ],
         },
         {
-          label: 'Flatpaks',
+          label: 'Flatpak',
           icon: 'package-pink',
           id: 'flat',
           desc: 'Choose Flatpak packages to install.',
@@ -380,7 +380,18 @@
           ],
         },
         {
-          label: 'User Scripts',
+          label: 'Non-Standard',
+          icon: '',
+          id: 'nonstandard',
+          desc: 'Choose items that don\'t have a standardized installation method.',
+          items: [
+            ['checklist', [
+              [true, 'oh-my-zsh', 'Framework for managing ZSH configuration'],
+            ]],
+          ],
+        },
+        {
+          label: 'Scripts',
           icon: 'toolbox',
           id: 'scripts',
           desc: 'Choose which User scripts to install.',
@@ -618,6 +629,7 @@
           const officalPkgs = [];
           const aurPkgs = [];
           const flatPkgs = [];
+          const nonStandardItems = [];
           const userScripts = [];
           const folders = [];
           const hardwareSteps = [];
@@ -633,6 +645,7 @@
               case 'official': officalPkgs.push(val); break;
               case 'aur': aurPkgs.push(val); break;
               case 'flat': flatPkgs.push(val); break;
+              case 'nonstandard': nonStandardItems.push(val); break;
               case 'scripts': userScripts.push(val); break;
               case 'settings': {
                 switch (itemKey) {
