@@ -65,7 +65,8 @@ pacman -S --noconfirm --needed \
   sddm `# display manager (login screen)` \
   sddm-kcm `# KDE integration for sddm` \
   xf86-input-synaptics `# better touchpad options` \
-  appmenu-gtk-module yad `# GUI dialog for scripts`
+  appmenu-gtk-module yad `# GUI dialog for scripts` \
+  git `# needed for install script`
 
 # remove packages
 pacman -R --noconfirm \
@@ -117,5 +118,17 @@ grub-mkconfig -o /boot/grub/grub.cf
 # build ramdisk env.
 mkinitcpio -p linux
 
+# copy the repo over for the User, and the final installation step
+REPO_PATH="$(git rev-parse --show-toplevel)"
+REPO_NAME="$(basename "${REPO_PATH}")"
 mkdir -p "/home/${NON_ROOT__USERNAME}/.config/autostart/"
-ln -s "${PATH__SCRIPT_DIR}/3-post-install.sh" "/home/${NON_ROOT__USERNAME}/.config/autostart/"
+cp -R "/root/${REPO_NAME}" "/home/${NON_ROOT__USERNAME}/"
+chown -R "${NON_ROOT__USERNAME}:${NON_ROOT__USERNAME}" "/home/${NON_ROOT__USERNAME}"
+(
+  echo '[Desktop Entry]'
+  echo "Exec=(cd '/home/${NON_ROOT__USERNAME}/distro/arch/bin' && ./3-post-install.sh)"
+  echo 'Icon=dialog-scripts'
+  echo 'Name="Post Install"'
+  echo 'Type=Application'
+  echo 'X-KDE-AutostartScript=true'
+) > "/home/${NON_ROOT__USERNAME}/.config/autostart/post-install.desktop"
