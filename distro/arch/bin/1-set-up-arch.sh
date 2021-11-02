@@ -161,7 +161,7 @@ echo "${REPO_PATH} | ${REPO_NAME}"
 cp -r "${REPO_PATH}" "/mnt/tmp/"
 ls -la "/mnt/tmp"
 
-NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh"
+NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh")"
 ls -la "$(dirname "${NEXT_SCRIPT}")"
 
 # run chroot setup
