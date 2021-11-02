@@ -57,31 +57,19 @@ echo "${NON_ROOT__USERNAME} ALL = NOPASSWD: ALL" | (EDITOR='tee -a' visudo)
 
 # add base packages
 pacman -S --noconfirm --needed \
-  # Install display server
-  xorg \
-  # Install network tools
-  networkmanager \
-  nmap \
-  # file browser
-  dolphin \
-  # terminal
-  konsole \
-  # Desktop theme
-  plasma \
-  # display manager (login screen)
-  sddm \
-  # KDE integration for sddm
-  sddm-kcm \
-  # better touchpad options
-  xf86-input-synaptics \
-  # GUI dialog for scripts
-  appmenu-gtk-module \
-  yad
+  xorg `# Install display server` \
+  networkmanager nmap `# Install network tools` \
+  dolphin `# file browser` \
+  konsole `# terminal` \
+  plasma `# Desktop theme` \
+  sddm `# display manager (login screen)` \
+  sddm-kcm `# KDE integration for sddm` \
+  xf86-input-synaptics `# better touchpad options` \
+  appmenu-gtk-module yad `# GUI dialog for scripts`
 
 # remove packages
 pacman -R --noconfirm \
-  # kill annoying 'Updates Available' messages.
-  discover
+  discover `# kill annoying 'Updates Available' messages.`
 
 # enable services during boot
 # Enable Desktop
@@ -128,6 +116,8 @@ sed -i "/^#GRUB_SAVEDEFAULT=true/s/^#//g" /etc/default/grub
 grub-mkconfig -o /boot/grub/grub.cf
 # build ramdisk env.
 mkinitcpio -p linux
+
+ln -s "${PATH__SCRIPT_DIR}/3-post-install.sh" "/home/${NON_ROOT__USERNAME}/.config/autostart/"
 
 # leave chroot
 exit
