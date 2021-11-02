@@ -2,7 +2,7 @@
 
 PATH__SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
-source "/tmp/instvars.sh"
+source "/root/instvars.sh"
 
 # set timezone
 timedatectl set-timezone "${TIMEZONE}"

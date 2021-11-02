@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 PATH__SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-PATH__SELECTED_DISK='/tmp/selected-disk'
 
 source "${PATH__SCRIPT_DIR}/utils/get-choice.sh"
 source "${PATH__SCRIPT_DIR}/utils/get-input.sh"
@@ -134,11 +133,11 @@ instVars=(
   "ROOT__PASSWORD='${ROOT__PASSWORD}'"
   "TIMEZONE='${TIMEZONE}'"
 )
-printf "%s\n" "${instVars[@]}" > /mnt/tmp/instvars.sh
+printf "%s\n" "${instVars[@]}" > /mnt/root/instvars.sh
 echo " ┌────────────┐ "
 echo " │ Vars Saved │ "
 echo " └────────────┘ "
-ls /mnt/tmp
+ls /mnt/root
 
 # Maintain filesystem mounts after boot
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -158,10 +157,10 @@ echo "${REPO_PATH} | ${REPO_NAME}"
 )
 
 # copy over repo to new partition
-cp -r "${REPO_PATH}" "/mnt/tmp/"
-ls -la "/mnt/tmp"
+cp -r "${REPO_PATH}" "/mnt/root/"
+ls -la "/mnt/root"
 
-NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh")"
+NEXT_SCRIPT="$(find "/mnt/root/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
 ls -la "$(dirname "${NEXT_SCRIPT}")"
 
 # run chroot setup
@@ -176,6 +175,6 @@ fi
 # clean up any setup files
 rm -f \
   "${STEP_FILE}" \
-  "/mnt/tmp/instVars.sh"
+  "/mnt/root/instvars.sh"
 
 shutdown -r
