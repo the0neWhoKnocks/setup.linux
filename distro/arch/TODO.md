@@ -3,15 +3,7 @@
 
 Step 1
 - Get User input at beginning of script
-  - [ ] Automate the initial disk formatting `fdisk`
-    - print list of disks
-  - [ ] Get non-root User name and password
-    ```sh
-    (echo '<PASSWORD>'; echo '<PASSWORD>') | passwd <USERNAME>
-    ```
-  - [ ] Computer name
   - [ ] WiFi (if not hardwired)
-  - [ ] Chosen locale/timezone (maybe get it from network info)
 
 Step 3
 - GUI
