@@ -1,10 +1,6 @@
 # TODO
 ---
 
-Step 1
-- Get User input at beginning of script
-  - [ ] WiFi (if not hardwired)
-
 Step 3
 - GUI
   - Settings
