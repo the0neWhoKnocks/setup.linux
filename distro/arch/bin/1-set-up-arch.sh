@@ -42,9 +42,9 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     # remove colons and commas
     sed 's/[:,]//g'
   )
-  echo " ╭──────────────╮ "
+  echo " ┌──────────────┐ "
   echo " │ Format Disks │ "
-  echo " ╰──────────────╯ "
+  echo " └──────────────┘ "
   printf "\nAvailable Disks:\n${fullDisksList}\n"
 
   disks=($( \
@@ -55,6 +55,8 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
   getChoice -q "\nSelect Disk to Format:" -o disks -m 4
   SELECTED_DISK="${selectedChoice}"
   
+  # unmount in case it was previously mounted
+  umount /mnt
   # clear the partition table
   wipefs -a "${SELECTED_DISK}"
   # create new partitions
@@ -64,7 +66,7 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     echo 1     # Partition number
     echo       # First sector (Accept default)
     echo +512M # Last sector
-    echo Y     # Remove partition signature if it exists (won't be prompted on a new disk)
+    echo y     # Remove partition signature if it exists (won't be prompted on a new disk)
     echo t     # Change partition type
     echo ef    # Set to EFI system
     echo n     # Add a new partition
@@ -72,12 +74,14 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     echo 2     # Partition number
     echo       # First sector (Accept default)
     echo       # Last sector (Accept default)
-    echo Y     # Remove partition signature if it exists (won't be prompted on a new disk)
+    echo y     # Remove partition signature if it exists (won't be prompted on a new disk)
     echo w     # Finalize and write changes
   ) | fdisk "${SELECTED_DISK}"
   # create file systems
   mkfs.fat -F32 "${SELECTED_DISK}1"
   mkfs.ext4 "${SELECTED_DISK}2"
+  fdisk -l
+  sleep 2
 else
   # NOTE: There's an EFI section in `2-chroot-setup` that should be addressed as well.
   echo "[ERROR] It appears that UEFI is not enabled, you'll have to figure out what to do."
@@ -95,9 +99,9 @@ sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 # Use reflector to update the list with the fastest download mirrors
-echo " ╭───────────────────────╮ "
+echo " ┌───────────────────────┐ "
 echo " │ Updating Mirror Links │ "
-echo " ╰───────────────────────╯ "
+echo " └───────────────────────┘ "
 reflector \
   --age 48 \
   --country "${COUNTRY_ISO}" \
@@ -108,6 +112,16 @@ reflector \
 
 # Mount the root partition (where Linux will install)
 mount "${SELECTED_DISK}2" /mnt
+
+# Install Linux and anything else you need for initial setup
+pacstrap /mnt \
+  # Linux kernel
+  base linux linux-firmware \
+  # text editor
+  vim
+
+# NOTE: Anything that should persist on the new FS, should be copied over after
+# 'pacstrap' runs, otherwise it'll be stomped on.
 
 # Copy over updated files
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
@@ -123,13 +137,10 @@ instVars=(
   "TIMEZONE='${TIMEZONE}'"
 )
 printf "%s\n" "${instVars[@]}" > /mnt/tmp/instvars.sh
-
-# Install Linux and anything else you need for initial setup
-pacstrap /mnt \
-  # Linux kernel
-  base linux linux-firmware \
-  # text editor
-  vim
+echo " ┌────────────┐ "
+echo " │ Vars Saved │ "
+echo " └────────────┘ "
+ls /mnt/tmp
 
 # Maintain filesystem mounts after boot
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -140,6 +151,8 @@ _finalize_:
 REPO_PATH="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "${REPO_PATH}")"
 
+echo "${REPO_PATH} | ${REPO_NAME}"
+
 # change repo remote over to SSH
 (
   cd "${REPO_PATH}" \
@@ -148,6 +161,7 @@ REPO_NAME="$(basename "${REPO_PATH}")"
 
 # copy over repo to new partition
 cp -r "${REPO_PATH}" "/mnt/tmp/"
+ls -la "/mnt/tmp"
 
 NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
 
@@ -157,6 +171,8 @@ arch-chroot /mnt "${NEXT_SCRIPT}"
 # ==============================================================================
 
 # clean up any setup files
-rm -f "${STEP_FILE}"
+rm -f \
+  "${STEP_FILE}" \
+  "/mnt/tmp/instVars.sh"
 
-restart now
+shutdown /r
