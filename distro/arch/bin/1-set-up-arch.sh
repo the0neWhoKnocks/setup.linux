@@ -8,7 +8,7 @@ source "${PATH__SCRIPT_DIR}/utils/get-input.sh"
 source "${PATH__SCRIPT_DIR}/utils/go-to-step.sh"
 
 # user specified data
-getInput "Enter computer's name"
+getInput "Enter computer's name (no spaces, use dashes)"
 COMPUTER_NAME="${inputValue}"
 getInput "Enter non-root username"
 NON_ROOT__USERNAME="${inputValue}"
@@ -42,6 +42,9 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     # remove colons and commas
     sed 's/[:,]//g'
   )
+  echo " ╭──────────────╮ "
+  echo " │ Format Disks │ "
+  echo " ╰──────────────╯ "
   printf "\nAvailable Disks:\n${fullDisksList}\n"
 
   disks=($( \
@@ -90,6 +93,9 @@ sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 # Use reflector to update the list with the fastest download mirrors
+echo " ╭───────────────────────╮ "
+echo " │ Updating Mirror Links │ "
+echo " ╰───────────────────────╯ "
 reflector \
   --age 48 \
   --country "${COUNTRY_ISO}" \
