@@ -64,6 +64,7 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     echo 1     # Partition number
     echo       # First sector (Accept default)
     echo +512M # Last sector
+    echo Y     # Remove partition signature if it exists (won't be prompted on a new disk)
     echo t     # Change partition type
     echo ef    # Set to EFI system
     echo n     # Add a new partition
@@ -71,6 +72,7 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
     echo 2     # Partition number
     echo       # First sector (Accept default)
     echo       # Last sector (Accept default)
+    echo Y     # Remove partition signature if it exists (won't be prompted on a new disk)
     echo w     # Finalize and write changes
   ) | fdisk "${SELECTED_DISK}"
   # create file systems
