@@ -177,4 +177,4 @@ rm -f \
   "${STEP_FILE}" \
   "/mnt/root/instvars.sh"
 
-shutdown -r
+shutdown -r now
