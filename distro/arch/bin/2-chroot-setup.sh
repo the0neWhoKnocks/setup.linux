@@ -2,10 +2,10 @@
 
 PATH__SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
-source "${PATH__SCRIPT_DIR}/utils/get-input.sh"
+source "/tmp/instvars.sh"
 
 # set timezone
-timedatectl set-timezone America/Los_Angeles
+timedatectl set-timezone "${TIMEZONE}"
 timedatectl set-ntp true
 timedatectl status
 
@@ -14,38 +14,49 @@ LOCALE="en_US.UTF-8"
 sed -i "/^#${LOCALE} UTF-8/s/^#//g" /etc/locale.gen
 locale-gen && echo LANG="${LOCALE}" > /etc/locale.conf && export LANG="${LOCALE}"
 
+# set keymaps
+localectl set-keymap $(echo "${COUNTRY_ISO}" | awk '{ print tolower($0) }')
+
 # set the computer's human-readable name
-getInput "Enter computer's name"
-COMPUTER_NAME="${inputValue}"
 echo "${COMPUTER_NAME}" > /etc/hostname
-printf "\n::1         localhost\n127.0.0.1   localhost\n127.0.0.1   ${COMPUTER_NAME}\n" >> /etc/hosts
+(
+  echo '::1        localhost'
+  echo '127.0.0.1  localhost'
+  echo "127.0.0.1  ${COMPUTER_NAME}"
+) >> /etc/hosts
 
 # set `root`'s password
-echo "Enter password for the 'root' User"
-passwd
+(
+  echo "${ROOT__PASSWORD}"
+  echo "${ROOT__PASSWORD}"
+) | passwd
+
+# enable parrallel downloads to speed things up
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
 # update package databases
-pacman -Syy
+pacman -Syu
 
 # set up boot loader
-pacman -S --noconfirm grub efibootmgr
+pacman -S --noconfirm --needed grub efibootmgr
 mkdir /boot/efi
 mount /dev/sda1 /boot/efi
 grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # add non-root User
-getInput "Enter non-root username"
-USERNAME="${inputValue}"
-useradd -m "${USERNAME}"
-passwd "${USERNAME}"
+useradd -m "${NON_ROOT__USERNAME}"
+(
+  echo "${NON_ROOT__PASSWORD}"
+  echo "${NON_ROOT__PASSWORD}"
+) | passwd "${NON_ROOT__USERNAME}"
 # Allow elevated privelages
-pacman -S --noconfirm sudo
+pacman -S --noconfirm --needed sudo
 # make it so the User doesn't require a password for `sudo` commands
-echo "${USERNAME} ALL = NOPASSWD: ALL" | (EDITOR='tee -a' visudo)
+echo "${NON_ROOT__USERNAME} ALL = NOPASSWD: ALL" | (EDITOR='tee -a' visudo)
 
 # add base packages
-pacman -S --noconfirm \
+pacman -S --noconfirm --needed \
   # Install display server
   xorg \
   # Install network tools

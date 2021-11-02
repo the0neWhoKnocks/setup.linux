@@ -4,7 +4,22 @@ PATH__SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pw
 PATH__SELECTED_DISK='/tmp/selected-disk'
 
 source "${PATH__SCRIPT_DIR}/utils/get-choice.sh"
+source "${PATH__SCRIPT_DIR}/utils/get-input.sh"
 source "${PATH__SCRIPT_DIR}/utils/go-to-step.sh"
+
+# user specified data
+getInput "Enter computer's name"
+COMPUTER_NAME="${inputValue}"
+getInput "Enter non-root username"
+NON_ROOT__USERNAME="${inputValue}"
+getInput "Enter non-root password"
+NON_ROOT__PASSWORD="${inputValue}"
+getInput "Enter root password"
+ROOT__PASSWORD="${inputValue}"
+# automated data
+IP_DATA=$(curl -s https://ifconfig.co/json | sed -E 's/[":,]//g')
+COUNTRY_ISO=$(echo "${IP_DATA}" | grep country_iso | awk '{ print $2 }')
+TIMEZONE=$(echo "${IP_DATA}" | grep time_zone | awk '{ print $2 }')
 
 initialStep=${1:-"_partition_"}
 if [ -f "${STEP_FILE}" ]; then
@@ -37,37 +52,29 @@ if [ -d "/sys/firmware/efi/efivars" ]; then
   getChoice -q "\nSelect Disk to Format:" -o disks -m 4
   SELECTED_DISK="${selectedChoice}"
   
-  # just printing the formatting commands since there are no non-interactive commands
-  echo;
-  echo " ╭─ "
-  echo " │ > fdisk ${SELECTED_DISK} "
-  echo " ╰─ "
-  echo "  Wipe drive with '[ d ]' (hit ENTER until all drives are gone)"
-  echo "  Create EFI partition with '[ n ]'"
-  echo "    partition #: 1"
-  echo "    1st sector: (blank)"
-  echo "    2nd sector: +512M"
-  echo "  Change partition type with '[ t ]'"
-  echo "    Enter 'l' to get a list of types"
-  echo "    Enter '1' (or 'ef') for EFI System"
-  echo "  Create root partition with '[ n ]'"
-  echo "    partition #: 2"
-  echo "    1st sector: (blank)"
-  echo "    2nd sector: (blank)"
-  echo "  Finalize changes with '[ w ]'"
-  echo;
-  echo "Create file systems with:"
-  echo " ╭─ "
-  echo " │ > mkfs.fat -F32 ${SELECTED_DISK}1 && mkfs.ext4 ${SELECTED_DISK}2 "
-  echo " ╰─ "
-  echo;
-  echo "Once done, run this script again to pick up at next step."
-  echo;
-  
-  echo "${SELECTED_DISK}" > "${PATH__SELECTED_DISK}"
-  saveStep "_install_linux_"
-  exit 0
+  # clear the partition table
+  wipefs -a "${SELECTED_DISK}"
+  # create new partitions
+  (
+    echo n     # Add a new partition
+    echo p     # Primary partition (EFI boot)
+    echo 1     # Partition number
+    echo       # First sector (Accept default)
+    echo +512M # Last sector
+    echo t     # Change partition type
+    echo ef    # Set to EFI system
+    echo n     # Add a new partition
+    echo p     # Primary partition (Linux boot)
+    echo 2     # Partition number
+    echo       # First sector (Accept default)
+    echo       # Last sector (Accept default)
+    echo w     # Finalize and write changes
+  ) | fdisk "${SELECTED_DISK}"
+  # create file systems
+  mkfs.fat -F32 "${SELECTED_DISK}1"
+  mkfs.ext4 "${SELECTED_DISK}2"
 else
+  # NOTE: There's an EFI section in `2-chroot-setup` that should be addressed as well.
   echo "[ERROR] It appears that UEFI is not enabled, you'll have to figure out what to do."
   saveStep "_partition_"
   exit 1
@@ -76,17 +83,38 @@ fi
 # ==============================================================================
 _install_linux_:
 
-# load previous selection
-SELECTED_DISK=$(cat "${PATH__SELECTED_DISK}")
+# enable parrallel downloads to speed things up
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
 # Back up mirror list
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 # Use reflector to update the list with the fastest download mirrors
-reflector -c "US" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
+reflector \
+  --age 48 \
+  --country "${COUNTRY_ISO}" \
+  --fastest 12 \
+  --number 12 \
+  --latest 10 \
+  --save /etc/pacman.d/mirrorlist
 
 # Mount the root partition (where Linux will install)
 mount "${SELECTED_DISK}2" /mnt
+
+# Copy over updated files
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/
+cp /etc/pacman.conf /mnt/etc/
+
+# Save vars for later use
+instVars=(
+  "COMPUTER_NAME='${COMPUTER_NAME}'"
+  "COUNTRY_ISO='${COUNTRY_ISO}'"
+  "NON_ROOT__PASSWORD='${NON_ROOT__PASSWORD}'"
+  "NON_ROOT__USERNAME='${NON_ROOT__USERNAME}'"
+  "ROOT__PASSWORD='${ROOT__PASSWORD}'"
+  "TIMEZONE='${TIMEZONE}'"
+)
+printf "%s\n" "${instVars[@]}" > /mnt/tmp/instvars.sh
 
 # Install Linux and anything else you need for initial setup
 pacstrap /mnt \

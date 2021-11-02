@@ -464,7 +464,11 @@
                 'Vid',
               ]],
               'Torrents',
-              'VirtualBox ISOs',
+              ['VirtualBox', [
+                'ISOs',
+                'Shares',
+                'VMs',
+              ]],
             ]],
           ],
         },
@@ -711,7 +715,7 @@
               '# update all installed packages (including kernel)',
               'sudo pacman -Syu',
               '# install packages',
-              `sudo pacman -S --needed ${officalPkgs.sort().join(' ')}`,
+              `sudo pacman -S --noconfirm --needed ${officalPkgs.sort().join(' ')}`,
               '',
             );
           }
