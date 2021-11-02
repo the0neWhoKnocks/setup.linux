@@ -117,7 +117,5 @@ grub-mkconfig -o /boot/grub/grub.cf
 # build ramdisk env.
 mkinitcpio -p linux
 
+mkdir -p "/home/${NON_ROOT__USERNAME}/.config/autostart/"
 ln -s "${PATH__SCRIPT_DIR}/3-post-install.sh" "/home/${NON_ROOT__USERNAME}/.config/autostart/"
-
-# leave chroot
-exit
