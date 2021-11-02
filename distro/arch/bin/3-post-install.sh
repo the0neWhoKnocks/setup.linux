@@ -49,3 +49,7 @@ done
 # TEMP: just verifying
 echo "${DIR__CONFIGS}"
 ls -la "${DIR__CONFIGS}"
+
+if [ -f "${HOME}/.config/autostart/3-post-install.sh" ]; then
+  rm "${HOME}/.config/autostart/3-post-install.sh"
+fi

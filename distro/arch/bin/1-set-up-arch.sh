@@ -115,10 +115,8 @@ mount "${SELECTED_DISK}2" /mnt
 
 # Install Linux and anything else you need for initial setup
 pacstrap /mnt \
-  # Linux kernel
-  base linux linux-firmware \
-  # text editor
-  vim
+  base linux linux-firmware `# Linux kernel` \
+  vim `# text editor`
 
 # NOTE: Anything that should persist on the new FS, should be copied over after
 # 'pacstrap' runs, otherwise it'll be stomped on.
@@ -164,6 +162,7 @@ cp -r "${REPO_PATH}" "/mnt/tmp/"
 ls -la "/mnt/tmp"
 
 NEXT_SCRIPT="$(find "/mnt/tmp/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
+ls -la "$(dirname "${NEXT_SCRIPT}")"
 
 # run chroot setup
 arch-chroot /mnt "${NEXT_SCRIPT}"
@@ -175,4 +174,4 @@ rm -f \
   "${STEP_FILE}" \
   "/mnt/tmp/instVars.sh"
 
-shutdown /r
+shutdown -r
