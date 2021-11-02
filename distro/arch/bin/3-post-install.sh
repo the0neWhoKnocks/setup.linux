@@ -2,12 +2,26 @@
 
 DIR__CONFIGS="${HOME}/.config/post-install"
 REPO_PATH="$(git rev-parse --show-toplevel)"
+REPO_NAME="$(basename "${REPO_PATH}")"
+
+# kill the previous dir once this has initialized
+if [ -d "/root/${REPO_NAME}" ]; then
+  sudo rm -rf "/root/${REPO_NAME}"
+fi
 
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
 
 GUI=$(cat ./3-post-install-gui.html)
 outputFile=''
+
+# NOTE: uncomment below for debugging purposes
+# (
+#   echo "PWD=${PWD}"
+#   echo "DIR__CONFIGS=${DIR__CONFIGS}"
+#   echo "REPO_PATH=${REPO_PATH}"
+#   echo "GUI=${GUI}"
+# ) > ~/Desktop/post-install.log
 
 function closeDialog {
   # NOTE: 'YAD_PID' is not set when using 'html'
@@ -50,6 +64,6 @@ done
 echo "${DIR__CONFIGS}"
 ls -la "${DIR__CONFIGS}"
 
-if [ -f "${HOME}/.config/autostart/3-post-install.sh" ]; then
-  rm "${HOME}/.config/autostart/3-post-install.sh"
+if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
+  rm "${HOME}/.config/autostart/post-install.desktop"
 fi
