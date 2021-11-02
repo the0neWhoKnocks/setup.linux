@@ -166,7 +166,7 @@ ls -la "$(dirname "${NEXT_SCRIPT}")"
 
 # run chroot setup
 arch-chroot /mnt "${NEXT_SCRIPT}"
-if [ $?--ne 0 ]; then
+if [ $? -ne 0 ]; then
   echo "[ERROR] chroot failed"
   exit 1
 fi
