@@ -49,8 +49,11 @@ ping -c 1 archlinux.org
 
 Once you have an internet connection, run the below.
 ```sh
-cd /tmp && git clone https://github.com/the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/arch/bin
+pacman -Sy git
 
+cd /tmp
+git clone https://github.com/the0neWhoKnocks/setup.linux.git
+cd setup.linux/distro/arch/bin
 ./1-set-up-arch.sh
 ```
 
