@@ -3,6 +3,7 @@
 DIR__CONFIGS="${HOME}/.config/post-install"
 REPO_PATH="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "${REPO_PATH}")"
+GUI=$(cat ./3-post-install-gui.html)
 
 # kill the previous dir once this has initialized
 if [ -d "/root/${REPO_NAME}" ]; then
@@ -11,9 +12,6 @@ fi
 
 # ensure directory exists
 mkdir -p "${DIR__CONFIGS}"
-
-GUI=$(cat ./3-post-install-gui.html)
-outputFile=''
 
 # NOTE: uncomment below for debugging purposes
 # (
@@ -42,12 +40,11 @@ echo "$GUI" | yad \
   if [[ "${line}" != *"CONSOLE LOG"* ]]; then
     if [[ "${line}" == "[CLOSE]" ]]; then
       closeDialog
-    elif [[ "${line}" == *"[FILE:"* ]]; then
-      outputFile=$(echo "${line}" | awk -F'"' '{ print $2 }')
-      outputFile="${DIR__CONFIGS}/${outputFile}"
-      touch "${outputFile}"
-      echo "" > "${outputFile}"
-    elif [[ "${outputFile}" != '' ]]; then
+    elif [[ "${line}" == "[FILE]" ]]; then
+      PATH__OUTPUT_FILE="${DIR__CONFIGS}/install.sh"
+      touch "${PATH__OUTPUT_FILE}"
+      echo "" > "${PATH__OUTPUT_FILE}"
+    elif [[ "${PATH__OUTPUT_FILE}" != '' ]]; then
       # swap out variable references
       if [[ "${line}" == *'${PWD}'* ]]; then
         line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
@@ -55,7 +52,7 @@ echo "$GUI" | yad \
         line=$(echo "${line}" | sed "s|\${REPO_PATH}|${REPO_PATH}|g")
       fi
       
-      echo "$line" >> "${outputFile}"
+      echo "$line" >> "${PATH__OUTPUT_FILE}"
     fi
   fi
 done
@@ -66,4 +63,8 @@ ls -la "${DIR__CONFIGS}"
 
 if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
   rm "${HOME}/.config/autostart/post-install.desktop"
+fi
+
+if [[ "${PATH__OUTPUT_FILE}" != '' ]]; then
+  "${PATH__OUTPUT_FILE}"
 fi
