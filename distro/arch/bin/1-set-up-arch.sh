@@ -155,7 +155,7 @@ echo "${REPO_PATH} | ${REPO_NAME}"
 )
 
 # copy over repo to new partition
-cp -r "${REPO_PATH}" "/mnt/root/"
+cp -R "${REPO_PATH}" "/mnt/root/"
 ls -la "/mnt/root"
 
 # run chroot setup
