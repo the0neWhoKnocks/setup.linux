@@ -423,7 +423,7 @@
               label: 'Dock',
               id: 'dock',
               options: [
-                'Cairo:cairo-dock cairo-dock-plug-ins cairo-dock-plug-ins-extra',
+                'Cairo:cairo-dock cairo-dock-plug-ins ; cairo-dock-plug-ins-extras',
                 'Plank:plank',
                 'Latte:latte-dock',
               ],
@@ -672,7 +672,12 @@
                     if (cursorPkgs) aurPkgs.push(cursorPkgs);
                     break;
                   }
-                  case 'dock': officalPkgs.push(val); break;
+                  case 'dock': {
+                    const [offs, aurs] = val.split(' ; ');
+                    if (offs) officalPkgs.push(offs);
+                    if (aurs) aurPkgs.push(aurs);
+                    break;
+                  }
                   case 'theme': {
                     theme = val;
                     break;
