@@ -373,7 +373,7 @@
           items: [
             ['checklist', {
               'Development': [
-                [true, 'atom', 'Hackable IDE'],
+                [true, 'atom ; app/io.atom.Atom/x86_64/stable', 'Hackable IDE'],
               ],
               'Extras': [
                 [false, 'bottles', 'A GUI to manage Wine and Proton software.'],
@@ -660,7 +660,11 @@
             switch (tabKey) {
               case 'official': officalPkgs.push(val); break;
               case 'aur': aurPkgs.push(val); break;
-              case 'flat': flatPkgs.push(val); break;
+              case 'flat': {
+                const [name, pkg] = val.split(' ; ');
+                flatPkgs.push(pkg | name);
+                break;
+              }
               case 'nonstandard': nonStandardItems.push(val); break;
               case 'scripts': userScripts.push(val); break;
               case 'settings': {
@@ -738,10 +742,21 @@
           
           if (aurPkgs.length) {
             output.push(
+              'echo " ╭─────────────╮ "',
+              'echo " │ Install YAY │ "',
+              'echo " ╰─────────────╯ "',
+              'sudo pacman -S --noconfirm --needed base-devel',
+              '(',
+              '  cd /tmp',
+              '  git clone https://aur.archlinux.org/yay-git.git',
+              '  cd yay-git',
+              '  makepkg -si --noconfirm --needed',
+              ')',
+              '',
               'echo " ╭──────────────╮ "',
               'echo " │ AUR Packages │ "',
               'echo " ╰──────────────╯ "',
-              `yay -S --noredownload ${aurPkgs.sort().join(' ')}`,
+              `yay -S --noredownload --useask --noconfirm --needed ${aurPkgs.sort().join(' ')}`,
               '',
             );
           }
@@ -751,7 +766,7 @@
               'echo " ╭──────────╮ "',
               'echo " │ Flatpack │ "',
               'echo " ╰──────────╯ "',
-              `flatpak install --assumeyes flathub ${flatPkgs.sort().join(' ')}`,
+              `sudo flatpak install --assumeyes --noninteractive flathub ${flatPkgs.sort().join(' ')}`,
               '',
             );
           }
