@@ -16,6 +16,9 @@ user-script.sh
 - [ ] Don't `cp` scripts to `/usr/local/bin`, `ln` instead so I can maintain the scripts more easily from the repo.
 
 backup.sh
+- flags
+  - [ ] `create`
+  - [ ] `restore`
 - [ ] Allow for choosing output location (local or external)
 - Locations
   - Atom
@@ -51,6 +54,22 @@ backup.sh
   - Inkscape
     - ~/.config/inkscape/preferences.xml
   - KDE
+    - https://www.addictivetips.com/ubuntu-linux-tips/backup-kde-plasma-5-desktop-linux/
+      ```sh
+      cd ~/.config
+      kdeSettings=(
+        $(ls -Adx1 --group-directories-first kde*)
+        $(ls -Adx1 --group-directories-first plasma*)
+      )
+      # create
+      tar \
+        --preserve-permissions \
+        --bzip2 \
+        --create --file=~/Desktop/kde-settings.tar.bz2 \
+        "${kdeSettings[@]}"
+      # restore
+      tar --extract --file=~/Desktop/kde-settings.tar.bz2
+      ```
     - KWin: ~/.config/kwinrc
     - Splash screen: ~/.config/ksplashrc
     - Timezone: ~/.config/ktimezonerc
@@ -61,6 +80,10 @@ backup.sh
       # or
       Image=file:///home/<USER>/.local/share/wallpapers/<FILENAME>.jpg
       ```
+    - Plasma
+      - ~/.config/plasmarc
+      - splashscreens: ~/.local/share/plasma/look-and-feel
+      - themes: ~/.local/share/plasma/desktoptheme
   - Keyboard
     - ~/.xbindkeysrc
   - Krita
@@ -81,10 +104,6 @@ backup.sh
     - ~/.config/obs-studio (seems like everything but the `logs` folder)
   - Plank Dock
     - ~/.config/plank/*
-  - Plasma
-    - ~/.config/plasmarc
-    - splashscreens: ~/.local/share/plasma/look-and-feel
-    - themes: ~/.local/share/plasma/desktoptheme
   - Puddletag
     - ~/.config/puddletag/puddletag.conf
   - QMMP
