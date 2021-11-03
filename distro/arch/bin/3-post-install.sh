@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DIR__CONFIGS="${HOME}/.config/post-install"
+PATH__OUTPUT_FILE="${DIR__CONFIGS}/install.sh"
 REPO_PATH="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "${REPO_PATH}")"
 GUI=$(cat ./3-post-install-gui.html)
@@ -26,8 +27,9 @@ function closeDialog {
   pkill yad
 }
 
-# NOTE: Reason for 'JSC_SIGNAL_FOR_GC' https://bugs.webkit.org/show_bug.cgi?id=223069
-echo "$GUI" | yad \
+rm -f "${PATH__OUTPUT_FILE}"
+IFS='' # maintain whitespace from output
+echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|" | yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
   --width=900 \
@@ -40,11 +42,11 @@ echo "$GUI" | yad \
   if [[ "${line}" != *"CONSOLE LOG"* ]]; then
     if [[ "${line}" == "[CLOSE]" ]]; then
       closeDialog
-    elif [[ "${line}" == "[FILE]" ]]; then
-      PATH__OUTPUT_FILE="${DIR__CONFIGS}/install.sh"
-      touch "${PATH__OUTPUT_FILE}"
-      echo "" > "${PATH__OUTPUT_FILE}"
-    elif [[ "${PATH__OUTPUT_FILE}" != '' ]]; then
+    elif [[ "${line}" == *"[FILE:"* ]]; then
+      outputFile=$(echo "${line}" | awk -F'"' '{ print $2 }')
+      touch "${outputFile}"
+      echo "" > "${outputFile}"
+    elif [[ "${outputFile}" != '' ]]; then
       # swap out variable references
       if [[ "${line}" == *'${PWD}'* ]]; then
         line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
@@ -52,19 +54,21 @@ echo "$GUI" | yad \
         line=$(echo "${line}" | sed "s|\${REPO_PATH}|${REPO_PATH}|g")
       fi
       
-      echo "$line" >> "${PATH__OUTPUT_FILE}"
+      echo "$line" >> "${outputFile}"
     fi
   fi
 done
-
-# TEMP: just verifying
-echo "${DIR__CONFIGS}"
-ls -la "${DIR__CONFIGS}"
 
 if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
   rm "${HOME}/.config/autostart/post-install.desktop"
 fi
 
-if [[ "${PATH__OUTPUT_FILE}" != '' ]]; then
+if [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
+  echo;
+  echo " Installation script written to: '${PATH__OUTPUT_FILE}'"
+  echo " Starting installation..."
+  echo;
+  
+  chmod +x "${PATH__OUTPUT_FILE}"
   "${PATH__OUTPUT_FILE}"
 fi
