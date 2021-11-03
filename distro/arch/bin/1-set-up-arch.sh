@@ -158,11 +158,8 @@ echo "${REPO_PATH} | ${REPO_NAME}"
 cp -r "${REPO_PATH}" "/mnt/root/"
 ls -la "/mnt/root"
 
-NEXT_SCRIPT="$(find "/mnt/root/${REPO_NAME}/distro/arch" -name "2-chroot-setup.sh" | sed 's/\/mnt//')"
-ls -la "$(dirname "${NEXT_SCRIPT}")"
-
 # run chroot setup
-arch-chroot /mnt "${NEXT_SCRIPT}"
+arch-chroot /mnt usr/bin/bash -c "cd /root/${REPO_NAME}/distro/arch/bin; ./2-chroot-setup.sh"
 if [ $? -ne 0 ]; then
   echo "[ERROR] chroot failed"
   exit 1
