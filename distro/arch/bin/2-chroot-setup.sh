@@ -129,10 +129,11 @@ mkinitcpio -p linux
 # copy the repo over for the User, and the final installation step
 REPO_PATH="$(git rev-parse --show-toplevel)"
 REPO_NAME="$(basename "${REPO_PATH}")"
-mkdir -p "/home/${NON_ROOT__USERNAME}/.config/autostart/"
+PATH__CONFIG="/home/${NON_ROOT__USERNAME}/.config"
+mkdir -p "${PATH__CONFIG}/autostart/"
 cp -R "/root/${REPO_NAME}" "/home/${NON_ROOT__USERNAME}/"
 UPDATED_REPO_PATH="/home/${NON_ROOT__USERNAME}/${REPO_NAME}"
-LAUNCHER="/home/${NON_ROOT__USERNAME}/.config/autostart/post-install.desktop"
+LAUNCHER="${PATH__CONFIG}/autostart/post-install.desktop"
 (
   echo '[Desktop Entry]'
   echo "Exec=(cd '${UPDATED_REPO_PATH}/distro/arch/bin' && ./3-post-install.sh)"
@@ -141,6 +142,8 @@ LAUNCHER="/home/${NON_ROOT__USERNAME}/.config/autostart/post-install.desktop"
   echo 'Type=Application'
   echo 'X-KDE-AutostartScript=true'
 ) > "${LAUNCHER}"
+chmod +x "${LAUNCHER}"
 chown -R "${NON_ROOT__USERNAME}:${NON_ROOT__USERNAME}" \
+  "${PATH__CONFIG}" \
   "${UPDATED_REPO_PATH}" \
   "${LAUNCHER}"
