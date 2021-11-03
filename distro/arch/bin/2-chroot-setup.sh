@@ -41,6 +41,8 @@ echo "${COMPUTER_NAME}" > /etc/hostname
 
 # enable parrallel downloads to speed things up
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+# enable multi-lib packages
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 
 # update package databases
 pacman -Syu
