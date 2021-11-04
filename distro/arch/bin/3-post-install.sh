@@ -29,7 +29,7 @@ function closeDialog {
 
 rm -f "${PATH__OUTPUT_FILE}"
 IFS='' # maintain whitespace from output
-echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|" | yad \
+echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|g" | yad \
   --window-icon="system-software-install" \
   --title="Post Install" \
   --width=900 \
