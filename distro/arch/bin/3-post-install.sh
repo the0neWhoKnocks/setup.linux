@@ -50,9 +50,14 @@ echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|g" | yad \
       # swap out variable references
       if [[ "${line}" == *'${PWD}'* ]]; then
         line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
-      elif [[ "${line}" == *'${REPO_PATH}'* ]]; then
+      fi
+      if [[ "${line}" == *'${REPO_PATH}'* ]]; then
         line=$(echo "${line}" | sed "s|\${REPO_PATH}|${REPO_PATH}|g")
-      elif [[ "${line}" == *'~'* ]]; then
+      fi
+      if [[ "${line}" == *'${REPO_NAME}'* ]]; then
+        line=$(echo "${line}" | sed "s|\${REPO_NAME}|${REPO_NAME}|g")
+      fi
+      if [[ "${line}" == *'~'* ]]; then
         line=$(echo "${line}" | sed "s|~|${HOME}|g")
       fi
       

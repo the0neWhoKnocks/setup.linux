@@ -25,6 +25,7 @@
         width: 100%;
         height: 100%;
         color: rgb(var(--color--fg));
+        font-family: Arial;
         font-size: 18px;
         padding: 0;
         margin: 0;
@@ -276,8 +277,6 @@
                 [true, 'notepadqq', 'A Notepad++-like editor for the Linux desktop.'],
                 [true, 'tilix', 'A feature-rich tiling terminal emulator following the GNOME human interface design guidelines.'],
                 [true, 'virtualbox', 'Open-source software for virtualizing the x86 computing architecture.'],
-                [true, 'virtualbox-host-modules-arch', 'Virtualbox host kernel modules for Arch Kernel.'],
-                [true, 'virtualbox-guest-iso', 'Provides mouse pointer integration, shared folders, better video support, seamless windows, generic host/guest communication channels, time synchronization, shared clipboards, and automated logins for Virtualbox.'],
                 [true, 'zsh', 'Z shell is a Unix shell that can be used as an interactive login shell and as a command interpreter for shell scripting.'],
               ],
               'Gaming': [
@@ -304,6 +303,7 @@
                 [true, 'mc', '(Midnight Commander) A CLI based file manager.'],
                 [true, 'p7zip', 'A CLI port of 7-Zip for POSIX systems.'],
                 [true, 'speedtest-cli', 'CLI util to measure internet connection performance metrics like download, upload, latency and packet loss natively without relying on a web browser.'],
+                [true, 'wget', 'Util to retrieve content from the web.'],
                 [true, 'xclip', 'CLI util that copies text to a User\'s clipboard.'],
               ],
               'Video Player': [
@@ -333,9 +333,6 @@
             ['checklist', {
               'Browsers': [
                 [true, 'google-chrome', "Google's Chrome Browser"],
-              ],
-              'Development': [
-                [true, 'virtualbox-ext-oracle', "Determines and installs the proper 'virtualbox-host-modules' for your Linux kernel (otherwise you can just manually install the proper version yourself)."],
               ],
               'Music file manipulation': [
                 [true, 'puddletag', 'Configurable tag editor for music files'],
@@ -662,7 +659,7 @@
               case 'aur': aurPkgs.push(val); break;
               case 'flat': {
                 const [name, pkg] = val.split(' ; ');
-                flatPkgs.push(pkg | name);
+                flatPkgs.push(pkg || name);
                 break;
               }
               case 'nonstandard': nonStandardItems.push(val); break;
@@ -728,54 +725,109 @@
           });
           
           if (officalPkgs.length) {
+            officalPkgs.forEach((pkg) => {
+              switch (pkg) {
+                case 'virtualbox': {
+                  officalPkgs.push(
+                    'linux-headers', // required for the VB kernel to be built properly
+                    'virtualbox-guest-iso', // Provides mouse pointer integration, shared folders, better video support, seamless windows, generic host/guest communication channels, time synchronization, shared clipboards, and automated logins for Virtualbox
+                    'virtualbox-host-modules-arch', // Virtualbox host kernel modules for Arch Kernel
+                  );
+                  aurPkgs.push(
+                    'virtualbox-ext-oracle', // Determines and installs the proper 'virtualbox-host-modules' for your Linux kernel (otherwise you can just manually install the proper version yourself)
+                  );
+                  break;
+                }
+              }
+            });
+            
+            officalPkgs.push(
+              // add in fonts designed for broad coverage of the Unicode Universal Character Set
+              'noto-fonts noto-fonts-emoji ttf-dejavu',
+              // collection which provide Times New Roman, Arial, Courier New
+              'ttf-liberation',
+            );
+            
             output.push(
-              'echo " ╭───────────────────╮ "',
-              'echo " │ Official Packages │ "',
-              'echo " ╰───────────────────╯ "',
+              'echo " ╭───────────────────────────╮ "',
+              'echo " │ Install Official Packages │ "',
+              'echo " ╰───────────────────────────╯ "',
               '# update all installed packages (including kernel)',
               'sudo pacman -Syu',
               '# install packages',
               `sudo pacman -S --noconfirm --needed ${officalPkgs.sort().join(' ')}`,
+              '',
+              '# reboot check',
+              "latestVersion=$(pacman -Q linux | sed 's/linux //')",
+              "runningVersion=$(uname -r | sed 's/-ARCH//')",
+              'if [ "${latestVersion}" != "${runningVersion}" ]; then',
+              '  echo;',
+              "  echo ' [INFO] Kernel has updated, rebooting...'",
+              '  echo;',
+              "  echo '... 5'; sleep 1",
+              "  echo '... 4'; sleep 1",
+              "  echo '... 3'; sleep 1",
+              "  echo '... 2'; sleep 1",
+              "  echo '... 1'; sleep 1",
+              '  shutdown -r now',
+              '  exit',
+              'fi',
               '',
             );
           }
           
           if (aurPkgs.length) {
             output.push(
-              'echo " ╭─────────────╮ "',
-              'echo " │ Install YAY │ "',
-              'echo " ╰─────────────╯ "',
-              'sudo pacman -S --noconfirm --needed base-devel',
-              '(',
-              '  cd /tmp',
-              '  git clone https://aur.archlinux.org/yay-git.git',
-              '  cd yay-git',
-              '  makepkg -si --noconfirm --needed',
-              ')',
+              'if ! command -v yay &> /dev/null; then',
+              '  echo " ╭─────────────╮ "',
+              '  echo " │ Install YAY │ "',
+              '  echo " ╰─────────────╯ "',
+              '  sudo pacman -S --noconfirm --needed base-devel',
+              '  (',
+              '    cd /tmp',
+              '    git clone https://aur.archlinux.org/yay-git.git',
+              '    cd yay-git',
+              '    makepkg -si --noconfirm --needed',
+              '  )',
+              'fi',
               '',
-              'echo " ╭──────────────╮ "',
-              'echo " │ AUR Packages │ "',
-              'echo " ╰──────────────╯ "',
-              `yay -S --noredownload --useask --noconfirm --needed ${aurPkgs.sort().join(' ')}`,
+              'echo " ╭──────────────────────╮ "',
+              'echo " │ Install AUR Packages │ "',
+              'echo " ╰──────────────────────╯ "',
+              `yay -S --mflags --skipinteg --noredownload --useask --noconfirm --needed ${aurPkgs.sort().join(' ')}`,
               '',
             );
           }
           
           if (flatPkgs.length) {
             output.push(
-              'echo " ╭──────────╮ "',
-              'echo " │ Flatpack │ "',
-              'echo " ╰──────────╯ "',
+              'echo " ╭───────────────────╮ "',
+              'echo " │ Install Flatpacks │ "',
+              'echo " ╰───────────────────╯ "',
               `sudo flatpak install --assumeyes --noninteractive flathub ${flatPkgs.sort().join(' ')}`,
               '',
             );
+            
+            for (let i=0; i<flatPkgs.length; i++) {
+              const currPkg = flatPkgs[i];
+              if (currPkg.includes('atom')) {
+                output.push(
+                  'echo " ╭─────────────────────╮ "',
+                  'echo " │ Create Atom Symlink │ "',
+                  'echo " ╰─────────────────────╯ "',
+                  'PATH__ATOM="$(which io.atom.Atom)"',
+                  'sudo ln -sf "${PATH__ATOM}" "$(dirname "${PATH__ATOM}")/atom"',
+                  '',
+                );
+              }
+            }
           }
           
           if (userScripts.length) {
             output.push(
-              'echo " ╭──────────────╮ "',
-              'echo " │ User Scripts │ "',
-              'echo " ╰──────────────╯ "',
+              'echo " ╭──────────────────────╮ "',
+              'echo " │ Install User Scripts │ "',
+              'echo " ╰──────────────────────╯ "',
             );
             userScripts.forEach((script) => {
               output.push(`"\${REPO_BIN}/dist/user-script.sh" --install "\${REPO_BIN}/dist/${script}"`);
@@ -785,9 +837,9 @@
           
           if (folders.length) {
             output.push(
-              'echo " ╭────────────────╮ "',
-              'echo " │ Common Folders │ "',
-              'echo " ╰────────────────╯ "',
+              'echo " ╭───────────────────────╮ "',
+              'echo " │ Create Common Folders │ "',
+              'echo " ╰───────────────────────╯ "',
             );
             output.push(
               `mkdir -p ${folders.map(folder => `"${folder}"`).join(' ')}`,
@@ -798,7 +850,9 @@
               const currFolder = folders[i];
               if (currFolder.includes('Code/Scripts')) {
                 output.push(
-                  `rsync -Rru "\${REPO_PATH}" "${currFolder}/"`,
+                  `if [ -d "${currFolder}/\${REPO_NAME}" ]; then`,
+                  `  cp -R "\${REPO_PATH}" "${currFolder}/"`,
+                  'fi',
                   '',
                 );
                 
@@ -811,32 +865,33 @@
             output.push(...hardwareSteps, '');
           }
           
+          // NOTE: KDE creates a '/etc/sddm.conf.d/kde_settings.conf' but it's
+          // not a simple task to keep it formatted correctly since it can be
+          // updated via the GUI, and KDE can change the formatting. If I update
+          // 'default.conf' I just have to deal with SDDM.
+          const PATH__SDDM_CONF = '/usr/lib/sddm/sddm.conf.d/default.conf';
+          output.push(
+            `sudo sed -i 's/Numlock=.*/Numlock=on/' ${PATH__SDDM_CONF}`,
+            '',
+          );
+          
           if (theme) {
-            const themeOpts = [`Current=${theme}`];
-            if (cursorTheme) themeOpts.push(`CursorTheme=${cursorTheme}`);
-            
             output.push(
-              'echo " ╭──────────────╮ "',
-              'echo " │ Login Screen │ "',
-              'echo " ╰──────────────╯ "',
-              '# NOTE: Might be too heavy-handed (not accounting for existing groups/settings).',
-              'sudo tee -a "/etc/sddm.conf.d/kde_settings.conf" > /dev/null <<EOT',
-              '[General]',
-              'Numlock=on',
-              '',
-              '[Theme]',
-              ...themeOpts,
-              'EOT',
+              'echo " ╭────────────────────────╮ "',
+              'echo " │ Set Login Screen Theme │ "',
+              'echo " ╰────────────────────────╯ "',
+              `sudo sed -i 's/Current=.*/Current=${theme}/' ${PATH__SDDM_CONF}`,
               '',
             );
           }
           
           if (cursorTheme) {
             output.push(
-              'echo " ╭──────────────╮ "',
-              'echo " │ Cursor Theme │ "',
-              'echo " ╰──────────────╯ "',
-              `sed -i -E 's/cursorTheme=.*/cursorTheme=${cursorTheme}/' \${HOME}/.config/kcminputrc`,
+              'echo " ╭──────────────────╮ "',
+              'echo " │ Set Cursor Theme │ "',
+              'echo " ╰──────────────────╯ "',
+              `sudo sed -i 's/CursorTheme=.*/CursorTheme=${cursorTheme}/' ${PATH__SDDM_CONF}`,
+              `sed -i 's/cursorTheme=.*/cursorTheme=${cursorTheme}/' \${HOME}/.config/kcminputrc`,
               '',
             );
           }
@@ -848,29 +903,45 @@
                 case 'oh-my-zsh': {
                   rcFile = '${HOME}/.zshrc';
                   output.push(
-                    'echo " ╭───────────╮ "',
-                    'echo " │ Oh My ZSH │ "',
-                    'echo " ╰───────────╯ "',
+                    'echo " ╭───────────────────╮ "',
+                    'echo " │ Install Oh-My-ZSH │ "',
+                    'echo " ╰───────────────────╯ "',
                     '# Install',
-                    'sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"',
+                    'rm -rf "${HOME}/.oh-my-zsh"',
+                    'CHSH=yes RUNZSH=no sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"',
                     'DEFAULT__ZSH_CUSTOM="${HOME}/.oh-my-zsh/custom"',
-                    'ZSH_THEME_PATH="${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/themes/zsh-theme-boom"',
+                    'PATH__OMZ_CUSTOM="${ZSH_CUSTOM:-"${DEFAULT__ZSH_CUSTOM}"}"',
+                    'PATH__ZSH_THEME="${PATH__OMZ_CUSTOM}/themes/zsh-theme-boom"',
+                    'PATH__OMZ_PLUGINS="${PATH__OMZ_CUSTOM}/plugins"',
                     '# Add external plugins',
-                    'git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/plugins/zsh-autosuggestions',
-                    'git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-DEFAULT__ZSH_CUSTOM}/plugins/zsh-syntax-highlighting',
-                    `sed '/plugins=(/,/)/c\plugins=(\n  zsh-autosuggestions\n  zsh-syntax-highlighting\n)' "${rcFile}"`,
+                    'if [ ! -d "${PATH__OMZ_PLUGINS}/zsh-autosuggestions" ]; then',
+                    '  (',
+                    '    cd "${PATH__OMZ_PLUGINS}"',
+                    '    git clone https://github.com/zsh-users/zsh-autosuggestions.git',
+                    '    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git',
+                    '  )',
+                    'fi',
+                    `sed -i '/plugins=(/,/)/c\\plugins=(\\n  zsh-autosuggestions\\n  zsh-syntax-highlighting\\n)' "${rcFile}"`,
                     '# Add my theme',
-                    '( \\',
-                    '  git clone https://github.com/the0neWhoKnocks/zsh-theme-boom.git ${ZSH_THEME_PATH} \\',
-                    '  && cd ${ZSH_THEME_PATH} \\',
-                    '  && git remote set-url origin git@github.com:the0neWhoKnocks/zsh-theme-boom.git \\',
-                    '  && git checkout linux \\',
-                    `  && sed -i -E \'s|ZSH_THEME=".*"|ZSH_THEME="zsh-theme-boom/skin"|\' "${rcFile}" \\`,
-                    '  && sudo cp "${ZSH_THEME_PATH}/fonts/Fantasque Sans Mono Regular Nerd Font Complete Mono Windows Compatible.ttf" /usr/share/fonts/TTF/ \\',
-                    '  && fc-cache -vf \\',
-                    ')',
-                    'neoFetchPatch=\'export SHELL="zsh" # fix for neofetch displaying incorrect Shell\'',
-                    `sed -i "1s|^|\${neoFetchPatch}|" "${rcFile}"`,
+                    'if [ ! -d "${PATH__ZSH_THEME}" ]; then',
+                    '  (',
+                    '    mkdir -p "${PATH__ZSH_THEME}"',
+                    '    cd "${PATH__ZSH_THEME}"',
+                    '    git clone https://github.com/the0neWhoKnocks/zsh-theme-boom.git .',
+                    '    git remote set-url origin git@github.com:the0neWhoKnocks/zsh-theme-boom.git',
+                    '    git checkout linux',
+                    '  )',
+                    'fi',
+                    '# set theme',
+                    `sed -i -E 's|ZSH_THEME=".*"|ZSH_THEME="zsh-theme-boom/skin"|' "${rcFile}"`,
+                    '# add custom fonts',
+                    'sudo cp "${PATH__ZSH_THEME}/fonts/Fantasque Sans Mono Regular Nerd Font Complete Mono Windows Compatible.ttf" /usr/share/fonts/TTF/',
+                    '# neofetch fix',
+                    `if ! grep -q "# fix for neofetch" "${rcFile}"; then`,
+                    '   neoFetchPatch=\'# fix for neofetch displaying incorrect Shell\\n\'',
+                    '  neoFetchPatch+=\'export SHELL="zsh"\\n\\n\'',
+                    `  sed -i '1 i\\'"\${neoFetchPatch}" "${rcFile}"`,
+                    'fi',
                     '',
                   );
                   break;
@@ -880,22 +951,40 @@
           }
           
           output.push(
-            'echo " ╭────────────────╮ "',
-            'echo " │ Custom Scripts │ "',
-            'echo " ╰────────────────╯ "',
-            '( \\',
-            '  git clone https://github.com/the0neWhoKnocks/shell-scripts.git ~/sh \\',
-            '  && cd ~/sh \\',
-            '  && git remote set-url origin git@github.com:the0neWhoKnocks/shell-scripts.git \\',
-            ')',
-            `printf "\\nsource ~/sh/git-functions.sh\\n" >> "${rcFile}"`,
+            'echo " ╭──────────────╮ "',
+            'echo " │ Update Fonts │ "',
+            'echo " ╰──────────────╯ "',
+            'fc-cache -vf',
             '',
           );
           
           output.push(
-            'echo " ╭─────────────╮ "',
-            'echo " │ Git Aliases │ "',
-            'echo " ╰─────────────╯ "',
+            'if [ ! -d ~/sh ]; then',
+            '  echo " ╭────────────────────╮ "',
+            '  echo " │ Add Custom Scripts │ "',
+            '  echo " ╰────────────────────╯ "',
+            '  (',
+            '    git clone https://github.com/the0neWhoKnocks/shell-scripts.git ~/sh',
+            '    cd ~/sh',
+            '    git remote set-url origin git@github.com:the0neWhoKnocks/shell-scripts.git',
+            '  )',
+            `  printf "\\nsource ~/sh/git-functions.sh\\n" >> "${rcFile}"`,
+            'fi',
+            '',
+          );
+          
+          output.push(
+            'echo " ╭───────────────────────╮ "',
+            'echo " │ Enter Git Credentials │ "',
+            'echo " ╰───────────────────────╯ "',
+            'read -p "Git User display name: " gitName',
+            '[[ "${gitName}" != "" ]] && git config --global user.name "${gitName}"',
+            'read -p "Git User email: " gitEmail',
+            '[[ "${gitEmail}" != "" ]] && git config --global user.email "${gitEmail}"',
+            '',
+            'echo " ╭─────────────────╮ "',
+            'echo " │ Add Git Aliases │ "',
+            'echo " ╰─────────────────╯ "',
             "git config --global alias.co 'checkout'",
             '',
           );
@@ -914,9 +1003,9 @@
           
           if (officalPkgs.includes('fzf')) {
             output.push(
-              'echo " ╭──────────────╮ "',
-              'echo " │ fzf defaults │ "',
-              'echo " ╰──────────────╯ "',
+              'echo " ╭──────────────────╮ "',
+              'echo " │ Set fzf Defaults │ "',
+              'echo " ╰──────────────────╯ "',
               `printf "\\nexport FZF_DEFAULT_OPTS='--height 50% --border'\\n" >> "${rcFile}"`,
               '',
             );
@@ -924,23 +1013,25 @@
           
           if (officalPkgs.includes('tilix')) {
             output.push(
-              'echo " ╭─────────────╮ "',
-              'echo " │ Tilix patch │ "',
-              'echo " ╰─────────────╯ "',
-              ' tilixPatch="# Fixes VTE error when starting a new terminal\\n"',
-              'tilixPatch+=\'if [ $TILIX_ID ] || [ $VTE_VERSION ]; then\\n\'',
-              'tilixPatch+="  source /etc/profile.d/vte.sh\\n"',
-              'tilixPatch+="fi\\n"',
-              `sed -i "1s|^|\${tilixPatch}|" "${rcFile}"`,
+              `if ! grep -q "# Fixes VTE" "${rcFile}"; then`,
+              '  echo " ╭─────────────────╮ "',
+              '  echo " │ Add Tilix Patch │ "',
+              '  echo " ╰─────────────────╯ "',
+              '   tilixPatch="# Fixes VTE error when starting a new terminal\\n"',
+              '  tilixPatch+=\'if [ $TILIX_ID ] || [ $VTE_VERSION ]; then\\n\'',
+              '  tilixPatch+="  source /etc/profile.d/vte.sh\\n"',
+              '  tilixPatch+="fi\\n"',
+              `  sed -i '1 i\\'"\${tilixPatch}" "${rcFile}"`,
+              'fi',
               '',
             );
           }
           
           if (officalPkgs.includes('virtualbox')) {
             output.push(
-              'echo " ╭─────────────╮ "',
-              'echo " │ Virtual Box │ "',
-              'echo " ╰─────────────╯ "',
+              'echo " ╭───────────────────╮ "',
+              'echo " │ Set Up VirtualBox │ "',
+              'echo " ╰───────────────────╯ "',
               '# add your user to the VB group (for USB to work)',
               'sudo gpasswd -a $USER vboxusers',
               '# load the VB kernel module (may return an error - view troubleshooting)',
