@@ -52,6 +52,8 @@ echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|g" | yad \
         line=$(echo "${line}" | sed "s|\${PWD}|${PWD}|g")
       elif [[ "${line}" == *'${REPO_PATH}'* ]]; then
         line=$(echo "${line}" | sed "s|\${REPO_PATH}|${REPO_PATH}|g")
+      elif [[ "${line}" == *'~'* ]]; then
+        line=$(echo "${line}" | sed "s|~|${HOME}|g")
       fi
       
       echo "$line" >> "${outputFile}"
