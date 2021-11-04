@@ -951,8 +951,6 @@
             );
           }
           
-          output.push('sudo reboot', '');
-          
           const head = [
             '#!/usr/bin/env bash',
             '',
@@ -970,7 +968,17 @@
             '',
           ];
           
-          return `${head.join('\n')}\n${output.join('\n')}`;
+          const end = [
+            '# remove the repo once the initial setup has completed',
+            'if [ -d "${REPO_PATH}" ]; then',
+            '  rm -rf "${REPO_PATH}"',
+            'fi',
+            '',
+            'shutdown -r now',
+            '',
+          ];
+          
+          return `${head.join('\n')}\n${output.join('\n')}\n${end.join('\n')}`;
         };
         
         let checkNdx = 0;
