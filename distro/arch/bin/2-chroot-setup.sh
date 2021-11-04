@@ -140,7 +140,7 @@ LAUNCHER="${PATH__CONFIG}/autostart/post-install.desktop"
   echo '[Desktop Entry]'
   echo "Exec=(cd '${UPDATED_REPO_PATH}/distro/arch/bin' && ./3-post-install.sh)"
   echo 'Icon=dialog-scripts'
-  echo 'Name="Post Install"'
+  echo 'Name=Post Install'
   echo 'Type=Application'
   echo 'X-KDE-AutostartScript=true'
 ) > "${LAUNCHER}"
