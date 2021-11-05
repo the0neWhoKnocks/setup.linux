@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-# exit when any command fails
-set -e
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'printf "\\n [ERROR] \"${last_command}\" command failed with exit code $?.\\n"' ERR
+trap 'printf "\\n [ERROR] \"${last_command}\" command failed with exit code $?.\\n\\n"; return' ERR
 
 
 PATH__SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
