@@ -987,9 +987,9 @@
           );
           
           output.push(
-            'echo " ╭───────────────────────╮ "',
-            'echo " │ Enter Git Credentials │ "',
-            'echo " ╰───────────────────────╯ "',
+            'echo " ╭────────────────╮ "',
+            'echo " │ Enter Git Info │ "',
+            'echo " ╰────────────────╯ "',
             'read -p "Git User display name: " gitName',
             '[[ "${gitName}" != "" ]] && git config --global user.name "${gitName}"',
             'read -p "Git User email: " gitEmail',
