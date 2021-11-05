@@ -12,9 +12,6 @@ Step 3
 General
 - [ ] Normalize `dist` scripts so they all have `help` and examples
 
-user-script.sh
-- [ ] Don't `cp` scripts to `/usr/local/bin`, `ln` instead so I can maintain the scripts more easily from the repo.
-
 backup.sh
 - flags
   - [ ] `create`
