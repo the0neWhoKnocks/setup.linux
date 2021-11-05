@@ -836,18 +836,6 @@
             }
           }
           
-          if (userScripts.length) {
-            output.push(
-              'echo " ╭──────────────────────╮ "',
-              'echo " │ Install User Scripts │ "',
-              'echo " ╰──────────────────────╯ "',
-            );
-            userScripts.forEach((script) => {
-              output.push(`"\${REPO_BIN}/dist/user-script.sh" --install "\${REPO_BIN}/dist/${script}"`);
-            });
-            output.push('');
-          }
-          
           if (folders.length) {
             output.push(
               'echo " ╭───────────────────────╮ "',
@@ -868,6 +856,7 @@
                   `if [ ! -d "${currFolder}/\${REPO_NAME}" ]; then`,
                   `  cp -R "\${REPO_PATH}" "${currFolder}/"`,
                   '  deleteRepoAfterInstall=true',
+                  `  REPO_BIN="${currFolder}/\${REPO_NAME}"`,
                   'fi',
                   '',
                 );
@@ -875,6 +864,19 @@
                 break;
               }
             }
+          }
+          
+          if (userScripts.length) {
+            output.push(
+              'echo " ╭──────────────────────╮ "',
+              'echo " │ Install User Scripts │ "',
+              'echo " ╰──────────────────────╯ "',
+            );
+            userScripts.forEach((script) => {
+              // if copied over, repoint to that
+              output.push(`"\${REPO_BIN}/dist/user-script.sh" --install "\${REPO_BIN}/dist/${script}"`);
+            });
+            output.push('');
           }
           
           if (hardwareSteps.length) {

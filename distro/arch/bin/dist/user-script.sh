@@ -41,9 +41,9 @@ if [[ "${1}" == '--install' ]]; then
   NAME__SCRIPT="$(stripExt "$(basename "${PATH__SCRIPT}")")"
   PATH__USR_SCRIPT="$(absScriptPath "${NAME__SCRIPT}")"
   
-  # copy source to output
-  sudo cp "${PATH__SCRIPT}" "${PATH__USR_SCRIPT}"
-  # set script permissions
+  # symlink source to a global path for easy access via terminal
+  sudo ln -s "${PATH__SCRIPT}" "${PATH__USR_SCRIPT}"
+  # ensure script permissions
   sudo chmod +x "${PATH__USR_SCRIPT}"
   
   if [[ "${LAUNCHER__NAME}" != '' ]]; then
