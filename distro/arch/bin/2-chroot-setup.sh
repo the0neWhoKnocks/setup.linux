@@ -98,8 +98,7 @@ cp /etc/fstab /etc/fstab.bak
 echo "${SWAP_FILE_PATH} none swap sw 0 0" | tee -a /etc/fstab
 
 # set up Hibernate
-OS_DISK=$(fdisk -l | grep Linux | awk '{ print $1 }')
-SWAP_DEVICE=$(lsblk -dno UUID "${OS_DISK}")
+SWAP_DEVICE=$(findmnt -no UUID -T "${SWAP_FILE_PATH}")
 SWAP_OFFSET=$( \
   # print list
   filefrag -v "${SWAP_FILE_PATH}" | \
