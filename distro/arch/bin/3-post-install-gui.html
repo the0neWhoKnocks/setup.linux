@@ -863,8 +863,11 @@
               const currFolder = folders[i];
               if (currFolder.includes('Code/Scripts')) {
                 output.push(
-                  `if [ -d "${currFolder}/\${REPO_NAME}" ]; then`,
+                  '# copy the repo over to Scripts if it does not already exist',
+                  'deleteRepoAfterInstall=false',
+                  `if [ ! -d "${currFolder}/\${REPO_NAME}" ]; then`,
                   `  cp -R "\${REPO_PATH}" "${currFolder}/"`,
+                  '  deleteRepoAfterInstall=true',
                   'fi',
                   '',
                 );
@@ -1080,7 +1083,7 @@
             '[ -f "${LAUNCHER}" ] && rm -r "${LAUNCHER}"',
             '',
             '# remove the repo once the initial setup has completed',
-            '[ -d "${REPO_PATH}" ] && rm -rf "${REPO_PATH}"',
+            '$deleteRepoAfterInstall && [ -d "${REPO_PATH}" ] && rm -rf "${REPO_PATH}"',
             '',
             'shutdown -r now',
             '',
