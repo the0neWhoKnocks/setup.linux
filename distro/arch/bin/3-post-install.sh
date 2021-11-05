@@ -66,10 +66,6 @@ echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|g" | yad \
   fi
 done
 
-if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
-  rm "${HOME}/.config/autostart/post-install.desktop"
-fi
-
 if [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
   echo;
   echo " Installation script written to: '${PATH__OUTPUT_FILE}'"
@@ -77,5 +73,9 @@ if [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
   echo;
   
   chmod +x "${PATH__OUTPUT_FILE}"
-  "${PATH__OUTPUT_FILE}"
+  konsole -e /bin/bash --rcfile "${PATH__OUTPUT_FILE}"
+fi
+
+if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
+  rm "${HOME}/.config/autostart/post-install.desktop"
 fi
