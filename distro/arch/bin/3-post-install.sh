@@ -66,7 +66,7 @@ echo "${GUI}" | sed "s|_FILENAME_|${PATH__OUTPUT_FILE}|g" | yad \
   fi
 done
 
-if [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
+if [ -f "${PATH__OUTPUT_FILE}" ] && [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
   echo;
   echo " Installation script written to: '${PATH__OUTPUT_FILE}'"
   echo " Starting installation..."
