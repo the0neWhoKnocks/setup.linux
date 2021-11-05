@@ -853,10 +853,10 @@
                 output.push(
                   '# copy the repo over to Scripts if it does not already exist',
                   'deleteRepoAfterInstall=false',
+                  `REPO_BIN="${currFolder}/\${REPO_NAME}/distro/arch/bin"`,
                   `if [ ! -d "${currFolder}/\${REPO_NAME}" ]; then`,
                   `  cp -R "\${REPO_PATH}" "${currFolder}/"`,
                   '  deleteRepoAfterInstall=true',
-                  `  REPO_BIN="${currFolder}/\${REPO_NAME}"`,
                   'fi',
                   '',
                 );
