@@ -4,6 +4,8 @@ SCRIPT_NAME=$(basename "${0}" | sed 's/\.sh$//')
 CONFS_PATH="${HOME}/.config/${SCRIPT_NAME}"
 PATH__USER_APPS="${HOME}/.local/share/application"
 
+mkdir -p "${CONFS_PATH}"
+
 export ICON__APP="drive-multidisk"
 export LAUNCHER_NAME="${SCRIPT_NAME}.desktop"
 export PATH__SCRIPT="${0}"
@@ -107,7 +109,7 @@ export -f rescanNetwork
 
 function openConfigDialog {
   # import config variables
-  source "${FILE__CONF}"
+  [ -f "${FILE__CONF}" ] && source "${FILE__CONF}"
   
   if [ ! -f "${FILE__IP_LIST}" ]; then
     scanNetwork
@@ -272,13 +274,11 @@ function openGUI {
       --field="$(guiBtn 'Mount' 'package-install' 'Mount your shares')" "bash -c mountShares" \
       --field="$(guiBtn 'Un-Mount' 'package-remove' 'Un-mount your shares')" "bash -c unMountShares" \
       --field="$(guiBtn 'Config' 'preferences-system' 'Configure this App')" "bash -c openConfigDialog" \
-      --field="$(guiBtn 'Exit' 'emblem-error' 'Exit App')" "bash -c closeDialog" \
+      --field="$(guiBtn 'Exit' 'emblem-error' 'Exit App')" "bash -c closeDialog"
 }
 export -f openGUI
 
 # ==============================================================================
-
-verifyDepsAreInstalled
 
 configExists=false
 if [ -f "${FILE__CONF}" ]; then
