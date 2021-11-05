@@ -1085,6 +1085,11 @@
             '# remove the repo once the initial setup has completed',
             '$deleteRepoAfterInstall && [ -d "${REPO_PATH}" ] && rm -rf "${REPO_PATH}"',
             '',
+            '# remove the autostart post-installer after setup is complete',
+            'if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then',
+            '  rm "${HOME}/.config/autostart/post-install.desktop"',
+            'fi',
+            '',
             'shutdown -r now',
             '',
           ];
