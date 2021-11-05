@@ -816,6 +816,8 @@
               'echo " │ Install Flatpacks │ "',
               'echo " ╰───────────────────╯ "',
               `sudo flatpak install --assumeyes --noninteractive flathub ${flatPkgs.sort().join(' ')}`,
+              '# the flatpak bin won\'t be added until after a restart',
+              'PATH=$PATH:/var/lib/flatpak/exports/bin',
               '',
             );
             
