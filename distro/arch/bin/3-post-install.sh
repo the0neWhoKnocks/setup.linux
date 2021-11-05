@@ -75,7 +75,3 @@ if [[ "$(cat "${PATH__OUTPUT_FILE}")" != '' ]]; then
   chmod +x "${PATH__OUTPUT_FILE}"
   konsole -e /bin/bash --rcfile "${PATH__OUTPUT_FILE}"
 fi
-
-if [ -f "${HOME}/.config/autostart/post-install.desktop" ]; then
-  rm "${HOME}/.config/autostart/post-install.desktop"
-fi
