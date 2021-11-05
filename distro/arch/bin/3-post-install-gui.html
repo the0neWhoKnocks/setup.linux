@@ -805,7 +805,7 @@
               'echo " ╭──────────────────────╮ "',
               'echo " │ Install AUR Packages │ "',
               'echo " ╰──────────────────────╯ "',
-              `yay -S --answerclean NotInstalled --answerdiff None --noredownload --norebuild --useask --batchinstall ${aurPkgs.sort().join(' ')}`,
+              `yay -S --answerclean NotInstalled --answerdiff None --needed --noconfirm --noprovides --noredownload --norebuild --noremovemake --useask --batchinstall --mflags '--skipchecksums --skippgpcheck --skipinteg' ${aurPkgs.sort().join(' ')}`,
               '',
             );
           }
