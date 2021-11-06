@@ -230,7 +230,7 @@
         align-items: center;
       }
       .combo-box label {
-        min-width: 20%;
+        min-width: 30%;
       }
       .combo-box select {
         width: 100%;
@@ -302,6 +302,7 @@
                 [true, 'lsd', "(LSDeluxe) A rewrite of GNU 'ls' with a lot of added features like colors, icons, tree-view, and more formatting options."],
                 [true, 'mc', '(Midnight Commander) A CLI based file manager.'],
                 [true, 'p7zip', 'A CLI port of 7-Zip for POSIX systems.'],
+                [true, 'qt5-tools', 'Includes qdbus and qdbusviewer to allow for interacting with the dbus.'],
                 [true, 'speedtest-cli', 'CLI util to measure internet connection performance metrics like download, upload, latency and packet loss natively without relying on a web browser.'],
                 [true, 'wget', 'Util to retrieve content from the web.'],
                 [true, 'xclip', 'CLI util that copies text to a User\'s clipboard.'],
@@ -414,6 +415,7 @@
               options: [
                 'Mac OS Big Sur:macOSBigSur;cursor-theme-macos-big-sur',
                 'KDE Classic:KDE_Classic',
+                'Breeze:breeze_cursors',
               ],
             }],
             ['combo-box', {
@@ -426,8 +428,16 @@
               ],
             }],
             ['combo-box', {
-              label: 'Theme',
+              label: 'Theme: Desktop',
               id: 'theme',
+              options: [ // get theme vals from `lookandfeeltool -l`
+                'Breeze (Dark):org.kde.breezedark.desktop',
+                'Breeze (Light):org.kde.breeze.desktop',
+              ],
+            }],
+            ['combo-box', {
+              label: 'Theme: Login Screen',
+              id: 'logintheme',
               options: [
                 'Breeze:breeze',
               ],
@@ -436,10 +446,10 @@
               label: 'Wallpaper',
               id: 'wallpaper',
               options: [
-                'Milky Way',
-                'Shell',
-                'Pastel Hills',
-                'Elarun',
+                'Milky Way:/usr/share/wallpapers/MilkyWay/contents/images/5120x2880.png',
+                'Shell:/usr/share/wallpapers/Shell/contents/images/5120x2880.jpg',
+                'Pastel Hills:/usr/share/wallpapers/PastelHills/contents/images/3200x2000.jpg',
+                'Elarun:/usr/share/wallpapers/Elarun/contents/images/2560x1600.png',
               ],
             }],
           ],
@@ -647,8 +657,10 @@
           const folders = [];
           const hardwareSteps = [];
           const output = [];
-          let theme;
-          let cursorTheme;
+          let theme = '';
+          let loginTheme = '';
+          let cursorTheme = '';
+          let wallpaper = '';
           
           [...fD.values()].forEach((rawVal, ndx) => {
             const [tab, val] = rawVal.split('|');
@@ -679,11 +691,16 @@
                     if (aurs) aurPkgs.push(aurs);
                     break;
                   }
+                  case 'logintheme': {
+                    loginTheme = val;
+                    break;
+                  }
                   case 'theme': {
                     theme = val;
                     break;
                   }
                   case 'wallpaper': {
+                    wallpaper = val;
                     break;
                   }
                 }
@@ -883,36 +900,62 @@
             output.push(...hardwareSteps, '');
           }
           
-          // NOTE: KDE creates a '/etc/sddm.conf.d/kde_settings.conf' but it's
-          // not a simple task to keep it formatted correctly since it can be
-          // updated via the GUI, and KDE can change the formatting. If I update
-          // 'default.conf' I just have to deal with SDDM.
-          const PATH__SDDM_CONF = '/usr/lib/sddm/sddm.conf.d/default.conf';
+          // NOTE: If you customize anything via the GUI, an /etc/sddm.conf.d/kde_settings.conf
+          // file will be generated. The .conf files are loaded alphabetically
+          // so 01-user will apply, then kde.
+          const PATH__SDDM_CONF = '/etc/sddm.conf.d/01-user.conf';
           output.push(
-            `sudo sed -i 's/Numlock=.*/Numlock=on/' ${PATH__SDDM_CONF}`,
+            'echo " ╭────────────────────────╮ "',
+            'echo " │ Customize Login Screen │ "',
+            'echo " ╰────────────────────────╯ "',
+            '(',
+            '  echo [General]',
+            '  echo Numlock=on',
+            '  echo;',
+            '  echo [Theme]',
+            `  echo Current=${loginTheme}`,
+            `  echo CursorTheme=`,
+            `) > "${PATH__SDDM_CONF}"`,
             '',
           );
           
-          if (theme) {
-            output.push(
-              'echo " ╭────────────────────────╮ "',
-              'echo " │ Set Login Screen Theme │ "',
-              'echo " ╰────────────────────────╯ "',
-              `sudo sed -i 's/Current=.*/Current=${theme}/' ${PATH__SDDM_CONF}`,
-              '',
-            );
-          }
+          output.push(
+            'echo " ╭───────────────────╮ "',
+            'echo " │ Set Desktop Theme │ "',
+            'echo " ╰───────────────────╯ "',
+            `lookandfeeltool -a '${theme}'`,
+            '',
+            'echo " ╭───────────────╮ "',
+            'echo " │ Set Wallpaper │ "',
+            'echo " ╰───────────────╯ "',
+            'qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "',
+            '  desktops().forEach((d) => {',
+            "    d.wallpaperPlugin = 'org.kde.image';",
+            "    d.currentConfigGroup = ['Wallpaper', 'org.kde.image', 'General'];",
+            `    d.writeConfig('Image', 'file://${wallpaper}');`,
+            '  });',
+            '"',
+            '',
+          );
           
-          if (cursorTheme) {
-            output.push(
-              'echo " ╭──────────────────╮ "',
-              'echo " │ Set Cursor Theme │ "',
-              'echo " ╰──────────────────╯ "',
-              `sudo sed -i 's/CursorTheme=.*/CursorTheme=${cursorTheme}/' ${PATH__SDDM_CONF}`,
-              `sed -i 's/cursorTheme=.*/cursorTheme=${cursorTheme}/' \${HOME}/.config/kcminputrc`,
-              '',
-            );
-          }
+          const INPUTRC = '${HOME}/.config/kcminputrc';
+          output.push(
+            'echo " ╭──────────────────╮ "',
+            'echo " │ Set Cursor Theme │ "',
+            'echo " ╰──────────────────╯ "',
+            '# cursors for login',
+            `sudo sed -i 's/CursorTheme=.*/CursorTheme=${cursorTheme}/' ${PATH__SDDM_CONF}`,
+            '# cursors for desktop',
+            `if ! grep -q "cursorTheme" "${INPUTRC}"; then`,
+            '  (',
+            "    echo '[Mouse]'",
+            `    echo 'cursorTheme=${cursorTheme}'`,
+            `  ) > '${INPUTRC}'`,
+            'else',
+            `  sed -i 's/cursorTheme=.*/cursorTheme=${cursorTheme}/' '${INPUTRC}'`,
+            'fi',
+            '',
+          );
           
           let rcFile = '${HOME}/.bashrc';
           if (nonStandardItems.length) {
