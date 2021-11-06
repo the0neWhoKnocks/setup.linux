@@ -371,7 +371,7 @@
           items: [
             ['checklist', {
               'Development': [
-                [true, 'atom ; app/io.atom.Atom/x86_64/stable', 'Hackable IDE'],
+                [true, 'atom:app/io.atom.Atom/x86_64/stable', 'Hackable IDE'],
               ],
               'Extras': [
                 [false, 'bottles', 'A GUI to manage Wine and Proton software.'],
@@ -669,11 +669,7 @@
             switch (tabKey) {
               case 'official': officalPkgs.push(val); break;
               case 'aur': aurPkgs.push(val); break;
-              case 'flat': {
-                const [name, pkg] = val.split(' ; ');
-                flatPkgs.push(pkg || name);
-                break;
-              }
+              case 'flat': flatPkgs.push(val); break;
               case 'nonstandard': nonStandardItems.push(val); break;
               case 'scripts': userScripts.push(val); break;
               case 'settings': {
