@@ -13,10 +13,6 @@ General
 - [ ] Normalize `dist` scripts so they all have `help` and examples
 
 backup.sh
-- flags
-  - [ ] `create`
-  - [ ] `restore`
-- [ ] Allow for choosing output location (local or external)
 - Locations
   - Atom
     - ~/.var/app/io.atom.Atom/data (figure out what's needed)
