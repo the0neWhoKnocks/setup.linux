@@ -50,7 +50,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # just display help
-if $displayHelp; then
+if $displayHelp || ! $createBackup && ! $restoreBackup; then
   echo;
   echo " Usage: backup [OPTION]..."
   echo " Archives specified files or paths within a User's Home directory."
@@ -68,6 +68,7 @@ if $displayHelp; then
   echo '   backup --create --files "$(${HOME}/files-list.sh)"'
   echo '   backup --create --output-path "${HOME}/some/other/path" --files ".ssh .zshrc"'
   echo '   backup --create --output-name "some-other-name" --files ".ssh .zshrc"'
+  echo '   backup --restore "${HOME}/backup.tar.bz2"'
   echo;
   
   exit 0
