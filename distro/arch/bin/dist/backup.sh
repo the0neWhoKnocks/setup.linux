@@ -110,7 +110,7 @@ elif $restoreBackup; then
       cd "${HOME}"
       echo "[TAR] Decompress and un-archive files in \"${PWD}\""
       
-      tar --extract --file="${restoreBackupPath}"
+      sudo tar --extract --overwrite --file="${restoreBackupPath}"
       
       # If there are any dconf files, apply them.
       # I'm specifically looking for files at the root of Home, and formatted 
