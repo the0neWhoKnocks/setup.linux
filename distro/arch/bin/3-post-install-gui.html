@@ -737,9 +737,21 @@
             }
           });
           
+          const postOfficialInstall = [];
           if (officalPkgs.length) {
             officalPkgs.forEach((pkg) => {
               switch (pkg) {
+                case 'docker': {
+                  postOfficialInstall.push(
+                    '',
+                    '# set up Docker',
+                    'sudo systemctl start docker.service',
+                    'sudo systemctl enable docker.service',
+                    'sudo usermod -aG docker $USER',
+                    '',
+                  );
+                  break;
+                }
                 case 'virtualbox': {
                   officalPkgs.push(
                     'linux-headers', // required for the VB kernel to be built properly
@@ -769,6 +781,7 @@
               'sudo pacman -Syu',
               '# install packages',
               `sudo pacman -S --noconfirm --needed ${officalPkgs.sort().join(' ')}`,
+              postOfficialInstall.join('\n'),
               '',
               '# reboot check',
               "latestVersion=$(pacman -Q linux | sed 's/linux //' | sed 's/\\.arch.*//')",
