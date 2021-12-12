@@ -9,6 +9,14 @@ function error {
   echo;
 }
 
+function outputToCurrentLine {
+  cut -b1-$(tput cols) | sed -u 'i\\o033[2K' | stdbuf -o0 tr '\n' '\r'; echo
+}
+
+function replaceLastLineWith {
+  echo -e '\e[1A\e[K'"$1"
+}
+
 createBackup=false
 displayHelp=false
 restoreBackup=false
@@ -88,16 +96,19 @@ if $createBackup; then
       cd "${HOME}"
       echo "[TAR] Archive and compress files in \"${PWD}\""
       
-      tar \
+      echo "${files}" | tar \
         --preserve-permissions \
         --bzip2 \
+        --verbose \
         --create --file="${BACKUP_FILE}" \
-        $(echo $files)
+        --files-from - | outputToCurrentLine
       
       # if [ $? -ne 0 ]; then
       #   # tar creates an empty file even when it fails
       #   rm "${BACKUP_FILE}"
       # fi
+      
+      replaceLastLineWith '[DONE]'
     )
   else
     error "No 'files' provided."
@@ -110,7 +121,11 @@ elif $restoreBackup; then
       cd "${HOME}"
       echo "[TAR] Decompress and un-archive files in \"${PWD}\""
       
-      sudo tar --extract --overwrite --file="${restoreBackupPath}"
+      sudo tar \
+        --extract \
+        --overwrite \
+        --verbose \
+        --file="${restoreBackupPath}" | outputToCurrentLine
       
       # If there are any dconf files, apply them.
       # I'm specifically looking for files at the root of Home, and formatted 
@@ -120,6 +135,8 @@ elif $restoreBackup; then
         parsed=$(echo "$dconf" | sed 's|_|/|g' | sed 's|./|/|' | sed 's|.dconf|/|')
         dconf load "${parsed}" < "${dconf}"
       done
+      
+      replaceLastLineWith '[DONE]'
     )
   else
     error "No backup file path provided."
