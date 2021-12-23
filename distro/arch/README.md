@@ -3,6 +3,8 @@
 - [Start](#start)
 - [Wireless](#wireless)
 - [Install](#install)
+- [Troubleshooting](#troubleshooting)
+  - [Font characters showing up as squares](#font-characters-showing-up-as-squares)
 
 ---
 
@@ -62,3 +64,18 @@ cd setup.linux/distro/arch/bin
 ## Development
 
 To more quickly test layout and functionality of the GUI you can just load up `file://<REPO_PATH>/distro/arch/bin/3-post-install-gui.html` in a Browser and set the responsive layout (in DevTools) to `890 x 600` (or whatever the dimensions are in `3-post-install-gui.sh`).
+
+---
+
+## Troubleshooting
+
+### Font characters showing up as squares
+
+I noticed while browsing some websites that some characters weren't displaying correctly, which is usually due to missing fonts. In order to determine what characters are trying to display, you can:
+- Copy the text/character.
+- Go to https://www.fontspace.com/unicode/analyzer, and paste the copied content.
+  - The `Name` and `Script` columns display key font info. In my case I used `CJK UNIFIED IDEOGRAPH` from the `Name` column, and I new I was missing `Hans` from the `Script` column.
+- With the info I got from the previous search, I did a Web search for `arch linux font CJK Unified Ideographs`. Note that if you search for stuff in all caps you may not get a good result. The search I listed pointed out the exact font I needed, but this search `arch linux font CJK UNIFIED IDEOGRAPH` didn't give me much.
+- The above search yielded `noto-fonts-cjk`.
+  - You may have to refresh package mirrors `pacman -Syyu`, you don't have to install the updates it lists out, just let it run and select `n` when prompted to install.
+- Install with `sudo pacman -S --needed noto-fonts-cjk && fc-cache -vf` 
