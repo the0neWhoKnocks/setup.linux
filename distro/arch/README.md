@@ -5,7 +5,9 @@
 - [Install](#install)
 - [Troubleshooting](#troubleshooting)
   - [Font characters showing up as squares](#font-characters-showing-up-as-squares)
-
+  - [Font size / window scale](#font-size---window-scale)
+  - [Disable Chrome auto-updates](#disable-chrome-auto-updates)
+  
 ---
 
 ## Start
@@ -79,3 +81,24 @@ I noticed while browsing some websites that some characters weren't displaying c
 - The above search yielded `noto-fonts-cjk`.
   - You may have to refresh package mirrors `pacman -Syyu`, you don't have to install the updates it lists out, just let it run and select `n` when prompted to install.
 - Install with `sudo pacman -S --needed noto-fonts-cjk && fc-cache -vf` 
+
+### Font size / window scale
+
+- KRunner > `display` > (select `Display Configuration`) > Set `Global Scale` to `125%` (will require a restart)
+- KRunner > `font` > (select `Fonts`) > (uncheck) `Force font DPI`. I've done this a couple times, but it keeps getting re-checked. The value is `120` which seems to be ok for now.
+
+### Disable Chrome auto-updates
+
+Normally I'm fine with the updates, but on Linux Chrome is installed via AUR which would require updating packages and building so I'm not entirely sure if it'd bork my profile. Also, there are issues with the newest AUR that has video performance and window resizing issues.
+
+- The Desktop Entry is in `/usr/share/applications/google-chrome.desktop`
+- I just copied that to my Desktop and trimmed out all the stuff in there that I didn't need.
+- The main thing that needs updating in your copy is:
+  ```diff
+  -Exec=/usr/bin/google-chrome-stable %U
+  +Exec=/usr/bin/google-chrome-stable --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT' %U
+  ```
+- If you're running a dock, re-point your launcher to the new one on your Desktop. It may cache Desktop Entries (in my case Cairo did), so you'll have to restart your dock to see it take effect. 
+- You'll have to update your Default Applications as well
+  - KRunner > `default` > (select `Default Applications`)
+    - For `Web browser`, click the drop-down and choose `Other`. Instead of selecting a file from the list, you just have to paste `/usr/bin/google-chrome-stable --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'` into the input above the file list.
