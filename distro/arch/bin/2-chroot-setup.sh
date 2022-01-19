@@ -65,10 +65,11 @@ echo "${NON_ROOT__USERNAME} ALL = NOPASSWD: ALL" | (EDITOR='tee -a' visudo)
 
 # add base packages
 pacman -S --noconfirm --needed \
+  archlinux-keyring `# fix 'unknown trust' errors while upgrading Arch` \
   xorg `# Install display server` \
   networkmanager nmap `# Install network tools` \
   dolphin `# file browser` \
-  konsole `# terminal` \
+  konsole `# default terminal required by KDE` \
   plasma `# Desktop theme` \
   sddm `# display manager (login screen)` \
   sddm-kcm `# KDE integration for sddm` \
