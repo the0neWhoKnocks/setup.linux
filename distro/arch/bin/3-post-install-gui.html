@@ -299,6 +299,7 @@
                 [true, 'filelight', 'App to visualize the disk usage on your computer.'],
                 [true, 'fzf', 'CLI fuzzy finder.'],
                 [true, 'gtk3-demos', "Brings in 'gtk3-icon-browser' which allows to easily search for icons."],
+                [true, 'krename', "Tool to batch rename files."],
                 [true, 'lsd', "(LSDeluxe) A rewrite of GNU 'ls' with a lot of added features like colors, icons, tree-view, and more formatting options."],
                 [true, 'mc', '(Midnight Commander) A CLI based file manager.'],
                 [true, 'p7zip', 'A CLI port of 7-Zip for POSIX systems.'],
@@ -334,6 +335,10 @@
             ['checklist', {
               'Browsers': [
                 [true, 'google-chrome', "Google's Chrome Browser"],
+              ],
+              'File Manager': [
+                [false, 'nautilus', 'Basic file manager'],
+                [false, 'Thunar:gvfs thunar-extended thunar-volman', 'Simple manager with customizable options'],
               ],
               'Music file manipulation': [
                 [true, 'puddletag', 'Configurable tag editor for music files'],
@@ -491,7 +496,8 @@
               'GPU:gpu': [
                 [true, 'None (Integrated):'],
                 [false, 'AMD:xf86-video-amdgpu'],
-                [false, 'Nvidia:nvidia nvidia-settings'],
+                [false, 'Nvidia:nvidia lib32-nvidia-utils'],
+                [false, 'Nvidia 470xx:nvidia-470xx-dkms lib32-nvidia-470xx-utils'],
               ],
             }],
           ],
@@ -721,7 +727,7 @@
                         'sudo bash -c "echo blacklist nouveau > /etc/modprobe.d/blacklist-nvidia-nouveau.conf"',
                         '',
                         '# Add GPU config for XOrg Server',
-                        'sudo cp "\${PWD}/../confs/20-nvidia.conf" "/etc/X11/xorg.conf.d/"',
+                        'sudo Xorg :0 -configure && sudo mv /root/xorg.conf.new /etc/X11/xorg.conf.d/xorg.conf',
                         '',
                         '# Load driver on boot',
                         'sudo sed -i "/^MODULES=(/s/)$/ nvidia nvidia_modeset nvidia_uvm nvidia_drm)/" /etc/mkinitcpio.conf',
