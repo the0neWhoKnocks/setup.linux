@@ -42,7 +42,7 @@ echo "${USER} ALL = NOPASSWD: ALL" | (sudo EDITOR='tee -a' visudo)
 Set up the script by adding an alias to your `*.rc` file
 ```sh
 alias bup="<PATH_TO_REPO>/distro/mint/bin/dist/backup.sh"
-alias createbup='bup -c -f "<PATH_TO_REPO>/distro/mint/bin/dist/backup-list.sh"'
+alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint/bin/dist/backup-list.sh)"'
 ```
 Backups will be output to the Desktop unless otherwise specified.
 
