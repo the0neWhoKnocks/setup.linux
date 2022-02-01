@@ -20,12 +20,16 @@
     .cinnamon
     .local/share/cinnamon
     org_cinnamon.dconf
+    # Blender
+    $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
+    # Dock
+    .config/cairo-dock
     # Fonts
     .fonts
     # Flameshot
     .config/flameshot/flameshot.ini
     # Gimp
-    .config/GIMP/2.10
+    $(find .config/GIMP -maxdepth 1 -mindepth 1 -type d -printf "\"%p\"\n")
     # Handbrake
     .config/ghb/preferences.json
     .config/ghb/presets.json
@@ -41,10 +45,12 @@
     # Krita
     .config/kritarc
     .local/share/krita
+    # Launcher
+    .config/ulauncher
     # LSD
     .config/lsd/config.yaml
     # Nemo
-    .config/gtk-3.0/bookmarks
+    $(find .config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
     .config/nemo
     .local/share/nemo
     # Notepadqq
@@ -66,6 +72,7 @@
     .history
     .oh-my-zsh
     .ssh
+    .vimrc
     .xprofile
     .zshrc
     $(find Pictures/avatars -maxdepth 1 -type f -printf "\"%p\"\n")
