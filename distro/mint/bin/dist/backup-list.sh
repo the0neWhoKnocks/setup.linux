@@ -24,10 +24,10 @@
     $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
     # Dock
     .config/cairo-dock
-    # Fonts
-    .fonts
-    # Flameshot
-    .config/flameshot/flameshot.ini
+    # # Fonts
+    # .fonts
+    # # Flameshot
+    # .config/flameshot/flameshot.ini
     # Gimp
     $(find .config/GIMP -maxdepth 1 -mindepth 1 -type d -printf "\"%p\"\n")
     # Handbrake
@@ -59,9 +59,6 @@
     .config/obs-studio
     # Passwords
     .local/share/keyrings
-    # Steam
-    .steam/steam/config
-    .steam/steam/userdata
     # Terminal
     com_gexperts_Tilix.dconf
     # VLC
@@ -73,7 +70,7 @@
     .oh-my-zsh
     .ssh
     .vimrc
-    .xprofile
+    # .xprofile
     .zshrc
     $(find Pictures/avatars -maxdepth 1 -type f -printf "\"%p\"\n")
     $(find Pictures/wallpapers -maxdepth 1 -type f -printf "\"%p\"\n")
