@@ -15,6 +15,28 @@ Once the install is done
 
 ---
 
+## Don't Require Password for Sudo
+
+```sh
+echo "${USER} ALL = NOPASSWD: ALL" | (sudo EDITOR='tee -a' visudo)
+```
+
+---
+
+## Set Up Shares
+
+```sh
+(
+  cd ./bin/dist
+  ./user-script.sh --install "${PWD}/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
+)
+```
+- Run the new Launcher that was added to the Desktop
+  - Configure the settings for the share.
+    - The mounted folder needs to be in `/media`, or it won't be automatically detected.
+
+---
+
 ## Backup/Restore Data
 
 Set up the script by adding an alias to your `*.rc` file
