@@ -62,6 +62,8 @@
     .local/share/keyrings
     # Shares
     .config/lan-shares
+    # Sticky Notes
+    .config/sticky
     # Terminal
     com_gexperts_Tilix.dconf
     # VLC
