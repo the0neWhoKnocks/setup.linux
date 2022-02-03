@@ -3,11 +3,12 @@
 (
   cd "${HOME}"
 
-  # NOTE: got some of the paths from: https://github.com/Prayag2/konsave/blob/master/konsave/conf_kde.yaml
-
+  # Create a list of all the installed packages
+  dpkg -l > pkgs.list
+  
   # Cinnamon GUI settings (panels, etc.)
   dconf dump "/org/cinnamon/" > ~/org_cinnamon.dconf
-  # terminal settings
+  # Terminal settings
   dconf dump "/com/gexperts/Tilix/" > ~/com_gexperts_Tilix.dconf
 
   list=(
@@ -74,6 +75,7 @@
     .zshrc
     $(find Pictures/avatars -maxdepth 1 -type f -printf "\"%p\"\n")
     $(find Pictures/wallpapers -maxdepth 1 -type f -printf "\"%p\"\n")
+    pkgs.list
   )
   
   # ensure items are surrounded in quotes for paths with spaces
