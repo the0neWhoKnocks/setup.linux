@@ -60,6 +60,8 @@
     .config/obs-studio
     # Passwords
     .local/share/keyrings
+    # Shares
+    .config/lan-shares
     # Terminal
     com_gexperts_Tilix.dconf
     # VLC

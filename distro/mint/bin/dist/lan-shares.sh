@@ -20,6 +20,7 @@ export PATH__USR_SCRIPT="/usr/local/bin/${SCRIPT_NAME}"
 export FILE__CONF="${CONFS_PATH}/mount.conf"
 export FILE__IP_LIST="${CONFS_PATH}/ips.conf"
 export FILE__LAUNCHER="${PATH__USER_APPS}/${LAUNCHER_NAME}"
+export DEFAULT__DOMAIN='WORKGROUP'
 export DEFAULT__MOUNT_DIR='/media'
 export EXIT_CODE__CANCELED=1
 export EXIT_CODE__ESC=252
@@ -141,6 +142,7 @@ function openConfigDialog {
         --field="Username" "${SHARE__USER:-}" \
         --field="Password" "${SHARE__PASS:-}" \
         --field="Server IP":CBE "${ipOpts}" \
+        --field="Domain" "${SHARE__DOMAIN:-$DEFAULT__DOMAIN}" \
         --field="Mount Directory":DIR "${SHARE__MOUNT_DIR:-$DEFAULT__MOUNT_DIR}" \
         --field="Share Name" "${SHARE__SHARE_NAME:-}" \
       --button="Exit:${EXIT_CODE__CANCELED}" \
@@ -164,8 +166,9 @@ function openConfigDialog {
   SHARE__USER="${formData[0]}"
   SHARE__PASS="${formData[1]}"
   SHARE__SERVER_IP="${formData[2]}"
-  SHARE__MOUNT_DIR="${formData[3]}"
-  SHARE__SHARE_NAME="${formData[4]}"
+  SHARE__DOMAIN="${formData[3]}"
+  SHARE__MOUNT_DIR="${formData[4]}"
+  SHARE__SHARE_NAME="${formData[5]}"
   
   # proceed only if the user hasn't canceled
   if [[ "$?" == "${EXIT_CODE__SUCCESS}" ]]; then
@@ -184,6 +187,7 @@ function verifyConfigData {
     [[ "${SHARE__USER}" == '' ]] || \
     [[ "${SHARE__PASS}" == '' ]] || \
     [[ "${SHARE__SERVER_IP}" == '' ]] || \
+    [[ "${SHARE__DOMAIN}" == '' ]] || \
     [[ "${SHARE__MOUNT_DIR}" == '' ]] || \
     [[ "${SHARE__SHARE_NAME}" == '' ]]
   then
@@ -209,6 +213,7 @@ function saveConfigData {
     echo "SHARE__PASS=\"${SHARE__PASS}\""
     echo "SHARE__LOCAL_UID=\"${UID}\""
     echo "SHARE__SERVER_IP=\"${SHARE__SERVER_IP}\""
+    echo "SHARE__DOMAIN=\"${SHARE__DOMAIN}\""
     echo "SHARE__MOUNT_DIR=\"${SHARE__MOUNT_DIR}\""
     echo "SHARE__SHARE_NAME=\"${SHARE__SHARE_NAME}\""
   } > "${FILE__CONF}"
@@ -243,7 +248,7 @@ function mountShares {
     notify "${ICON__APP}" "Network Shares Already Mounted"
   else
     # NOTE: Add `-v` flag to get verbose mount output in case something goes wrong
-    sudo mount -t cifs -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}" "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" "${SHARE__MOUNT_DIR}"
+    sudo mount -t cifs -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",domain="${SHARE__DOMAIN}" "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" "${SHARE__MOUNT_DIR}"
     
     if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
       notify "${ICON__APP}" "Network Shares Mounted"
