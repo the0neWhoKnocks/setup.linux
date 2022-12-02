@@ -127,14 +127,8 @@ elif $restoreBackup; then
         --verbose \
         --file="${restoreBackupPath}" | outputToCurrentLine
       
-      # If there are any dconf files, apply them.
-      # I'm specifically looking for files at the root of Home, and formatted 
-      # with underscores and hopefully named by the export/load path.
-      # Example: `~/com_gexperts_Tilix.dconf` would go to `/com/gexperts/Tilix/`
-      find . -maxdepth 1 -name '*_*.dconf' | while read dconf; do
-        parsed=$(echo "$dconf" | sed 's|_|/|g' | sed 's|./|/|' | sed 's|.dconf|/|')
-        dconf load "${parsed}" < "${dconf}"
-      done
+      dconf load / < ./settings-backup.dconf
+      # `dconf reset -f /` will reset all to default
       
       replaceLastLineWith '[DONE]'
     )
