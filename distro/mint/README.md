@@ -1,17 +1,21 @@
 # Mint
 ---
 
-## Set Up ZSH
+## Initial Boot
 
-Install oh-my-zsh, plugins, and my custom theme
+System Reports may prompt to install things like GPU drivers and language packs. If it doesn't, launch the Driver Manager, see if there's a "recommended" one like `nvidia-driver-515`.
+
+Open **Software Sources** &gt; Official Repositories &gt; Optional Sources
+- Enable **Source code repositories**
+- 
+
+---
+
+## Create Common Directories
+
 ```sh
-./bin/set-up-zsh.sh
+mkdir -v -p ~/{.ssh,Downloads/{archives,debs},Projects/{3D,Code/{Apps,Games,Gists,Scripts},Img,Vid},Software} && chmod 700 ~/.ssh
 ```
-
-Once the install is done
-
-- Update your terminal's font to use the newly installed Fantasque
-- Update the color scheme to the one in `~/.oh-my-zsh/custom/themes/zsh-theme-boom/colors.sh`. Normally just sourcing that file should work, but some terminals will override with their own colors.
 
 ---
 
@@ -20,6 +24,127 @@ Once the install is done
 ```sh
 echo "${USER} ALL = NOPASSWD: ALL" | (sudo EDITOR='tee -a' visudo)
 ```
+
+---
+
+## Install Base Software
+
+```sh
+sudo apt update && sudo apt install -y apt-transport-https git tilix vim
+```
+
+<details>
+  <summary>Expand for Software Details</summary>
+  
+  | Package | Description |
+  | ------- | ----------- |
+  | [apt-transport-https](https://manpages.ubuntu.com/manpages/bionic/man1/apt-transport-https.1.html) | Allows the use of repositories accessed via the HTTP Secure protocol (HTTPS), also referred to as HTTP over TLS |
+  | [git](https://git-scm.com/about) | Version control |
+  | [tilix](https://github.com/gnunn1/tilix) | A tiling terminal emulator for Linux using GTK+ 3 |
+  | [vim](https://www.vim.org/) | Configurable text editor for CLI |
+</details>
+
+<details>
+  <summary>Expand for Git Settings</summary>
+  
+  ```sh
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+  ```
+<details>
+
+<details>
+  <summary>Expand for Tilix Settings</summary>
+  
+  Open **Preferred Applications** and change Terminal to `Tilix`.
+  
+  To fix the warning you get when you open Preferences:
+     - In your `.bashrc` or `.zshrc` file add
+        ```sh
+        if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+          source /etc/profile.d/vte.sh
+        fi
+        ```
+     - If `/etc/profile.d/vte.sh` doesn't exist run:
+        ```sh
+        sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
+        ```
+  
+  Open Tilix **Preferences**
+  
+  ```
+  [ Global ]
+  
+    (check) Save and restore window state
+    (check) Automatically copy text to clipboard when selecting
+
+  [ Appearance ]
+
+    Theme variant: Dark
+
+  [ Shortcuts ]
+
+    [ Terminal ]
+      
+      Paste: Ctrl+V
+
+  [ Profiles > Default ]
+
+    [ Color ]
+
+      (uncheck) Use theme colors for foreground/background
+      Unfocused dim: 50%
+  ```
+<details>
+
+<details>
+  <summary>Expand for Vim Settings</summary>
+  
+  https://gist.github.com/the0neWhoKnocks/ece1903a179aeb16619768ba44570abe#vimrc
+<details>
+
+---
+
+## Clone This Repo
+
+```sh
+ssh-keygen -t ed25519 -C "<IDENTIFYING_COMMENT>" -f ~/.ssh/github
+cat ~/.ssh/github.pub
+```
+Add new key to https://github.com/settings/keys
+
+```sh
+cd ~/Projects/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint
+```
+
+---
+
+## Set Up ZSH
+
+Install oh-my-zsh, plugins, and my custom theme
+```sh
+./bin/set-up-zsh.sh
+```
+
+<details>
+  <summary>Expand for Tilix Settings</summary>
+  
+  Print out colors to be manually added: `cat ~/.oh-my-zsh/custom/themes/zsh-theme-boom/colors.sh`
+  
+  Open Tilix **Preferences**
+  
+  ```
+  [ Profiles > Default ]
+  
+    [ General ]
+
+      (check) Custom font: FantasqueSansMono NF Regular 16
+
+    [ Color ]
+
+      (updated colors to match my zsh theme)
+  ```
+<details>
 
 ---
 
@@ -37,27 +162,30 @@ echo "${USER} ALL = NOPASSWD: ALL" | (sudo EDITOR='tee -a' visudo)
 
 ---
 
-## Create Common Directories
-
-```sh
-mkdir -v -p ~/{Projects/{3D,Code/{Apps,Games,Gists,Scripts},Img,Vid}}
-```
-
----
-
 ## Install Software
 
 ### Via Software Manager (or apt install)
 
 ```sh
-apt install aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium flameshot git grub-customizer handbrake inkscape kid3-qt meld mkvtoolnix-gui okular peek plasma-sdk sddm sddm-theme-breeze soundconverter tilix ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo add-apt-repository ppa:alex-p/aegisub
+sudo add-apt-repository ppa:danielrichter2007/grub-customizer
+sudo add-apt-repository ppa:kdenlive/kdenlive-stable
+sudo apt update
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium flameshot grub-customizer handbrake inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular peek plasma-sdk sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 
 # optional
-apt install figlet lolcat obs-studio
+sudo apt install -y figlet obs-studio
 ```
 
 <details>
-  <summary>Expand for Details</summary>
+  <summary>Expand for Software Details</summary>
+  
+  PPA's can be found a couple of ways:
+  1. https://launchpad.net/ubuntu/+ppas
+  1. Or go to https://launchpad.net/PACKAGE_NAME, like https://launchpad.net/grub-customizer.
+     - Click on the Maintainer's link
+     - See if there's a **Personal package archives** section. If there is look for your package and click on the link.
+     - I then look through the dates for the **Overview of published packages** section, to see if it's an up-to-date package and being maintained.
   
   | Package | Description |
   | ------- | ----------- |
@@ -66,11 +194,12 @@ apt install figlet lolcat obs-studio
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
-  | [git](https://git-scm.com/about) | Version control |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
+  | [kdenlive](https://kdenlive.org/en/features/) | Kdenlive | Video editor |
   | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
+  | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
@@ -79,7 +208,6 @@ apt install figlet lolcat obs-studio
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
-  | [tilix](https://github.com/gnunn1/tilix) | A tiling terminal emulator for Linux using GTK+ 3 |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
@@ -89,34 +217,18 @@ apt install figlet lolcat obs-studio
   | Package | Description |
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
-  | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
 </details>
 
 
 ### Via Flatpak
 
-TBD, may switch to `gimp gimp-plugin-registry`
-
 ```sh
-flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer org.kde.kdenlive
-
-# PhotoGIMP
-(
-  mv ~/.config/GIMP/2.10 ~/.config/GIMP/2.10.bak
-  wget "https://github.com/Diolinux/PhotoGIMP/releases/download/1.1/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak.zip" -O ~/.config/GIMP/temp.zip
-  unzip ~/.config/GIMP/temp.zip -d ~/.config/GIMP/temp/
-  cd ~/.config/GIMP/temp/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak
-  rsync -r ./.local/share/applications/ ~/.local/share/applications/
-  rsync -r ./.local/share/icons/hicolor ~/.local/share/icons/hicolor/
-  rsync -r ./.var/app/org.gimp.GIMP/config/GIMP/2.10 ~/.config/GIMP/
-  cd ../..
-  rm -rf ./temp ./temp.zip
-)
+flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
-  <summary>Expand for Details</summary>
+  <summary>Expand for Software Details</summary>
   
   List what's currently installed `flatpak list`.
   
@@ -128,13 +240,28 @@ flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Pl
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
-  | [org.kde.kdenlive](https://kdenlive.org/en/features/) | Kdenlive | Video editor |
+</details>
+
+<details>
+  <summary>Expand for GIMP Settings</summary>
   
   | Software | Description |
   | -------- | ----------- |
   | [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) | Makes GIMP look like Photoshop |
   
-  https://www.gimp-forum.net/Thread-Resynthesizer-for-2-10-24-how-to-add-plugin?pid=22856#pid22856
+  
+  ```sh
+  (
+    mv ~/.config/GIMP/2.10 ~/.config/GIMP/2.10.bak
+    wget "https://github.com/Diolinux/PhotoGIMP/releases/download/1.1/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak.zip" -O ~/Downloads/archives/PhotoGIMP_v2020.1.zip
+    unzip ~/Downloads/archives/PhotoGIMP_v2020.1.zip -d ~/Downloads/archives/
+    cd ~/Downloads/archives/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak
+    rsync -r ./.local/share/applications/ ~/.local/share/applications/
+    rsync --mkpath -r ./.local/share/icons/hicolor/ ~/.local/share/icons/hicolor/
+    rsync -r ./.var/app/org.gimp.GIMP/config/GIMP/2.10 ~/.config/GIMP/
+    cd ../ && rm -rf PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak
+  )
+  ```
 </details>
 
 
@@ -142,8 +269,7 @@ flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Pl
 
 ```sh
 (
-  DEBS_DIR="~/Downloads/deb"
-  mkdir -p "${DEBS_DIR}"
+  DEBS_DIR=~/Downloads/debs
   urls=(
     'https://github.com/atom/atom/releases/download/v1.63.1/atom-amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
@@ -158,7 +284,8 @@ flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Pl
     wget "${url}" -P "${DEBS_DIR}/"
   done
   
-  sudo dpkg -i "${DEBS_DIR}/*.deb"
+  sudo dpkg -i "${DEBS_DIR}/"*.deb
+  sudo apt install -f
 )
 
 # optional URLs
@@ -166,7 +293,7 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 ```
 
 <details>
-  <summary>Expand for Details</summary>
+  <summary>Expand for Software Details</summary>
   
   | Software | Description |
   | -------- | ----------- |
@@ -184,26 +311,50 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
 </details>
 
+<details>
+  <summary>Expand for Software Tweaks</summary>
+  
+  Was getting a `FATAL:gpu_data_manager_impl_private.cc` error when opening Atom. When run with the `--in-process-gpu` flag it works from the CLI.
+  https://github.com/atom/atom/issues/23608
+  ```sh
+  sudo mv /bin/atom /bin/atdumb
+  sudo vim /bin/atom
+  
+  #!/bin/bash
+  /bin/atdumb --in-process-gpu "$@"
+  
+  sudo chmod +x /bin/atom
+  ```
+</details>
+
 
 ### Via Archives
 
 ```sh
 (
-  mkdir -p ~/{Downloads/archives,Software}
-  ARCH_DIR="~/Downloads/archives"
+  ARCH_DIR=~/Downloads/archives
   urls=(
     'https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
   )
   for url in "${urls[@]}"; do
-    wget "${url}" -P "${ARCH_DIR}/"
+    wget --no-clobber "${url}" -P "${ARCH_DIR}/"
+    file="$(basename "${url}")"
+    version="$(basename $(dirname "${url}"))"
+    pkg="$(echo "${file}" | awk -F '[-_]' -v name=1 '{print $name}')"
+    outputPath="${HOME}/Software/${pkg}/${version}/"
+    mkdir -p "${outputPath}"
+    
+    if [[ "${file}" == *.zip ]]; then
+      unzip "${ARCH_DIR}/${file}" -d "${outputPath}"
+    else
+      tar --strip 1 --extract --file "${ARCH_DIR}/${file}" --directory="${outputPath}"
+    fi
   done
-  
-  # TODO: extract archives to Software/<NAME>/<VERSION>
 )
 
 # optional
-https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz/
+https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz
 https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ```
 
@@ -221,6 +372,21 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   | [godot](https://godotengine.org/) | Game engine |
 </details>
 
+<details>
+  <summary>Expand for Tweaks</summary>
+  
+  ```sh
+  # have to run the install script for btop from within the directory
+  cd ~/Software/btop/v1.2.13/
+  ./install.sh
+  ```
+  
+  ```sh
+  # 
+  chmod +x ~/Software/jmkvpropedit/v1.5.2/JMkvpropedit.jar
+  ```
+</details>
+
 
 ### Via CLI
 
@@ -228,24 +394,36 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ##########
 # docker #
 ##########
+sudo apt install ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
-sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-sudo apt update
-apt-cache policy docker-ce
-sudo apt install docker-ce
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo usermod -aG docker $USER
 # verify install
 systemctl is-enabled docker
 systemctl status docker
+sudo docker run hello-world
 
-##################
-# docker-compose #
-##################
-curl -s https://api.github.com/repos/docker/compose/releases/latest | grep browser_download_url  | grep docker-compose-linux-x86_64 | cut -d '"' -f 4 | wget -qi -
-chmod +x docker-compose-linux-x86_64
-sudo mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose
+######################
+# 'n' NodeJS manager #
+######################
+curl -L https://bit.ly/n-install | bash
+# The script will add an `export` line to your .bashrc. If you use another shell, copy that line to your *rc file and source your shell. 
+n ls-remote # list available versions to download
+n install 16
+# Theck version
+node -v
+
+########
+# qemu #
+########
+sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
+# you'll have to log out/in for it to work with your current user, but you can test with
+sudo virt-manager
+
+# Optional #####################################################################
 
 ##########
 # lutris #
@@ -253,32 +431,37 @@ sudo mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose
 sudo add-apt-repository ppa:lutris-team/lutris
 sudo apt update
 sudo apt install lutris
-
-######################
-# 'n' NodeJS manager #
-######################
-# https://github.com/tj/n#third-party-installers
-curl -L https://git.io/n-install | bash
-n ls-remote # list available versions to download
-n install 16
-
-########
-# qemu #
-########
-sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
-sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
 ```
 
 <details>
-  <summary>Expand for Details</summary>
+  <summary>Expand for Software Details</summary>
   
   | Software | Description |
   | -------- | ----------- |
   | [docker](https://www.docker.com/why-docker/) | Containerize environments |
   | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
-  | [lutris](https://lutris.net/) | Allows for playing games on Linux. Use to install [Origin](https://lutris.net/games/origin/) |
-  | [n](https://github.com/tj/n) | NodeJS version management |
+  | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
   | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
+  
+  | Software | Description |
+  | -------- | ----------- |
+  | [lutris](https://lutris.net/) | Allows for playing games on Linux. Use to install [Origin](https://lutris.net/games/origin/) |
+</details>
+
+<details>
+  <summary>Expand for Docker Notes</summary>
+  
+  The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I found an alternative with
+  ```sh
+  cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||"
+  ```
+  I verified it was the correct name by going to https://download.docker.com/linux/ubuntu/dists/ to see the available names, and checking the Ubuntu releases https://wiki.ubuntu.com/Releases.
+  
+  [Docker Desktop](https://docs.docker.com/desktop/install/ubuntu/) now exists for Linux, but I've had issues with it:
+  - Not being up-to-date
+  - Trying to sell me something
+  
+  `docker-compose` has [been replaced](https://docs.docker.com/compose/compose-v2/) with `docker compose`. The new [compose spec](https://github.com/compose-spec/compose-spec/blob/master/spec.md) is more universal but it also deprecates some fields.
 </details>
 
 ---
