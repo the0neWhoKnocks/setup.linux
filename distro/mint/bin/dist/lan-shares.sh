@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-if ! command -v nmap &> /dev/null; then
+if ! command -v nmap || ! command -v yad &> /dev/null; then
   echo " ╭──────────────────────────────────╮ "
   echo " │ Install missing dependency: nmap │ "
   echo " ╰──────────────────────────────────╯ "
-  sudo apt install nmap
+  sudo apt install appmenu-gtk3-module nmap yad
 fi
 
 SCRIPT_NAME=$(basename "${0}" | sed 's/\.sh$//')
