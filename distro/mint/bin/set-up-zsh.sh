@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+if ! command -v zsh &> /dev/null; then
+  echo " ╭─────────────╮ "
+  echo " │ Install ZSH │ "
+  echo " ╰─────────────╯ "
+  
+  sudo apt install zsh
+fi
+
 echo " ╭───────────────────╮ "
 echo " │ Install Oh-My-ZSH │ "
 echo " ╰───────────────────╯ "
@@ -44,5 +52,5 @@ sudo cp "${PATH__ZSH_THEME}/fonts/Fantasque Sans Mono Regular Nerd Font Complete
 # update font cache.
 sudo fc-cache -fv
 
-# change shell
-sudo chsh -s $(which zsh) && zsh
+# change shell (was using $(which zsh) but it pointed to /usr/bin/zsh which wasn't accepted by chsh)
+sudo chsh -s /bin/zsh && zsh
