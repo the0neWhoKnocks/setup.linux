@@ -20,70 +20,78 @@
   done
   
   list=(
+    # ┎────────┒
+    # ┃ System ┃
+    # ┖────────┚
+    /etc/sddm.conf.d
+    /usr/share/sddm/themes/breeze/theme.conf.user
+    
+    # ┎──────┒
+    # ┃ Home ┃
+    # ┖──────┚
     # Atom
-    .atom
+    ~/.var/app/io.atom.Atom/data/{packages,config.cson,keymap.cson,snippets.cson,styles.less}
     # Chrome and Chromium
-    $(find .config/chromium \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
-    $(find .config/chromium/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
-    $(find .config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
-    $(find .config/google-chrome/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
+    $(find ~/.config/chromium \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
+    $(find ~/.config/chromium/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
+    $(find ~/.config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
+    $(find ~/.config/google-chrome/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
     # Cinnamon
-    .cinnamon
-    .local/share/cinnamon
-    # Blender
-    $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
+    ~/.cinnamon
+    ~/.local/share/cinnamon
+    # # Blender
+    # $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
     # Dock
-    .config/cairo-dock
+    ~/.config/cairo-dock
     # Gimp
-    $(find .config/GIMP -maxdepth 1 -mindepth 1 -type d -printf "\"%p\"\n")
+    $(find ~/.config/GIMP -maxdepth 1 -mindepth 1 -type d -printf "\"%p\"\n")
     # Handbrake
-    .config/ghb/preferences.json
-    .config/ghb/presets.json
+    ~/.config/ghb/preferences.json
+    ~/.config/ghb/presets.json
     # icons
-    .icons
-    .local/share/icons
+    ~/.icons
+    ~/.local/share/icons
     # Inkscape
-    .config/inkscape/preferences.xml
+    ~/.config/inkscape/preferences.xml
     # Insomnia
-    .config/Insomnia
+    ~/.config/Insomnia
     # Launcher
-    .config/ulauncher
+    ~/.config/ulauncher
     # LSD
-    .config/lsd/config.yaml
+    ~/.config/lsd/config.yaml
     # Nemo
-    $(find .config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
-    .config/nemo
-    .local/share/nemo
-    # Notepadqq
-    .config/Notepadqq/Notepadqq.ini
-    # OBS Studio
-    .config/obs-studio
+    $(find ~/.config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
+    ~/.config/nemo
+    ~/.local/share/nemo
+    # # OBS Studio
+    # ~/.config/obs-studio
     # Passwords
-    .local/share/keyrings
+    ~/.local/share/keyrings
     # Shares
-    .config/lan-shares
+    ~/.config/lan-shares
     # Sticky Notes
-    .config/sticky
+    ~/.config/sticky
     # VLC
-    .config/vlc/vlc-qt-interface.conf
+    ~/.config/vlc/skins
+    ~/.config/vlc/vlc-qt-interface.conf
+    # Xed
+    ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
   
     # User stuff
-    .bash_history
-    .face
-    .gitconfig
-    .history
-    .nvidia-settings-rc
-    .oh-my-zsh
-    .profile
-    .ssh
-    .vimrc
-    .zshrc
-    $(find Pictures/app-icons -maxdepth 1 -type f -printf "\"%p\"\n")
-    $(find Pictures/avatars -maxdepth 1 -type f -printf "\"%p\"\n")
-    $(find Pictures/wallpapers -maxdepth 1 -type f -printf "\"%p\"\n")
-    pkgs.list
-    settings-backup.dconf
-    settings-backup-imgs
+    ~/.bash_history
+    ~/.face
+    ~/.gitconfig
+    ~/.history
+    ~/.nvidia-settings-rc
+    ~/.oh-my-zsh
+    ~/.profile
+    ~/.ssh
+    ~/.vimrc
+    ~/.zshrc
+    $(find ~/Pictures/{app-icons,avatars,wallpapers} -maxdepth 1 -type f -printf "\"%p\"\n")
+    ~/pkgs.list
+    ~/settings-backup.dconf
+    ~/settings-backup-imgs
   )
   
   # ensure items are surrounded in quotes for paths with spaces
