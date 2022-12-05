@@ -1,13 +1,51 @@
 # Mint
+
+- [Pre-Install](#pre-install)
+- [Install](#install)
+- [Initial Boot](#initial-boot)
+- [Create Common Directories](#create-common-directories)
+- [Don't Require Password for Sudo](#dont-require-password-for-sudo)
+- [Install Base Software](#install-base-software)
+- [Clone This Repo](#clone-this-repo)
+- [Set Up Shell](#set-up-shell)
+- [Set Up Shares](#set-up-shares)
+- [Install Software](#install-software)
+   - [Via Software Manager or CLI](#via-software-manager-or-cli)
+   - [Via Flatpak](#via-flatpak)
+   - [Via deb](#via-deb)
+   - [Via Archives](#via-archives)
+   - [Via CLI](#via-cli)
+- [Configure Software](#configure-software)
+- [Back Up or Restore Data](#back-up-or-restor-data)
+- [Troubleshooting](#Troubleshooting)
+
+---
+
+## Pre-Install
+
+I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so just download the distro and drop it in the designated `isos` folder on your formatted USB drive. 
+
+> **Issue: Ventoy won't boot**
+> **Solution:** In order to allow Ventoy to load, you'll have to disable Secure Boot in the Bios. In some cases, to change the Secure Boot setting, you'll need to set a supervisor password. Once the password is set the Secure Boot option will no longer be grayed out and can be disabled.
+
+> **Issue: Can't install Linux due to RST being enabled**
+> **Solution:** Go into the Bios. Location may vary, for me I found it under Main &gt; Sata Mode &gt; Changed it from `RST Premium with Optane` to `AHCI`.
+
+---
+
+## Install
+
+1. Once the distro boots into it's live environment, double-click the **Install** item that should be on the Desktop.
+1. Choose the option to **Erase disk**, which should then ask you to choose the file system. I chose **ZFS**.
+1. The next screen prompts to choose the disk to install to. I want to dual-boot Windows and Linux and am installing Linux to a freshly installed unformatted drive.
+
 ---
 
 ## Initial Boot
 
-System Reports may prompt to install things like GPU drivers and language packs. If it doesn't, launch the Driver Manager, see if there's a "recommended" one like `nvidia-driver-515`.
+System Reports may prompt to install things like GPU drivers and language packs. If it doesn't (it's set to wait 40 seconds after login), launch the Driver Manager, see if there's a "recommended" one like `nvidia-driver-515` (just make sure it matches your kernel number `uname -r`).
 
-Open **Software Sources** &gt; Official Repositories &gt; Optional Sources
-- Enable **Source code repositories**
-- 
+Open the **Update Manager**, if there are updates for the GPU driver or kernel, install them.
 
 ---
 
@@ -48,10 +86,17 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   <summary>Expand for Git Settings</summary>
   
   ```sh
+  # Only required if you plan to push changes to a repo
   git config --global user.email "you@example.com"
   git config --global user.name "Your Name"
+  
+  # Create key for github (if you don't already have one)
+  ssh-keygen -t ed25519 -C "<IDENTIFYING_COMMENT>" -f ~/.ssh/github
+  # print out key so it can be copied
+  cat ~/.ssh/github.pub
   ```
-<details>
+  Add new key to https://github.com/settings/keys
+</details>
 
 <details>
   <summary>Expand for Tilix Settings</summary>
@@ -73,53 +118,49 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   Open Tilix **Preferences**
   
   ```
-  [ Global ]
-  
+  ┎────────┒
+  ┃ Global ┃
+  ┖────────┚
     (check) Save and restore window state
     (check) Automatically copy text to clipboard when selecting
 
-  [ Appearance ]
-
+  ┎────────────┒
+  ┃ Appearance ┃
+  ┖────────────┚
     Theme variant: Dark
 
-  [ Shortcuts ]
-
-    [ Terminal ]
-      
-      Paste: Ctrl+V
-
-  [ Profiles > Default ]
-
-    [ Color ]
-
-      (uncheck) Use theme colors for foreground/background
-      Unfocused dim: 50%
+  ┎──────────────────────┒
+  ┃ Shortcuts > Terminal ┃
+  ┖──────────────────────┚
+    Paste: Ctrl+V
+    
+  ┎────────────────────────────┒
+  ┃ Profiles > Default > Color ┃
+  ┖────────────────────────────┚
+    (uncheck) Use theme colors for foreground/background
+    Unfocused dim: 50%
   ```
-<details>
+</details>
 
 <details>
   <summary>Expand for Vim Settings</summary>
   
   https://gist.github.com/the0neWhoKnocks/ece1903a179aeb16619768ba44570abe#vimrc
-<details>
+</details>
 
 ---
 
 ## Clone This Repo
 
-```sh
-ssh-keygen -t ed25519 -C "<IDENTIFYING_COMMENT>" -f ~/.ssh/github
-cat ~/.ssh/github.pub
-```
-Add new key to https://github.com/settings/keys
+This is only required if you want to use the helper scripts.
 
 ```sh
-cd ~/Projects/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint
+cd ~/Projects/Code/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint
 ```
 
 ---
 
-## Set Up ZSH
+## Set Up Shell
 
 Install oh-my-zsh, plugins, and my custom theme
 ```sh
@@ -129,26 +170,33 @@ Install oh-my-zsh, plugins, and my custom theme
 <details>
   <summary>Expand for Tilix Settings</summary>
   
-  Print out colors to be manually added: `cat ~/.oh-my-zsh/custom/themes/zsh-theme-boom/colors.sh`
+  Print out colors to be manually added. Not needed if you have a `dconf` backup.
+  ```sh
+  cat ~/.oh-my-zsh/custom/themes/zsh-theme-boom/colors.sh
+  ```
   
   Open Tilix **Preferences**
-  
   ```
-  [ Profiles > Default ]
-  
-    [ General ]
-
+  ┎────────────────────┒
+  ┃ Profiles > Default ┃
+  ┖────────────────────┚
+    ┎─────────┒
+    ┃ General ┃
+    ┖─────────┚
       (check) Custom font: FantasqueSansMono NF Regular 16
 
-    [ Color ]
-
+    ┎───────┒
+    ┃ Color ┃
+    ┖───────┚
       (updated colors to match my zsh theme)
   ```
-<details>
+</details>
 
 ---
 
 ## Set Up Shares
+
+Only required if you need access to a network share.
 
 ```sh
 (
@@ -164,14 +212,14 @@ Install oh-my-zsh, plugins, and my custom theme
 
 ## Install Software
 
-### Via Software Manager (or apt install)
+### Via Software Manager or CLI
 
 ```sh
 sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium flameshot grub-customizer handbrake inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular peek plasma-sdk sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 
 # optional
 sudo apt install -y figlet obs-studio
@@ -193,6 +241,7 @@ sudo apt install -y figlet obs-studio
   | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
+  | [elisa](https://invent.kde.org/multimedia/elisa) | Music player |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
@@ -203,8 +252,10 @@ sudo apt install -y figlet obs-studio
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
+  | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
+  | [pulseeffects](https://github.com/wwmm/easyeffects) | Equalizer for PulseAudio |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
@@ -224,7 +275,7 @@ sudo apt install -y figlet obs-studio
 ### Via Flatpak
 
 ```sh
-flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub io.atom.Atom io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
@@ -236,10 +287,33 @@ flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Pl
 
   | Package | Software | Description |
   | ------- | -------- | ----------- |
+  | [io.atom.Atom](https://atom.io/) | Atom | Hackable text editor |
+  | [io.bassi.Amberol](https://flathub.org/apps/details/io.bassi.Amberol) | Amberol | Simple music player |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
+</details>
+
+<details>
+  <summary>Expand for Atom Notes</summary>
+  
+  With the sun-setting of Atom, the `.deb` has become unreliable so I've switched to flatpak.
+  
+  To be able to run from CLI more easily, create an alias in your *rc file
+  ```
+  alias atom="flatpak run io.atom.Atom"
+  ```
+  
+  The backup paths are
+  ```
+  ~/.var/app/io.atom.Atom/data/
+    packages
+    config.json
+    keymap.cson
+    snippets.cson
+    styles.less
+  ```
 </details>
 
 <details>
@@ -265,13 +339,12 @@ flatpak install flathub org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Pl
 </details>
 
 
-### Via .deb
+### Via deb
 
 ```sh
 (
   DEBS_DIR=~/Downloads/debs
   urls=(
-    'https://github.com/atom/atom/releases/download/v1.63.1/atom-amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
@@ -297,7 +370,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   
   | Software | Description |
   | -------- | ----------- |
-  | [Atom](https://atom.io/) | Hackable text editor |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
@@ -309,22 +381,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | Software | Description |
   | -------- | ----------- |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
-</details>
-
-<details>
-  <summary>Expand for Software Tweaks</summary>
-  
-  Was getting a `FATAL:gpu_data_manager_impl_private.cc` error when opening Atom. When run with the `--in-process-gpu` flag it works from the CLI.
-  https://github.com/atom/atom/issues/23608
-  ```sh
-  sudo mv /bin/atom /bin/atdumb
-  sudo vim /bin/atom
-  
-  #!/bin/bash
-  /bin/atdumb --in-process-gpu "$@"
-  
-  sudo chmod +x /bin/atom
-  ```
 </details>
 
 
@@ -382,7 +438,7 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   ```
   
   ```sh
-  # 
+  # make it executable to run
   chmod +x ~/Software/jmkvpropedit/v1.5.2/JMkvpropedit.jar
   ```
 </details>
@@ -391,43 +447,43 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ### Via CLI
 
 ```sh
-##########
-# docker #
-##########
+# ┎────────┒
+# ┃ Docker ┃
+# ┖────────┚
 sudo apt install ca-certificates curl gnupg lsb-release
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo usermod -aG docker $USER
-# verify install
+# Verify install
 systemctl is-enabled docker
 systemctl status docker
 sudo docker run hello-world
 
-######################
-# 'n' NodeJS manager #
-######################
+# ┎────────────────────┒
+# ┃ 'n' NodeJS manager ┃
+# ┖────────────────────┚
 curl -L https://bit.ly/n-install | bash
 # The script will add an `export` line to your .bashrc. If you use another shell, copy that line to your *rc file and source your shell. 
 n ls-remote # list available versions to download
 n install 16
-# Theck version
+# Check version
 node -v
 
-########
-# qemu #
-########
+# ┎──────┒
+# ┃ qemu ┃
+# ┖──────┚
 sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
 sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
-# you'll have to log out/in for it to work with your current user, but you can test with
+# You'll have to log out/in for it to work with your current user, but you can test with
 sudo virt-manager
 
 # Optional #####################################################################
 
-##########
-# lutris #
-##########
+# ┎────────┒
+# ┃ lutris ┃
+# ┖────────┚
 sudo add-apt-repository ppa:lutris-team/lutris
 sudo apt update
 sudo apt install lutris
@@ -451,7 +507,7 @@ sudo apt install lutris
 <details>
   <summary>Expand for Docker Notes</summary>
   
-  The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I found an alternative with
+  The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
   ```sh
   cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||"
   ```
@@ -466,7 +522,221 @@ sudo apt install lutris
 
 ---
 
-## Backup/Restore Data
+## Configure Software
+
+At this point you should probably restart so things like the GPU driver and Display Manager can do their initial boot stuff. You may experience some odd boot stuff the first time around, and a second reboot may solve any quirks.
+
+During boot you may see a bunch of lines printed in the terminal before the login screen appears. There may be some errors hidden in there. After you log in, you can check for errors by running
+```sh
+dmesg | grep -i "error\|warn\|fail"
+```
+
+<details>
+  <summary>Expand to view common issues and solutions</summary>
+  
+  - **Issue: ACPI BIOS Error**
+    <details>
+      <summary>Expand for Solution</summary>
+      
+      Apparently this has been [a known issue](https://forums.linuxmint.com/viewtopic.php?f=42&t=371358) and can be ignored. 
+      ```sh
+      sudo vim /etc/default/grub
+      # Replace `quiet` in the GRUB_CMDLINE_LINUX_DEFAULT with `loglevel=3`
+      
+      sudo update-grub
+      ```
+    </details>
+</details>
+<br>
+<br>
+
+
+If you have a previous backup that utilized `dconf`, you can restore it now which may save you some configuration time.
+```sh
+# Restore GNOME settings
+dconf load / < ~/settings.dconf
+```
+<br>
+
+<details>
+  <summary>Expand for Desktop Settings</summary>
+
+  Right-click &gt; Customize
+
+  Use the sliders on the bottom and side to change how icons are spaced. I usually reset both to zero, and do one tick over for the bottom, and two for the right slider.
+</details>
+
+<details>
+  <summary>Expand for System Settings</summary>
+
+  ```
+  ┎─────────────────┒
+  ┃ Account Details ┃
+  ┖─────────────────┚
+    Picture: (choose avatar)
+    Name: (change to a preferred display name)
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎─────────┒
+  ┃ Applets ┃
+  ┖─────────┚
+    ┎──────────┒
+    ┃ Download ┃
+    ┖──────────┚
+      CinnVIIStartMenu
+      Lock keys indicator with notifications
+      QRedShift
+    
+    ┎────────┒
+    ┃ Manage ┃
+    ┖────────┚
+      (select and Add the downloaded items)
+      (disable the Menu applet, and replace it with CinnVIIStartMenu by going into 'Panel edit mode' in the taskbar)
+      
+      ┎──────────┒
+      ┃ Calendar ┃
+      ┖──────────┚
+        Use a custom date format: (checked)
+        Date format: %b. %e 【%a.】【%l: %M %p】
+      
+      ┎──────────────────┒
+      ┃ CinnVIIStartMenu ┃
+      ┖──────────────────┚
+        [Menu]
+          Menu layout: MATE-Menu
+        
+        [Panel]
+          Use a custom icon and label: (checked)
+          Icon: linuxmint-logo-simple-symbolic
+          Text: enu
+        
+        [Sidebar]
+          Separator below user account info box: (checked)
+      
+      ┎────────────────────────────────────────┒
+      ┃ Lock keys indicator with notifications ┃
+      ┖────────────────────────────────────────┚
+        Show caps lock indicator: (checked)
+        Show num lock indicator: (checked)
+        
+      ┎───────────┒
+      ┃ QRedShift ┃
+      ┖───────────┚
+        [Settings]
+          [Day Settings]
+            Temperature (K): 4500
+            Brightness: 70
+            Gamma: 1.00
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎────────────────┒
+  ┃ Font Selection ┃
+  ┖────────────────┚
+    Default font: Ubuntu Regular 12
+    Desktop font: Ubuntu Bold 12
+    Document font: Sans Regular 12
+    Monospace font: Monospace Regular 12
+    Window title font: Ubuntu Medium 12
+    Text scaling factor: 1.0
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎─────────────┒
+  ┃ Hot Corners ┃
+  ┖─────────────┚
+    Enable top left: Show the desktop
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎──────────────┒
+  ┃ Login Window ┃
+  ┖──────────────┚
+    ┎────────────┒
+    ┃ Appearance ┃
+    ┖────────────┚
+      Background: (choose image)
+      Icon theme: Mint-Y-Dark-Aqua
+    
+    ┎───────┒
+    ┃ Users ┃
+    ┖───────┚
+      Allow guest sessions: (checked)
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎────────────────────┒
+  ┃ Mouse and Touchpad ┃
+  ┖────────────────────┚
+    ┎──────────┒
+    ┃ Touchpad ┃
+    ┖──────────┚
+      Click actions: Use multiple fingers for right and middle click
+      Reverse scrolling direction: (uncheck)
+      Speed: Roughly 65%
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎──────────────────┒
+  ┃ Power Management ┃
+  ┖──────────────────┚
+    ┎───────┒
+    ┃ Power ┃
+    ┖───────┚
+      Turn off the screen when inactive for:  15 minutes | 15 minutes
+      Suspend when inactive for:                   Never | Never
+      When the lid is closed:                 Do Nothing | Suspend
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  ┎────────┒
+  ┃ Themes ┃
+  ┖────────┚
+    ┎────────┒
+    ┃ Themes ┃
+    ┖────────┚
+      Icons: Mint-Y-Dark-Aqua
+      Applications: Mint-Y-Dark-Aqua
+      Mouse Pointer: DMZ-White
+      Desktop: Mint-Y-Dark-Aqua
+      
+    ┎──────────┒
+    ┃ Settings ┃
+    ┖──────────┚
+      Jump to position when clicking in a trough: (checked)
+    
+  ──────────────────────────────────────────────────────────────────────────────
+    
+  ┎─────────┒
+  ┃ Windows ┃
+  ┖─────────┚
+    ┎─────────┒
+    ┃ Alt-Tab ┃
+    ┖─────────┚
+      Alt-Tab switcher style: Coverflow (3D)
+  ```
+</details>
+
+<details>
+  <summary>Expand for SDDM Settings</summary>
+
+  If `sddm` isn't behaving, you can revert to the default with `sudo dpkg-reconfigure lightdm`.
+</details>
+
+
+<br>
+<br>
+
+Now that things are set up, you should back things up.
+```sh
+# Back up GNOME settings
+dconf dump / > ~/settings.dconf
+```
+
+---
+
+## Back Up or Restore Data
 
 Set up the script by adding an alias to your `*.rc` file
 ```sh
@@ -479,3 +749,48 @@ Restore a backup with
 ```sh
 bup -r "<PATH_TO_BACKUP>"
 ```
+
+---
+
+## Troubleshooting
+
+**Issue: System going to sleep after a few seconds on the Login screen**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  The issue only happened when my system was docked and the lid was closed and I was using an external monitor.
+  
+  Normally you'd go into **Power Management** and set what the system should do when the lid is closed. Turns out that it has no effect in the Login screen, rather it's controlled by `logind`.
+  
+  First check what files are effecting `logind`:
+  ```sh
+  systemd-analyze cat-config systemd/logind.conf
+  ```
+  If you don't see any files with settings pertaining to `HandleLidSwitchExternalPower`, create a new one:
+  ```sh
+  sudo vim /usr/lib/systemd/logind.conf.d/laptop-login.conf
+  ```
+  ```
+  [Login]
+  # don't suspend on login screen when plugged in
+  HandleLidSwitchExternalPower=ignore
+  ```
+</details>
+
+**Issue: Kernel Panic error after choosing "recommended" nvidia driver**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  To fix the panic, during boot I chose Advanced in the Grub menu. In that sub-menu I went down the list of available `recovery-mode` options until one booted.
+  
+  From the menu I chose the Root shell option. Then I ran `ubuntu-drivers devices` (displays what Driver Manager shows). I found the bad driver name and ran:
+  ```sh
+  apt purge nvidia-driver-525
+  apt autoremove
+  reboot
+  ```
+  You should then be able to boot normally with the default `nouveau` driver. Open up Driver Manager and reinstall the nvidia driver that matches your kernel.
+  
+  To find the driver that matches your kernel, run `uname -r` to view the current kernel. Then compare that against the available nvidia drivers in Driver Manager. For me it was recommending `nvidia-driver-525` when my kernel was `5.15.0-56-generic`. So it should've been recommending `nvidia-driver-515`.
+</details>
+
