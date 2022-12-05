@@ -78,6 +78,7 @@
     .ssh
     .vimrc
     .zshrc
+    $(find Pictures/app-icons -maxdepth 1 -type f -printf "\"%p\"\n")
     $(find Pictures/avatars -maxdepth 1 -type f -printf "\"%p\"\n")
     $(find Pictures/wallpapers -maxdepth 1 -type f -printf "\"%p\"\n")
     pkgs.list
