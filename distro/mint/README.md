@@ -345,13 +345,13 @@ flatpak install flathub io.atom.Atom io.bassi.Amberol org.gimp.GIMP org.gimp.GIM
 (
   DEBS_DIR=~/Downloads/debs
   urls=(
+    'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/amd64/albert_0.17.6-0_amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
     'https://updates.insomnia.rest/downloads/ubuntu/latest?&app=com.insomnia.app&source=website'
     'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
-    'https://github.com/Ulauncher/Ulauncher/releases/download/5.15.0/ulauncher_5.15.0_all.deb'
   )
   for url in "${urls[@]}"; do
     wget "${url}" -P "${DEBS_DIR}/"
@@ -370,13 +370,13 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   
   | Software | Description |
   | -------- | ----------- |
+  | [Albert](https://albertlauncher.github.io/) | Launcher (alternative to Wox). In the Installing page look for look for the `OBS software repo` link for downloads. |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
   | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
-  | [ULauncher](https://ulauncher.io/) | Application launcher |
   
   | Software | Description |
   | -------- | ----------- |
@@ -479,7 +479,7 @@ sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvi
 # You'll have to log out/in for it to work with your current user, but you can test with
 sudo virt-manager
 
-# Optional #####################################################################
+# Optional ─────────────────────────────────────────────────────────────────────
 
 # ┎────────┒
 # ┃ lutris ┃
@@ -530,7 +530,6 @@ During boot you may see a bunch of lines printed in the terminal before the logi
 ```sh
 dmesg | grep -i "error\|warn\|fail"
 ```
-
 <details>
   <summary>Expand to view common issues and solutions</summary>
   
@@ -619,6 +618,11 @@ dconf load / < ~/settings.dconf
       ┖────────────────────────────────────────┚
         Show caps lock indicator: (checked)
         Show num lock indicator: (checked)
+        
+      ┎───────────────┒
+      ┃ Notifications ┃
+      ┖───────────────┚
+        Show empty tray: (checked)
         
       ┎───────────┒
       ┃ QRedShift ┃
@@ -719,9 +723,359 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
-  <summary>Expand for SDDM Settings</summary>
+  <summary>Expand for Albert Settings</summary>
+  
+  ```
+  ┎─────────┒
+  ┃ General ┃
+  ┖─────────┚
+    Hot key: Ctrl+Space
+    Terminal: Tilix
+    Autostart on login: (checked)
+    Theme: Dark Magenta
+  
+  ┎────────────┒
+  ┃ Extensions ┃
+  ┖────────────┚
+    [X] Applications
+    [X] WebSearch
+  ```
+</details>
 
+<details>
+  <summary>Expand for Cairo-Dock Settings</summary>
+  
+  To have it start on boot go into **Startup Applications**. `Add > Choose Applications > pick Cairo-Dock`.
+  
+  In order to add launchers to the dock, I go into the taskbar menu and search for the application. Once I find the application you can sometimes just drag it right to the dock, but more often than not I just right-click the app and choose `Add to desktop`. Then I can drag that launcher to the dock.
+  
+  Note that when a launcher is added to the dock, a copy of it is added to `~/.config/cairo-dock/current_theme/launchers`. So if a launcher needs to be updated, I'll generally just delete it and add the new one, but you can go in and manually edit the launcher in that folder.
+  
+  When manually creating a launcher I look to see if there's a good system icon via Cuttlefish instead of pointing to an image. Some apps like system binaries may not have an icon, so I created a folder in `~/Pictures/app-icons` to house custom icons.
+</details>
+
+<details>
+  <summary>Expand for Certificates</summary>
+  
+  In order to add your own self-signed certs
+  ```sh
+  sudo apt-get install -y ca-certificates
+  sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates
+  sudo update-ca-certificates
+  ```
+  
+  - In some cases, changes don't take effect right away and a restart may be required.
+  - In some cases a restart doesn't work, for example Browsers sometimes have their own certificate area where you have to manually add a cert. For example, in Chrome you can go to Settings > search for `cert` > click Security > click Manage Certificates > go to Authorities and add your cert.
+</details>
+
+<details>
+  <summary>Expand for Grub Settings</summary>
+  
+  You can use **Grub Customizer** or CLI
+  ```sh
+  sudo vim /etc/default/grub
+  # Decrease duration that grub menu displays: `GRUB_TIMEOUT=2`
+  
+  sudo update-grub
+  ```
+</details>
+
+<details>
+  <summary>Expand for LSD Settings</summary>
+  
+  ```sh
+  mkdir -p ~/.config/lsd
+  vim ~/.config/lsd/config.yaml
+  ```
+  ```yaml
+  # == Classic ==
+  # This is a shorthand to override some of the options to be backwards compatible
+  # with `ls`. It affects the "color"->"when", "sorting"->"dir-grouping", "date"
+  # and "icons"->"when" options.
+  # Possible values: false, true
+  classic: false
+
+  # == Blocks ==
+  # This specifies the columns and their order when using the long and the tree
+  # layout.
+  # Possible values: permission, user, group, size, size_value, date, name, inode
+  blocks:
+    - permission
+    - user
+    - group
+    - size
+    - date
+    - name
+
+  # == Color ==
+  # This has various color options. (Will be expanded in the future.)
+  color:
+    # When to colorize the output.
+    # When "classic" is set, this is set to "never".
+    # Possible values: never, auto, always
+    when: auto
+    # How to colorize the output.
+    # When "classic" is set, this is set to "no-color".
+    # Possible values: default, <theme-file-name>
+    # when specifying <theme-file-name>, lsd will look up theme file
+    # XDG Base Directory if relative, e.g. ~/.config/lsd/themes/<theme-file-name>.yaml,
+    # The file path if absolute
+    theme: default
+
+  # == Date ==
+  # This specifies the date format for the date column. The freeform format
+  # accepts an strftime like string.
+  # When "classic" is set, this is set to "date".
+  # Possible values: date, relative, '+<date_format>'
+  # `date_format` will be a `strftime` formatted value. e.g. `date: '+%d %b %y %X'` will give you a date like this: 17 Jun 21 20:14:55
+  # Format cheatsheet: https://strftime.org/
+  date: '+%Y/%m/%d'
+
+  # == Dereference ==
+  # Whether to dereference symbolic links.
+  # Possible values: false, true
+  dereference: false
+
+  # == Display ==
+  # What items to display. Do not specify this for the default behavior.
+  # Possible values: all, almost-all, directory-only
+  # display: all
+
+  # == Icons ==
+  icons:
+    # When to use icons.
+    # When "classic" is set, this is set to "never".
+    # Possible values: always, auto, never
+    when: auto
+    # Which icon theme to use.
+    # Possible values: fancy, unicode
+    theme: fancy
+    # Separator between icon and the name
+    # Default to 1 space
+    separator: ' '
+
+
+  # == Ignore Globs ==
+  # A list of globs to ignore when listing.
+  # ignore-globs:
+  #   - .git
+
+  # == Indicators ==
+  # Whether to add indicator characters to certain listed files.
+  # Possible values: false, true
+  indicators: false
+
+  # == Layout ==
+  # Which layout to use. "oneline" might be a bit confusing here and should be
+  # called "one-per-line". It might be changed in the future.
+  # Possible values: grid, tree, oneline
+  layout: oneline
+
+  # == Recursion ==
+  recursion:
+    # Whether to enable recursion.
+    # Possible values: false, true
+    enabled: false
+    # How deep the recursion should go. This has to be a positive integer. Leave
+    # it unspecified for (virtually) infinite.
+    # depth: 3
+
+  # == Size ==
+  # Specifies the format of the size column.
+  # Possible values: default, short, bytes
+  size: default
+
+  # == Sorting ==
+  sorting:
+    # Specify what to sort by.
+    # Possible values: extension, name, time, size, version
+    column: name
+    # Whether to reverse the sorting.
+    # Possible values: false, true
+    reverse: false
+    # Whether to group directories together and where.
+    # When "classic" is set, this is set to "none".
+    # Possible values: first, last, none
+    dir-grouping: first
+
+  # == No Symlink ==
+  # Whether to omit showing symlink targets
+  # Possible values: false, true
+  no-symlink: false
+
+  # == Total size ==
+  # Whether to display the total size of directories.
+  # Possible values: false, true
+  total-size: false
+
+  # == Symlink arrow ==
+  # Specifies how the symlink arrow display, chars in both ascii and utf8
+  symlink-arrow: ⇒
+  ```
+</details>
+
+<details>
+  <summary>Expand for Nemo Settings</summary>
+  
+  Preferences
+  ```
+  ┎───────┒
+  ┃ Views ┃
+  ┖───────┚
+    View new folders using: List View
+    Sort favorites before other files: (uncheck)
+    Default Zoom Level: (change all to) 66%
+    Tree View Defaults: (uncheck) Show only folders
+  
+  ┎──────────┒
+  ┃ Behavior ┃
+  ┖──────────┚
+    Click on a file's name twice to rename it: (check)
+    Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
+  
+  ┎─────────┒
+  ┃ Display ┃
+  ┖─────────┚
+    Show advanced permissions in the file property dialog: (check)
+  
+  ┎─────────┒
+  ┃ Toolbar ┃
+  ┖─────────┚
+    (check) Refresh
+    (check) Open in Terminal
+    (check) New folder
+    (check) Show Thumbnails
+  
+  ┎───────────────┒
+  ┃ Context Menus ┃
+  ┖───────────────┚
+    [Selection]
+      (check) Make Link
+      (check) Copy to
+      (check) Move to
+  ```
+</details>
+
+<details>
+  <summary>Expand for Qemu Settings</summary>
+  
+  - After the initial install, a reboot may be required to run `virsh` commands without `sudo`.
+  - Verify things are running correctly with
+     ```sh
+     # list VMs - should be empty
+     virsh -c qemu:///system list
+     # make sure virtualization daemon is running
+     systemctl status libvirtd.service
+     ```
+  - Start up virt-manager. If you run your quick launcher and type `virt`, an entry for `Virtual Machine Manager` should come up. Run it.
+     - Go to Edit > Preferences
+        ```
+        [General]
+          [X] Enable system tray icon
+        ```
+</details>
+
+<details>
+  <summary>Expand for SDDM Settings</summary>
+  
+  To configure the theme, create a custom config for sddm:
+  ```sh
+  sudo mkdir -p /etc/sddm.conf.d
+  sudo vim /etc/sddm.conf.d/10-custom.conf
+  ```
+  ```
+  [General]
+  Numlock=on
+  
+  [Theme]
+  Current=breeze
+  ```
+  and then a custom config for the theme:
+  ```sh
+  sudo vim /usr/share/sddm/themes/breeze/theme.conf.user
+  ```
+  ```
+  [General]
+  background=/usr/share/wallpapers/Digital Stream Vanessa/contents/images/5034x2832.jpg
+  ```
+  
+  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme.
+  
+  The backgrounds for a theme are set in `/usr/share/sddm/themes/<THEME>/theme.conf` on the `background=` line.
+  Generally themes point to the global wallpapers so an image can be displayed for any user. Those wallpapers are in `/usr/share/wallpapers`.
+  To more easily view all wallpapers I open that directory with a file manager, and do a search for `screenshot.jpg`, then I can just browse through the results, and find the path for the wallpaper I want.
+  Once you have a wallpaper you like, create/update your config's background line, and you'll see the new image after a reboot. Note that you'll see your User wallpaper on the lock screen.
+  
+  If your user icon isn't showing up, look in `/var/lib/AccountsService/icons/` and see if an icon exists with your user name. If not, try picking and choosing an icon again from **Account Details**.
+  
   If `sddm` isn't behaving, you can revert to the default with `sudo dpkg-reconfigure lightdm`.
+  
+  Configuration doc: https://wiki.archlinux.org/title/SDDM#Configuration
+  
+  View the default config: `sddm --example-config | bat`
+</details>
+
+<details>
+  <summary>Expand for VLC Settings</summary>
+  
+  Download custom skin
+  ```sh
+  mkdir ~/.config/vlc/skins
+  wget http://www.videolan.org/vlc/download-skins2-go.php?url=subX.vlt -O ~/.config/vlc/skins/
+  ```
+  
+  Preferences
+  ```
+  ┎───────────┒
+  ┃ Interface ┃
+  ┖───────────┚
+    Use custom skin: ~/.config/vlc/skins/subX.vlt
+
+  ┎───────┒
+  ┃ Video ┃
+  ┖───────┚
+    Video snapshots
+      Directory: ~/Pictures/vlc
+      Format: jpg
+  ```
+</details>
+
+<details>
+  <summary>Expand for Xed (Text Editor) Settings</summary>
+  
+  I was using `notepadqq` but it started taking a very long time to open.
+
+  Xed comes default with Mint, but it requires a little customization.
+
+  - Styles will come from https://github.com/trusktr/gedit-color-schemes
+     - There are a few places where styles could possibly go. Run `ls -la /usr/share/gtksourceview-*/styles`, and take note of the folders that have a `styles.rng` file. For each one of those folders, you'll need to create a `.local` version where you'll dump the custom styles.
+        ```sh
+        # currently these folders match the above criteria
+        mkdir -p ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
+        ```
+     - Now you can copy the contents of the repo's `gtksourceview-3.0/styles` folder over to the new folders.
+        ```sh
+        wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
+        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
+        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
+        rm ~/Downloads/geditcolors.zip
+        ```
+  - Open a file with Xed (Text Editor)
+     - Go to Edit > Preferences
+        ```
+        [Editor]
+          (check) Display line numbers
+          (check) Display overview map
+          (check) Display right margin (set to 80)
+          (check) Highlight the current line
+          (check) Highlight matching brackets
+          Tab width: 2
+          (check) Automatic indentation
+          (un-check) Allow mouse wheel scrolling to change tabs
+          
+        [Theme]
+          Twilight
+        ```
 </details>
 
 
