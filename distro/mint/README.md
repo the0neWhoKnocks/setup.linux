@@ -200,7 +200,7 @@ Only required if you need access to a network share.
 
 ```sh
 (
-  cd ./bin/dist
+  cd ./bin
   ./user-script.sh --install "${PWD}/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
 )
 ```
@@ -740,8 +740,8 @@ dconf dump / > ~/settings.dconf
 
 Set up the script by adding an alias to your `*.rc` file
 ```sh
-alias bup="<PATH_TO_REPO>/distro/mint/bin/dist/backup.sh"
-alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint/bin/dist/backup-list.sh)"'
+alias bup="<PATH_TO_REPO>/distro/mint/bin/backup.sh"
+alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint/bin/backup-list.sh)"'
 ```
 Backups will be output to the Desktop unless otherwise specified.
 
