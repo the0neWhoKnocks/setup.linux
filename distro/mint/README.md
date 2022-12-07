@@ -43,7 +43,15 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 
 ## Initial Boot
 
+There's a splash screen that can hide potential issues during boot, so disable it while settings things up.
+```sh
+sudo vim /etc/default/grub
+# Replace `splash` in the GRUB_CMDLINE_LINUX_DEFAULT with `nosplash`
+sudo update-grub
+```
+
 System Reports may prompt to install things like GPU drivers and language packs. If it doesn't (it's set to wait 40 seconds after login), launch the Driver Manager, see if there's a "recommended" one like `nvidia-driver-515` (just make sure it matches your kernel number `uname -r`).
+- **IMPORTANT**: If you have a dock that has one monitor hooked up, and another monitor is hooked up to a laptop, you'll want to stick with the `nouveau` driver. It's the only one that's given me stable performance with a second monitor.
 
 Open the **Update Manager**, if there are updates for the GPU driver or kernel, install them.
 
@@ -147,6 +155,40 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   
   https://gist.github.com/the0neWhoKnocks/ece1903a179aeb16619768ba44570abe#vimrc
 </details>
+<br>
+
+<details>
+  <summary>[ Optional ] Expand for DisplayLink Install (for Targus dock)</summary>
+  
+  ```sh
+  # Download and install DisplayLink driver
+  wget https://cdn.targus.com/web/us/downloads/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu.zip -O ~/Downloads/driver__Targus_USB_DisplayLink.zip
+  unzip ~/Downloads/driver__Targus_USB_DisplayLink.zip -d ~/Downloads/Targus/
+  # Install deps
+  sudo apt install dkms
+  # The next step will prompt for a restart, skip it.
+  sudo ~/Downloads/Targus/displaylink-driver-*.run
+  # Patch udev entry, otherwise the system will freeze during boot
+  sudo vim /opt/displaylink/udev.sh
+  ```
+  ```diff
+  # find the `start_service` function around line 104, and change to:
+  - systemctl start displaylink-driver
+  + systemctl start --no-block displaylink-driver
+  
+  # save and exit
+  ```
+  ```sh
+  # Clean-up
+  rm -rf ~/Downloads/Targus
+  # reboot and verify things work
+  sudo reboot
+  ```
+  
+  I ran into an issue where the system would freeze at the boot logo if the dock's USB was plugged in (only after the driver was installed). With the USB unplugged everything was fine. During boot I noticed it was hanging on the `udev` service. I ran `ls -la /etc/udev/rules.d/` and the only rule in there was `99-displaylink.rules` which was executing `/opt/displaylink/udev.sh`. I came across a few posts to fix the freeze during boot:
+  - [Post that calls out real fix which calls out `--no-block`](https://support.displaylink.com/forums/287786-displaylink-feature-suggestions/suggestions/41424121-avoid-boot-time-stall-due-to-udev-rules)
+  - There was another that said to use `sudo systemctl mask systemd-udev-settle`. It worked, but it didn't target the issue specifically and could have masked other issues.
+</details>
 
 ---
 
@@ -168,7 +210,7 @@ Install oh-my-zsh, plugins, and my custom theme
 ```
 
 <details>
-  <summary>Expand for Tilix Settings</summary>
+  <summary>Expand for Extra Tilix Settings</summary>
   
   Print out colors to be manually added. Not needed if you have a `dconf` backup.
   ```sh
@@ -212,6 +254,10 @@ Only required if you need access to a network share.
 
 ## Install Software
 
+Here are some sources for finding alternatives to software you may have used on other OS's:
+- https://alternativeto.net/platform/linux/
+- https://www.linuxalt.com/
+
 ### Via Software Manager or CLI
 
 ```sh
@@ -219,7 +265,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 
 # optional
 sudo apt install -y figlet obs-studio
@@ -245,8 +291,10 @@ sudo apt install -y figlet obs-studio
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
+  | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
-  | [kdenlive](https://kdenlive.org/en/features/) | Kdenlive | Video editor |
+  | [kate](https://kate-editor.org/about-kate/) | Text editor |
+  | [kdenlive](https://kdenlive.org/en/features/) | Video editor |
   | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
@@ -275,7 +323,7 @@ sudo apt install -y figlet obs-studio
 ### Via Flatpak
 
 ```sh
-flatpak install flathub io.atom.Atom io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
@@ -284,36 +332,16 @@ flatpak install flathub io.atom.Atom io.bassi.Amberol org.gimp.GIMP org.gimp.GIM
   List what's currently installed `flatpak list`.
   
   Search for packages with `flatpak search <PACKAGE>`, like `flatpak search org.gimp.GIMP.Plugin`.
-
+  
+  `bin` path for apps: `/var/lib/flatpak/exports/bin`.
+  
   | Package | Software | Description |
   | ------- | -------- | ----------- |
-  | [io.atom.Atom](https://atom.io/) | Atom | Hackable text editor |
   | [io.bassi.Amberol](https://flathub.org/apps/details/io.bassi.Amberol) | Amberol | Simple music player |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
-</details>
-
-<details>
-  <summary>Expand for Atom Notes</summary>
-  
-  With the sun-setting of Atom, the `.deb` has become unreliable so I've switched to flatpak.
-  
-  To be able to run from CLI more easily, create an alias in your *rc file
-  ```
-  alias atom="flatpak run io.atom.Atom"
-  ```
-  
-  The backup paths are
-  ```
-  ~/.var/app/io.atom.Atom/data/
-    packages
-    config.json
-    keymap.cson
-    snippets.cson
-    styles.less
-  ```
 </details>
 
 <details>
@@ -346,12 +374,14 @@ flatpak install flathub io.atom.Atom io.bassi.Amberol org.gimp.GIMP org.gimp.GIM
   DEBS_DIR=~/Downloads/debs
   urls=(
     'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/amd64/albert_0.17.6-0_amd64.deb'
+    'https://github.com/atom/atom/releases/download/v1.59.0/atom-amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
     'https://updates.insomnia.rest/downloads/ubuntu/latest?&app=com.insomnia.app&source=website'
     'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
+    'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
   )
   for url in "${urls[@]}"; do
     wget "${url}" -P "${DEBS_DIR}/"
@@ -371,16 +401,36 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | Software | Description |
   | -------- | ----------- |
   | [Albert](https://albertlauncher.github.io/) | Launcher (alternative to Wox). In the Installing page look for look for the `OBS software repo` link for downloads. |
+  | [Atom](https://atom.io/) | Hackable text editor |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
   | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
+  | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
   
   | Software | Description |
   | -------- | ----------- |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
+</details>
+
+<details>
+  <summary>Expand for Atom Notes</summary>
+  
+  Since they're sunsetting Atom, and the newer versions have bugs that won't get fixed, I'm just using `v1.59.0`.
+  
+  Was getting a `FATAL:gpu_data_manager_impl_private.cc` error when opening Atom. When run with the `--in-process-gpu` flag it works from the CLI. So I created a script to run the binary so launchers and CLI both work.
+  https://github.com/atom/atom/issues/23608
+  ```sh
+  sudo mv /bin/atom /bin/atdumb
+  sudo vim /bin/atom
+  
+  #!/bin/bash
+  /bin/atdumb --in-process-gpu "$@"
+  
+  sudo chmod +x /bin/atom
+  ```
 </details>
 
 
@@ -745,6 +795,12 @@ dconf load / < ~/settings.dconf
 <details>
   <summary>Expand for Cairo-Dock Settings</summary>
   
+  If you want to switch from OpenGL go into `~/.config/cairo-dock/.cairo-dock` and update:
+  ```diff
+  - default_backend=opengl
+  + default_backend=cairo
+  ```
+  
   To have it start on boot go into **Startup Applications**. `Add > Choose Applications > pick Cairo-Dock`.
   
   In order to add launchers to the dock, I go into the taskbar menu and search for the application. Once I find the application you can sometimes just drag it right to the dock, but more often than not I just right-click the app and choose `Add to desktop`. Then I can drag that launcher to the dock.
@@ -1078,6 +1134,15 @@ dconf load / < ~/settings.dconf
         ```
 </details>
 
+<details>
+  <summary>Expand for root Settings</summary>
+  
+  When running some commands via `sudo` you may notice things don't look or behave the same. Here are some things I copy over:
+  ```sh
+  sudo cp -r ~/.config/lsd /root/.config/
+  sudo cp ~/.vimrc /root/
+  ```
+</details>
 
 <br>
 <br>
@@ -1092,12 +1157,14 @@ dconf dump / > ~/settings.dconf
 
 ## Back Up or Restore Data
 
+I've created a couple helper scripts. One that generates a list of paths and files ([backup-list.sh](./bin/backup-list.sh)), and the other creates an archive based on the list ([backup.sh](./bin/backup.sh)).
+
 Set up the script by adding an alias to your `*.rc` file
 ```sh
 alias bup="<PATH_TO_REPO>/distro/mint/bin/backup.sh"
 alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint/bin/backup-list.sh)"'
 ```
-Backups will be output to the Desktop unless otherwise specified.
+Backups will be output to the Desktop unless otherwise specified. Run `bup -h` for script options.
 
 Restore a backup with
 ```sh
