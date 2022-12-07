@@ -30,7 +30,7 @@
     # ┃ Home ┃
     # ┖──────┚
     # Atom
-    ~/.var/app/io.atom.Atom/data/{packages,config.cson,keymap.cson,snippets.cson,styles.less}
+    ~/.atom/{packages,config.cson,keymap.cson,snippets.cson,styles.less}
     # Chrome and Chromium
     $(find ~/.config/chromium \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/chromium/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
@@ -48,6 +48,8 @@
     # Handbrake
     ~/.config/ghb/preferences.json
     ~/.config/ghb/presets.json
+    # Hydrapaper
+    ~/.config/hydrapaper.json
     # icons
     ~/.icons
     ~/.local/share/icons
@@ -74,6 +76,9 @@
     # VLC
     ~/.config/vlc/skins
     ~/.config/vlc/vlc-qt-interface.conf
+    # VS Code
+    ~/.config/Code/User
+    ~/.vscode
     # Xed
     ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
   
