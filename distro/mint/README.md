@@ -1,5 +1,7 @@
 # Mint
 
+This setup is for creative/development tasks. Before blindly installing everything listed, go over the **Software Details** sections to see if the software could be useful.
+
 - [Pre-Install](#pre-install)
 - [Install](#install)
 - [Initial Boot](#initial-boot)
@@ -10,14 +12,15 @@
 - [Set Up Shell](#set-up-shell)
 - [Set Up Shares](#set-up-shares)
 - [Install Software](#install-software)
-   - [Via Software Manager or CLI](#via-software-manager-or-cli)
-   - [Via Flatpak](#via-flatpak)
-   - [Via deb](#via-deb)
-   - [Via Archives](#via-archives)
-   - [Via CLI](#via-cli)
+  - [Via Software Manager or CLI](#via-software-manager-or-cli)
+  - [Via Flatpak](#via-flatpak)
+  - [Via deb](#via-deb)
+  - [Via Archives](#via-archives)
+  - [Via Snap](#via-snap)
+  - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
-- [Back Up or Restore Data](#back-up-or-restor-data)
-- [Troubleshooting](#Troubleshooting)
+- [Back Up or Restore Data](#back-up-or-restore-data)
+- [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -204,7 +207,7 @@ cd ~/Projects/Code/Scripts && git clone git@github.com:the0neWhoKnocks/setup.lin
 
 ## Set Up Shell
 
-Install oh-my-zsh, plugins, and my custom theme
+Install oh-my-zsh, plugins, and my custom theme (requires [this step](#clone-this-repo))
 ```sh
 ./bin/set-up-zsh.sh
 ```
@@ -240,6 +243,7 @@ Install oh-my-zsh, plugins, and my custom theme
 
 Only required if you need access to a network share.
 
+This an on-demand approach, like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
 ```sh
 (
   cd ./bin
@@ -465,7 +469,7 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ```
 
 <details>
-  <summary>Expand for Details</summary>
+  <summary>Expand for Software Details</summary>
   
   | Software | Description |
   | -------- | ----------- |
@@ -491,6 +495,33 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   # make it executable to run
   chmod +x ~/Software/jmkvpropedit/v1.5.2/JMkvpropedit.jar
   ```
+</details>
+
+
+### Via Snap
+
+```sh
+# This is a one time operation. You have to allow snap on Mint.
+sudo mv /etc/apt/preferences.d/nosnap.pref /etc/apt/preferences.d/nosnap.pref.bak
+sudo apt update
+sudo apt install snapd
+# If you're using zsh, there's a known issue (https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1640514) that this fixes.
+sudo vim /etc/zsh/zprofile
+  # Add this:
+  emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'
+
+# 7zip
+sudo apt install p7zip-full && sudo snap install p7zip-desktop
+
+# You may have to reboot after this since `/etc/environment` gets `/snap/bin` added, but `$XDG_DATA_DIRS` doesn't get updated.
+```
+
+<details>
+  <summary>Expand for Software Details</summary>
+  
+  | Software | Description |
+  | -------- | ----------- |
+  | [p7zip](https://snapcraft.io/p7zip-desktop) | Faster alternative to **Archive Manager**. Also available on Windows/Mac |
 </details>
 
 
@@ -1135,6 +1166,78 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
+  <summary>Expand for VS Code Settings</summary>
+  
+  Extensions:
+  - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
+  - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
+  - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
+  - dotenv https://marketplace.visualstudio.com/items?itemName=dotenv.dotenv-vscode
+  - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
+  - ESLint https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+  - File Icons https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons
+  - File Utils https://marketplace.visualstudio.com/items?itemName=sleistner.vscode-fileutils
+  - Git Commits https://marketplace.visualstudio.com/items?itemName=exelord.git-commits
+  - Lint Lens https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens
+  - Markdown All in One https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one
+  - One Dark Pro theme https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme
+  - Partial Diff https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff
+  - select highlight in minimap https://marketplace.visualstudio.com/items?itemName=mde.select-highlight-minimap
+  - Sort Lines https://marketplace.visualstudio.com/items?itemName=Tyriar.sort-lines
+  - Toggle Quotes https://marketplace.visualstudio.com/items?itemName=BriteSnow.vscode-toggle-quotes
+  - VS DocBlockr https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock
+
+  If things aren't behaving as expected after installing extensions (like config pages not loading), run `CTRL+SHIFT+P > Reload Window`.
+
+  Settings:
+  - File > Preferences > Settings > User (or `CTRL + ,`)
+     ```
+     ┎─────────────┒
+     ┃ Text Editor ┃
+     ┖─────────────┚
+       Editor: Font Size: 16
+       Editor: Detect Indentation: (uncheck)
+       Editor: Insert Spaces: (check)
+       Editor: Scroll Beyond Last Line: (uncheck)
+       Editor: Tab Size: 2
+       Files: Exclude: (remove the pattern for `.git`)
+       Search: Use Global Ignore Files: (check)
+     
+     ┎────────────┒
+     ┃ Extensions ┃
+     ┖────────────┚
+       Git: Input Validation: Off
+       Markdown All In One: Math Enabled: (uncheck)
+       Markdown All In One: Ordered List: Auto Renumber: (uncheck)
+       Markdown All In One: Ordered List: Marker: one
+       Markdown All In One: Toc Levels: 2..6
+     ```
+     - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
+        ```sh
+        vim ~/.gitignore_global
+        ``` 
+        ```
+        # for visual clarity in VSCode
+        .git
+        ```
+        ```sh
+        git config --global core.excludesFile ~/.gitignore_global
+        ```
+  - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`)
+     ```
+     # Toggle the 'Record Keys' button in the input.
+     # Type `CTRL + d`, select the 'Add selection to next find match' entry, hit `DELETE`
+     # Toggle 'Record Keys'
+     # Search for 'Copy line down', set it's shortcut to `CTRL + d`
+     ```
+  - You can right-click on icons in the left bar to hide them.
+  - Toggle the Activity Bar <code>CTRL + `</code>, drag the Search icon down to the panel so that the global searches have more space.
+  - Right-click on the bottom Status Bar
+    - Uncheck the second instance of Source Control
+    - Uncheck Feedback
+</details>
+
+<details>
   <summary>Expand for root Settings</summary>
   
   When running some commands via `sudo` you may notice things don't look or behave the same. Here are some things I copy over:
@@ -1197,6 +1300,8 @@ bup -r "<PATH_TO_BACKUP>"
   HandleLidSwitchExternalPower=ignore
   ```
 </details>
+<br>
+<br>
 
 **Issue: Kernel Panic error after choosing "recommended" nvidia driver**
 <details>
@@ -1214,4 +1319,3 @@ bup -r "<PATH_TO_BACKUP>"
   
   To find the driver that matches your kernel, run `uname -r` to view the current kernel. Then compare that against the available nvidia drivers in Driver Manager. For me it was recommending `nvidia-driver-525` when my kernel was `5.15.0-56-generic`. So it should've been recommending `nvidia-driver-515`.
 </details>
-
