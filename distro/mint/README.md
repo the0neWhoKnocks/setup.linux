@@ -49,7 +49,8 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 There's a splash screen that can hide potential issues during boot, so disable it while settings things up.
 ```sh
 sudo vim /etc/default/grub
-# Replace `splash` in the GRUB_CMDLINE_LINUX_DEFAULT with `nosplash`
+# Replace `splash` in GRUB_CMDLINE_LINUX_DEFAULT with `nosplash`
+
 sudo update-grub
 ```
 
@@ -1171,6 +1172,7 @@ dconf load / < ~/settings.dconf
   Extensions:
   - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
+  - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
   - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
   - dotenv https://marketplace.visualstudio.com/items?itemName=dotenv.dotenv-vscode
   - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
@@ -1178,12 +1180,17 @@ dconf load / < ~/settings.dconf
   - File Icons https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons
   - File Utils https://marketplace.visualstudio.com/items?itemName=sleistner.vscode-fileutils
   - Git Commits https://marketplace.visualstudio.com/items?itemName=exelord.git-commits
+  - Git Last Commit Message https://marketplace.visualstudio.com/items?itemName=JanBn.git-last-commit-message
+  - git-rename https://marketplace.visualstudio.com/items?itemName=ambooth.git-rename
+  - Indent one space https://marketplace.visualstudio.com/items?itemName=usernamehw.indent-one-space
   - Lint Lens https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens
   - Markdown All in One https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one
   - One Dark Pro theme https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme
   - Partial Diff https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff
   - select highlight in minimap https://marketplace.visualstudio.com/items?itemName=mde.select-highlight-minimap
   - Sort Lines https://marketplace.visualstudio.com/items?itemName=Tyriar.sort-lines
+  - Svelte for VS Code https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode
+  - SVG Previewer https://marketplace.visualstudio.com/items?itemName=vitaliymaz.vscode-svg-previewer
   - Toggle Quotes https://marketplace.visualstudio.com/items?itemName=BriteSnow.vscode-toggle-quotes
   - VS DocBlockr https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock
 
@@ -1195,22 +1202,72 @@ dconf load / < ~/settings.dconf
      ┎─────────────┒
      ┃ Text Editor ┃
      ┖─────────────┚
-       Editor: Font Size: 16
+       Diff Editor: Render Side By Side: (uncheck)
+       Editor: Accept Suggestion on Commit Character: (uncheck)
        Editor: Detect Indentation: (uncheck)
+       Editor: Font Size: 14
        Editor: Insert Spaces: (check)
+       Editor: Rulers: [80]
        Editor: Scroll Beyond Last Line: (uncheck)
        Editor: Tab Size: 2
+       Editor: Token Color Customizations: (edit in JSON)
        Files: Exclude: (remove the pattern for `.git`)
        Search: Use Global Ignore Files: (check)
+     
+     ┎─────────────┒
+     ┃ Application ┃
+     ┖─────────────┚
+       Telemetry: off
+       Update Mode: manual
+     
+     ┎──────────┒
+     ┃ Features ┃
+     ┖──────────┚
+       Extensions: Auto Check Updates: (uncheck)
+       Extensions: AUto Update: None
+       Extensions: Ignore Recomendations: (check)
+       Terminal > Integrated: Font Family: FantasqueSansMono NF
      
      ┎────────────┒
      ┃ Extensions ┃
      ┖────────────┚
        Git: Input Validation: Off
+       Javascript > Validate: Enable: (uncheck)
        Markdown All In One: Math Enabled: (uncheck)
        Markdown All In One: Ordered List: Auto Renumber: (uncheck)
        Markdown All In One: Ordered List: Marker: one
        Markdown All In One: Toc Levels: 2..6
+       Typescript > Validate: Enable: (uncheck)
+     
+     ┎───────────┒
+     ┃ Workbench ┃
+     ┖───────────┚
+       Window: Title: [${rootName}] ${activeEditorMedium}${separator}
+       Window: Zoom Level: 1
+     ```
+     ```json
+     "editor.tokenColorCustomizations": {
+       "textMateRules": [
+         {
+           "scope": "markup.quote.markdown",
+           "settings": {
+             "foreground": "#bbba71"
+           }
+         },
+         {
+           "scope": "markup.inline.raw.string.markdown",
+           "settings": {
+             "foreground": "#62b9d3"
+           }
+         },
+         {
+           "scope": "markup.fenced_code.block.markdown",
+           "settings": {
+             "foreground": "#f379ce"
+           }
+         }
+       ]
+     },
      ```
      - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
         ```sh
@@ -1223,12 +1280,17 @@ dconf load / < ~/settings.dconf
         ```sh
         git config --global core.excludesFile ~/.gitignore_global
         ```
-  - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`)
+  - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`) (or `CTRL+SHIFT+P`, `Preferences: Open Keyboard Shortcuts (JSON)`)
      ```
      # Toggle the 'Record Keys' button in the input.
      # Type `CTRL + d`, select the 'Add selection to next find match' entry, hit `DELETE`
      # Toggle 'Record Keys'
      # Search for 'Copy line down', set it's shortcut to `CTRL + d`
+
+     # Toggle the 'Record Keys' button in the input.
+     # Type `CTRL + s`, select the 'File: Save' entry, hit `DELETE`
+     # Toggle 'Record Keys'
+     # Search for 'Save All (workbench.action.files.saveall', set it's shortcut to `CTRL + s`
      ```
   - You can right-click on icons in the left bar to hide them.
   - Toggle the Activity Bar <code>CTRL + `</code>, drag the Search icon down to the panel so that the global searches have more space.
