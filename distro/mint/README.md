@@ -16,7 +16,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via Flatpak](#via-flatpak)
   - [Via deb](#via-deb)
   - [Via Archives](#via-archives)
-  - [Via Snap](#via-snap)
   - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
 - [Back Up or Restore Data](#back-up-or-restore-data)
@@ -33,6 +32,13 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 
 > **Issue: Can't install Linux due to RST being enabled**
 > **Solution:** Go into the Bios. Location may vary, for me I found it under Main &gt; Sata Mode &gt; Changed it from `RST Premium with Optane` to `AHCI`.
+
+**NOTE**: I use XFCE instead of Cinnamon because Cinnamon randomly spikes to 100% on the CPU after Suspend'ing the system multiple times. If you later choose that you want to try out a different Session Manager, install the appropriate package below via `apt install`, log out, and choose the new manager before you login (there should be a drop-down).
+```sh
+mint-meta-cinnamon
+mint-meta-mate
+mint-meta-xfce
+```
 
 ---
 
@@ -270,7 +276,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 
 # optional
 sudo apt install -y figlet obs-studio
@@ -311,12 +317,13 @@ sudo apt install -y figlet obs-studio
   | [pulseeffects](https://github.com/wwmm/easyeffects) | Equalizer for PulseAudio |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
+  | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
   | [xclip](https://github.com/astrand/xclip) | Copy from CLI to clipboard |
-  | [xserver-xorg-input-synaptics](https://packages.ubuntu.com/bionic/xserver-xorg-input-synaptics) | Enables smooth/inertial/kinetic scroll on long documents/webpages (requires reboot) |
+  | [xserver-xorg-input-synaptics](https://packages.ubuntu.com/bionic/xserver-xorg-input-synaptics) | Enables smooth/inertial/kinetic scroll for touchpads on long documents/webpages (requires reboot) |
   
   | Package | Description |
   | ------- | ----------- |
@@ -499,33 +506,6 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 </details>
 
 
-### Via Snap
-
-```sh
-# This is a one time operation. You have to allow snap on Mint.
-sudo mv /etc/apt/preferences.d/nosnap.pref /etc/apt/preferences.d/nosnap.pref.bak
-sudo apt update
-sudo apt install snapd
-# If you're using zsh, there's a known issue (https://bugs.launchpad.net/ubuntu/+source/snapd/+bug/1640514) that this fixes.
-sudo vim /etc/zsh/zprofile
-  # Add this:
-  emulate sh -c 'source /etc/profile.d/apps-bin-path.sh'
-
-# 7zip
-sudo apt install p7zip-full && sudo snap install p7zip-desktop
-
-# You may have to reboot after this since `/etc/environment` gets `/snap/bin` added, but `$XDG_DATA_DIRS` doesn't get updated.
-```
-
-<details>
-  <summary>Expand for Software Details</summary>
-  
-  | Software | Description |
-  | -------- | ----------- |
-  | [p7zip](https://snapcraft.io/p7zip-desktop) | Faster alternative to **Archive Manager**. Also available on Windows/Mac |
-</details>
-
-
 ### Via CLI
 
 ```sh
@@ -648,7 +628,196 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
-  <summary>Expand for System Settings</summary>
+  <summary>Expand for XFCE System Settings</summary>
+
+  First, install a few extra XFCE specific items:
+  ```sh
+  # System modules
+  sudo apt install xfce4-power-manager
+  
+  # Panel plugins
+  sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
+  
+  # May be required for redshift (may be optional, not sure if it's installed by default)
+  sudo apt install redshift redshift-gtk
+  ```
+  
+  Control your monitor's temperature (limit blue light):
+  - ```sh
+    # NOTE: This file could conflict with the qredshift applet in Cinnamon
+    vim ~/.config/redshift.conf
+    ```
+  - Add contents from [redshift.conf](./files/redshift.conf)
+  - Start Redshift from your launcher (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
+  
+  
+  ```
+  ┎──────────┒
+  ┃ About Me ┃
+  ┖──────────┚
+    Picture: (choose avatar)
+  ```
+  ```
+  ┎────────────┒
+  ┃ Appearance ┃
+  ┖────────────┚
+    [Style]
+      Mint-Y-Dark-Aqua
+    
+    [Icons]
+      Mint-Y-Dark-Aqua
+    
+    [Fonts]
+      Default Font: Ubuntu Regular 12
+      Default Monospace Font: Monospace Regular 12
+  ```
+  ```
+  ┎─────────┒
+  ┃ Display ┃
+  ┖─────────┚
+    [Advanced]
+      (create a 'Docked' profile once things are set up)
+      Configure new displays when connected (checked)
+      Automatically enable profiles when new display is connected (checked)
+      Show popup to identify displays (checked)
+    
+    [General]
+      Display 2 (main monitor plugged into laptop for GPU)
+        Primary Display (checked)
+        Reflection: None
+      
+      Display 3 (vertical monitor plugged into dock)
+        Rotation: Left
+    
+    Wallpaper
+      Just right-click each monitor (on the desktop) > Desktop Settings > choose a folder with images > pick an image and apply a style.
+  ```
+  ```
+  ┎──────────────┒
+  ┃ Login Window ┃
+  ┖──────────────┚
+    [Appearance]
+      Background: (choose image)
+      Icon theme: Mint-Y-Dark-Aqua
+    
+    [Users]
+      Allow guest sessions: (checked)
+  ```
+  ```
+  ┎────────────────────┒
+  ┃ Mouse and Touchpad ┃
+  ┖────────────────────┚
+    [Devices]
+      [Mouse]
+        Acceleration: 3.5
+      
+      [Touchpad]
+        Reverse scrolling direction: (uncheck)
+        [X] Enable horizontal scrolling
+    
+    [Theme]: DMZ (White)
+  ```
+  ```
+  ┎───────┒
+  ┃ Panel ┃
+  ┖───────┚
+    ┎─────────┒
+    ┃ Display ┃
+    ┖─────────┚
+      Row size: 36
+    
+    ┎───────┒
+    ┃ Items ┃
+    ┖───────┚
+      [Whisker Menu]
+        [General]
+          Application icon size: Small
+          Category icon size: Small
+        
+        [Appearance]
+          [X] Position commands next to search entry
+          Display: Icon and title
+          Title: enu 
+          Icon: linuxmint-logo-simple
+        
+        [Behavior]
+          Default Category: Recently Used
+        
+        [Commands]
+          [X] Suspend
+      
+      [Show Desktop]
+      
+      [Separator]
+        Style: Separator
+      
+      [Separator]
+        Style: Transparent
+        [X] Expand
+      
+      [Window Buttons]
+        Sorting order: None, allow drag-and-drop
+      
+      [Separator]
+        Style: Transparent
+        [X] Expand
+      
+      [Separator]
+        Style: Separator
+      
+      [Generic Monitor]
+        Command: <THIS_REPO>/distro/mint/bin/key-lock-status.sh
+        Label: (uncheck)
+        Period: 0.25
+        Font: Monospace 9
+        
+      [Status Tray Plugin]
+        Adjust size automatically: (checked)
+        Square items: (checked)
+      
+      [XApp Status Plugin]
+      
+      [PulseAudio Plugin]
+      
+      [Clock]
+        Format: Custom Format: %b. %e 【%a.】【%l: %M %p】
+  ```
+  ```
+  ┎───────────────┒
+  ┃ Power Manager ┃
+  ┖───────────────┚
+    [General]
+      When power button is pressed: Shutdown
+      When sleep button is pressed: Suspend
+      
+    [System]
+      Suspend when inactive for: Never | Never
+      When laptop lid is closed: Suspend | Lock screen
+    
+    [Display]
+      Switch off after: 15 minutes | 15 minutes
+  ```
+  ```
+  ┎────────────────┒
+  ┃ Window Manager ┃
+  ┖────────────────┚
+    [Style]
+      Theme: Mint-Y-Dark-Aqua
+      Title font: Ubuntu Medium 12
+  ```
+  ```
+  ┎───────────────────────┒
+  ┃ Window Manager Tweaks ┃
+  ┖───────────────────────┚
+    [Compositor]
+      (uncheck) Show shadows under dock windows (to remove random shadow under Cairo-dock)
+  ```
+</details>
+
+<details>
+  <summary>Expand for Cinnamon System Settings</summary>
+
+  **NOTE**: I switched to XFCE because Cinnamon randomly spikes to 100% on the CPU after Suspend'ing the system multiple times.
 
   ```
   ┎─────────────────┒
@@ -1003,45 +1172,60 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
-  <summary>Expand for Nemo Settings</summary>
+  <summary>Expand for File Manager Settings</summary>
   
-  Preferences
-  ```
-  ┎───────┒
-  ┃ Views ┃
-  ┖───────┚
-    View new folders using: List View
-    Sort favorites before other files: (uncheck)
-    Default Zoom Level: (change all to) 66%
-    Tree View Defaults: (uncheck) Show only folders
+  <details>
+    <summary>Expand for Thunar</summary>
+    
+    Edit > Preferences
+    ```
+    [Display]
+      View new folders using: Compact View
+    ```
+    View > [X] Show Hidden Files
+  </details>
   
-  ┎──────────┒
-  ┃ Behavior ┃
-  ┖──────────┚
-    Click on a file's name twice to rename it: (check)
-    Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
-  
-  ┎─────────┒
-  ┃ Display ┃
-  ┖─────────┚
-    Show advanced permissions in the file property dialog: (check)
-  
-  ┎─────────┒
-  ┃ Toolbar ┃
-  ┖─────────┚
-    (check) Refresh
-    (check) Open in Terminal
-    (check) New folder
-    (check) Show Thumbnails
-  
-  ┎───────────────┒
-  ┃ Context Menus ┃
-  ┖───────────────┚
-    [Selection]
-      (check) Make Link
-      (check) Copy to
-      (check) Move to
-  ```
+  <details>
+    <summary>Expand for Nemo</summary>
+    
+    Preferences
+    ```
+    ┎───────┒
+    ┃ Views ┃
+    ┖───────┚
+      View new folders using: List View
+      Sort favorites before other files: (uncheck)
+      Default Zoom Level: (change all to) 66%
+      Tree View Defaults: (uncheck) Show only folders
+    
+    ┎──────────┒
+    ┃ Behavior ┃
+    ┖──────────┚
+      Click on a file's name twice to rename it: (check)
+      Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
+    
+    ┎─────────┒
+    ┃ Display ┃
+    ┖─────────┚
+      Show advanced permissions in the file property dialog: (check)
+    
+    ┎─────────┒
+    ┃ Toolbar ┃
+    ┖─────────┚
+      (check) Refresh
+      (check) Open in Terminal
+      (check) New folder
+      (check) Show Thumbnails
+    
+    ┎───────────────┒
+    ┃ Context Menus ┃
+    ┖───────────────┚
+      [Selection]
+        (check) Make Link
+        (check) Copy to
+        (check) Move to
+    ```
+  </details>
 </details>
 
 <details>
@@ -1129,44 +1313,6 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
-  <summary>Expand for Xed (Text Editor) Settings</summary>
-  
-  I was using `notepadqq` but it started taking a very long time to open.
-
-  Xed comes default with Mint, but it requires a little customization.
-
-  - Styles will come from https://github.com/trusktr/gedit-color-schemes
-     - There are a few places where styles could possibly go. Run `ls -la /usr/share/gtksourceview-*/styles`, and take note of the folders that have a `styles.rng` file. For each one of those folders, you'll need to create a `.local` version where you'll dump the custom styles.
-        ```sh
-        # currently these folders match the above criteria
-        mkdir -p ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
-        ```
-     - Now you can copy the contents of the repo's `gtksourceview-3.0/styles` folder over to the new folders.
-        ```sh
-        wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
-        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
-        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
-        rm ~/Downloads/geditcolors.zip
-        ```
-  - Open a file with Xed (Text Editor)
-     - Go to Edit > Preferences
-        ```
-        [Editor]
-          (check) Display line numbers
-          (check) Display overview map
-          (check) Display right margin (set to 80)
-          (check) Highlight the current line
-          (check) Highlight matching brackets
-          Tab width: 2
-          (check) Automatic indentation
-          (un-check) Allow mouse wheel scrolling to change tabs
-          
-        [Theme]
-          Twilight
-        ```
-</details>
-
-<details>
   <summary>Expand for VS Code Settings</summary>
   
   Extensions:
@@ -1205,12 +1351,14 @@ dconf load / < ~/settings.dconf
        Diff Editor: Render Side By Side: (uncheck)
        Editor: Accept Suggestion on Commit Character: (uncheck)
        Editor: Detect Indentation: (uncheck)
+       Editor: Folding Strategy: indentation
        Editor: Font Size: 14
        Editor: Insert Spaces: (check)
        Editor: Rulers: [80]
        Editor: Scroll Beyond Last Line: (uncheck)
        Editor: Tab Size: 2
        Editor: Token Color Customizations: (edit in JSON)
+       Editor: Trim Auto Whitespace: (uncheck)
        Files: Exclude: (remove the pattern for `.git`)
        Search: Use Global Ignore Files: (check)
      
@@ -1297,6 +1445,44 @@ dconf load / < ~/settings.dconf
   - Right-click on the bottom Status Bar
     - Uncheck the second instance of Source Control
     - Uncheck Feedback
+</details>
+
+<details>
+  <summary>Expand for Xed (Text Editor) Settings</summary>
+  
+  I was using `notepadqq` but it started taking a very long time to open.
+
+  Xed comes default with Mint, but it requires a little customization.
+
+  - Styles will come from https://github.com/trusktr/gedit-color-schemes
+     - There are a few places where styles could possibly go. Run `ls -la /usr/share/gtksourceview-*/styles`, and take note of the folders that have a `styles.rng` file. For each one of those folders, you'll need to create a `.local` version where you'll dump the custom styles.
+        ```sh
+        # currently these folders match the above criteria
+        mkdir -p ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
+        ```
+     - Now you can copy the contents of the repo's `gtksourceview-3.0/styles` folder over to the new folders.
+        ```sh
+        wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
+        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
+        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
+        rm ~/Downloads/geditcolors.zip
+        ```
+  - Open a file with Xed (Text Editor)
+     - Go to Edit > Preferences
+        ```
+        [Editor]
+          (check) Display line numbers
+          (check) Display overview map
+          (check) Display right margin (set to 80)
+          (check) Highlight the current line
+          (check) Highlight matching brackets
+          Tab width: 2
+          (check) Automatic indentation
+          (un-check) Allow mouse wheel scrolling to change tabs
+          
+        [Theme]
+          Twilight
+        ```
 </details>
 
 <details>
