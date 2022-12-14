@@ -195,6 +195,11 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   sudo reboot
   ```
   
+  If you want to remove displaylink, run:
+  ```sh
+  sudo displaylink-installer uninstall
+  ```
+  
   I ran into an issue where the system would freeze at the boot logo if the dock's USB was plugged in (only after the driver was installed). With the USB unplugged everything was fine. During boot I noticed it was hanging on the `udev` service. I ran `ls -la /etc/udev/rules.d/` and the only rule in there was `99-displaylink.rules` which was executing `/opt/displaylink/udev.sh`. I came across a few posts to fix the freeze during boot:
   - [Post that calls out real fix which calls out `--no-block`](https://support.displaylink.com/forums/287786-displaylink-feature-suggestions/suggestions/41424121-avoid-boot-time-stall-due-to-udev-rules)
   - There was another that said to use `sudo systemctl mask systemd-udev-settle`. It worked, but it didn't target the issue specifically and could have masked other issues.
