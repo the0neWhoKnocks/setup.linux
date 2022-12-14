@@ -25,20 +25,20 @@
     # ┖────────┚
     /etc/sddm.conf.d
     /usr/share/sddm/themes/breeze/theme.conf.user
+    /var/lib/AccountsService/icons/${USER}
     
     # ┎──────┒
     # ┃ Home ┃
     # ┖──────┚
-    # Atom
-    ~/.atom/{packages,config.cson,keymap.cson,snippets.cson,styles.less}
+    # Albert
+    ~/.config/albert
+    # autostart
+    ~/.config/autostart
     # Chrome and Chromium
     $(find ~/.config/chromium \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/chromium/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
     $(find ~/.config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/google-chrome/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
-    # Cinnamon
-    ~/.cinnamon
-    ~/.local/share/cinnamon
     # # Blender
     # $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
     # Dock
@@ -57,14 +57,8 @@
     ~/.config/inkscape/preferences.xml
     # Insomnia
     ~/.config/Insomnia
-    # Launcher
-    ~/.config/ulauncher
     # LSD
     ~/.config/lsd/config.yaml
-    # Nemo
-    $(find ~/.config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
-    ~/.config/nemo
-    ~/.local/share/nemo
     # # OBS Studio
     # ~/.config/obs-studio
     # Passwords
@@ -84,7 +78,6 @@
   
     # User stuff
     ~/.bash_history
-    ~/.face
     ~/.gitconfig
     ~/.history
     ~/.nvidia-settings-rc
@@ -98,6 +91,28 @@
     ~/settings-backup.dconf
     ~/settings-backup-imgs
   )
+  
+  # Session specific
+  if [[ "${DESKTOP_SESSION}" == "cinnamon" ]]; then
+    list+=(
+      # Cinnamon
+      ~/.cinnamon
+      ~/.local/share/cinnamon
+      # Nemo
+      $(find ~/.config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
+      ~/.config/nemo
+      ~/.local/share/nemo
+    )
+  elif [[ "${DESKTOP_SESSION}" == "xfce" ]]; then
+    list+=(
+      # Redshift
+      ~/.config/redshift.conf
+      # Thunar
+      ~/.config/Thunar
+      # XFCE
+      ~/.config/xfce4
+    )
+  fi
   
   # ensure items are surrounded in quotes for paths with spaces
   echo "${list[@]}" | xargs -n 1 printf "%s\n"
