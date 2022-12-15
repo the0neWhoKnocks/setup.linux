@@ -19,6 +19,8 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
 - [Back Up or Restore Data](#back-up-or-restore-data)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Useful Commands](#useful-commands)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -707,6 +709,9 @@ dconf load / < ~/settings.dconf
     
     [Users]
       Allow guest sessions: (checked)
+      
+    [Settings]
+      Monitor: DP-3 (your main monitor)
   ```
   ```
   ┎────────────────────┒
@@ -817,6 +822,11 @@ dconf load / < ~/settings.dconf
     [Compositor]
       (uncheck) Show shadows under dock windows (to remove random shadow under Cairo-dock)
   ```
+  
+  Shortcuts
+  | Keys | Action |
+  | ---- | ------ |
+  | `CTRL+ALT+d` | Hide/Show Desktop |
 </details>
 
 <details>
@@ -876,6 +886,11 @@ dconf load / < ~/settings.dconf
         Show num lock indicator: (checked)
         
       ┎───────────────┒
+      ┃ Power Manager ┃
+      ┖───────────────┚
+        Display: Show percentage
+        
+      ┎───────────────┒
       ┃ Notifications ┃
       ┖───────────────┚
         Show empty tray: (checked)
@@ -923,6 +938,11 @@ dconf load / < ~/settings.dconf
     ┃ Users ┃
     ┖───────┚
       Allow guest sessions: (checked)
+    
+    ┎──────────┒
+    ┃ Settings ┃
+    ┖──────────┚
+      Monitor: DP-3 (your main monitor)
   
   ──────────────────────────────────────────────────────────────────────────────
   
@@ -1234,6 +1254,16 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
+  <summary>Expand for Pulse Audio Settings</summary>
+  
+  PulseEffects
+  ```
+  [General]
+    Start Service at Login
+  ```
+</details>
+
+<details>
   <summary>Expand for Qemu Settings</summary>
   
   - After the initial install, a reboot may be required to run `virsh` commands without `sudo`.
@@ -1284,6 +1314,26 @@ dconf load / < ~/settings.dconf
   Once you have a wallpaper you like, create/update your config's background line, and you'll see the new image after a reboot. Note that you'll see your User wallpaper on the lock screen.
   
   If your user icon isn't showing up, look in `/var/lib/AccountsService/icons/` and see if an icon exists with your user name. If not, try picking and choosing an icon again from **Account Details**.
+  
+  If you have multiple monitors hooked up, things will likely be jacked up when the login screen appears. Here's how to fix it:
+  ```sh
+  # get info about connected monitors
+  xrandr | grep -w connected
+  # In my case the output was:
+  # --------------------------
+  ## HDMI-0 connected 1080x1920+1920+0 left (normal left inverted right x axis y axis) 531mm x 299mm
+  ## DP-1 connected (normal left inverted right x axis y axis)
+  ## DP-3 connected primary 1920x1080+0+423 (normal left inverted right x axis y axis) 531mm x 299mm
+  # --------------------------
+  # HDMI-0 is my secondary vertical monitor to the right of my primary DP-3. DP-1 is the closed laptop.
+  
+  # add rules so the login behaves
+  sudo vim /usr/share/sddm/scripts/Xsetup
+  # -------------------------------------
+  xrandr --output DP-3 --auto --primary
+  xrandr --output HDMI-0 --right-of DP-3 --rotate left --noprimary
+  # -------------------------------------
+  ```
   
   If `sddm` isn't behaving, you can revert to the default with `sudo dpkg-reconfigure lightdm`.
   
@@ -1525,6 +1575,23 @@ Backups will be output to the Desktop unless otherwise specified. Run `bup -h` f
 Restore a backup with
 ```sh
 bup -r "<PATH_TO_BACKUP>"
+```
+
+---
+
+## Keyboard Shortcuts
+
+| Keys | Action |
+| ---- | ------ |
+| `ALT` | While clicking and dragging a window will move it |
+| `CTRL+ALT+ESC` | Refresh Desktop |
+
+---
+
+## Useful Commands
+
+```sh
+xev # prints out keycodes
 ```
 
 ---
