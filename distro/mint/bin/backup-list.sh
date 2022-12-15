@@ -63,6 +63,10 @@
     # ~/.config/obs-studio
     # Passwords
     ~/.local/share/keyrings
+    # Pulse Audio
+    ~/.config/pulse
+    ~/.config/PulseEffects
+    ~/.config/pavucontrol.ini
     # Shares
     ~/.config/lan-shares
     # Sticky Notes
