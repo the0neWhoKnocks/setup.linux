@@ -61,8 +61,6 @@
     ~/.config/lsd/config.yaml
     # # OBS Studio
     # ~/.config/obs-studio
-    # Passwords
-    ~/.local/share/keyrings
     # Pulse Audio
     ~/.config/pulse
     ~/.config/PulseEffects
@@ -87,13 +85,16 @@
     ~/.nvidia-settings-rc
     ~/.oh-my-zsh
     ~/.profile
-    ~/.ssh
     ~/.vimrc
     ~/.zshrc
     $(find ~/Pictures/{app-icons,avatars,wallpapers} -maxdepth 1 -type f -printf "\"%p\"\n")
     ~/pkgs.list
     ~/settings-backup.dconf
     ~/settings-backup-imgs
+    # Passwords
+    ~/.gnupg
+    ~/.local/share/keyrings
+    ~/.ssh
   )
   
   # Session specific
