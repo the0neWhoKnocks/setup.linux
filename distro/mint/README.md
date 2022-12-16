@@ -165,7 +165,9 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
 <details>
   <summary>Expand for Vim Settings</summary>
   
-  https://gist.github.com/the0neWhoKnocks/ece1903a179aeb16619768ba44570abe#vimrc
+  ```sh
+  cp -i ./files/.vimrc ~/
+  ```
 </details>
 <br>
 
@@ -284,6 +286,8 @@ sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
 sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+# remove some stuff that tagged along
+sudo apt remove kwalletmanager
 
 # optional
 sudo apt install -y figlet obs-studio
@@ -393,7 +397,6 @@ flatpak install flathub io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic
   DEBS_DIR=~/Downloads/debs
   urls=(
     'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/amd64/albert_0.17.6-0_amd64.deb'
-    'https://github.com/atom/atom/releases/download/v1.59.0/atom-amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
@@ -420,7 +423,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | Software | Description |
   | -------- | ----------- |
   | [Albert](https://albertlauncher.github.io/) | Launcher (alternative to Wox). In the Installing page look for look for the `OBS software repo` link for downloads. |
-  | [Atom](https://atom.io/) | Hackable text editor |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
@@ -432,24 +434,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | Software | Description |
   | -------- | ----------- |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
-</details>
-
-<details>
-  <summary>Expand for Atom Notes</summary>
-  
-  Since they're sunsetting Atom, and the newer versions have bugs that won't get fixed, I'm just using `v1.59.0`.
-  
-  Was getting a `FATAL:gpu_data_manager_impl_private.cc` error when opening Atom. When run with the `--in-process-gpu` flag it works from the CLI. So I created a script to run the binary so launchers and CLI both work.
-  https://github.com/atom/atom/issues/23608
-  ```sh
-  sudo mv /bin/atom /bin/atdumb
-  sudo vim /bin/atom
-  
-  #!/bin/bash
-  /bin/atdumb --in-process-gpu "$@"
-  
-  sudo chmod +x /bin/atom
-  ```
 </details>
 
 
@@ -652,9 +636,8 @@ dconf load / < ~/settings.dconf
   Control your monitor's temperature (limit blue light):
   - ```sh
     # NOTE: This file could conflict with the qredshift applet in Cinnamon
-    vim ~/.config/redshift.conf
+    cp -i ./files/redshift.conf ~/.config/
     ```
-  - Add contents from [redshift.conf](./files/redshift.conf)
   - Start Redshift from your launcher (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
   
   
@@ -1068,132 +1051,7 @@ dconf load / < ~/settings.dconf
   
   ```sh
   mkdir -p ~/.config/lsd
-  vim ~/.config/lsd/config.yaml
-  ```
-  ```yaml
-  # == Classic ==
-  # This is a shorthand to override some of the options to be backwards compatible
-  # with `ls`. It affects the "color"->"when", "sorting"->"dir-grouping", "date"
-  # and "icons"->"when" options.
-  # Possible values: false, true
-  classic: false
-
-  # == Blocks ==
-  # This specifies the columns and their order when using the long and the tree
-  # layout.
-  # Possible values: permission, user, group, size, size_value, date, name, inode
-  blocks:
-    - permission
-    - user
-    - group
-    - size
-    - date
-    - name
-
-  # == Color ==
-  # This has various color options. (Will be expanded in the future.)
-  color:
-    # When to colorize the output.
-    # When "classic" is set, this is set to "never".
-    # Possible values: never, auto, always
-    when: auto
-    # How to colorize the output.
-    # When "classic" is set, this is set to "no-color".
-    # Possible values: default, <theme-file-name>
-    # when specifying <theme-file-name>, lsd will look up theme file
-    # XDG Base Directory if relative, e.g. ~/.config/lsd/themes/<theme-file-name>.yaml,
-    # The file path if absolute
-    theme: default
-
-  # == Date ==
-  # This specifies the date format for the date column. The freeform format
-  # accepts an strftime like string.
-  # When "classic" is set, this is set to "date".
-  # Possible values: date, relative, '+<date_format>'
-  # `date_format` will be a `strftime` formatted value. e.g. `date: '+%d %b %y %X'` will give you a date like this: 17 Jun 21 20:14:55
-  # Format cheatsheet: https://strftime.org/
-  date: '+%Y/%m/%d'
-
-  # == Dereference ==
-  # Whether to dereference symbolic links.
-  # Possible values: false, true
-  dereference: false
-
-  # == Display ==
-  # What items to display. Do not specify this for the default behavior.
-  # Possible values: all, almost-all, directory-only
-  # display: all
-
-  # == Icons ==
-  icons:
-    # When to use icons.
-    # When "classic" is set, this is set to "never".
-    # Possible values: always, auto, never
-    when: auto
-    # Which icon theme to use.
-    # Possible values: fancy, unicode
-    theme: fancy
-    # Separator between icon and the name
-    # Default to 1 space
-    separator: ' '
-
-
-  # == Ignore Globs ==
-  # A list of globs to ignore when listing.
-  # ignore-globs:
-  #   - .git
-
-  # == Indicators ==
-  # Whether to add indicator characters to certain listed files.
-  # Possible values: false, true
-  indicators: false
-
-  # == Layout ==
-  # Which layout to use. "oneline" might be a bit confusing here and should be
-  # called "one-per-line". It might be changed in the future.
-  # Possible values: grid, tree, oneline
-  layout: oneline
-
-  # == Recursion ==
-  recursion:
-    # Whether to enable recursion.
-    # Possible values: false, true
-    enabled: false
-    # How deep the recursion should go. This has to be a positive integer. Leave
-    # it unspecified for (virtually) infinite.
-    # depth: 3
-
-  # == Size ==
-  # Specifies the format of the size column.
-  # Possible values: default, short, bytes
-  size: default
-
-  # == Sorting ==
-  sorting:
-    # Specify what to sort by.
-    # Possible values: extension, name, time, size, version
-    column: name
-    # Whether to reverse the sorting.
-    # Possible values: false, true
-    reverse: false
-    # Whether to group directories together and where.
-    # When "classic" is set, this is set to "none".
-    # Possible values: first, last, none
-    dir-grouping: first
-
-  # == No Symlink ==
-  # Whether to omit showing symlink targets
-  # Possible values: false, true
-  no-symlink: false
-
-  # == Total size ==
-  # Whether to display the total size of directories.
-  # Possible values: false, true
-  total-size: false
-
-  # == Symlink arrow ==
-  # Specifies how the symlink arrow display, chars in both ascii and utf8
-  symlink-arrow: ⇒
+  cp -i ./files/lsd/config.yaml ~/.config/lsd/
   ```
 </details>
 
@@ -1286,25 +1144,13 @@ dconf load / < ~/settings.dconf
 <details>
   <summary>Expand for SDDM Settings</summary>
   
-  To configure the theme, create a custom config for sddm:
   ```sh
+  # To configure the theme, create a custom config for sddm
   sudo mkdir -p /etc/sddm.conf.d
-  sudo vim /etc/sddm.conf.d/10-custom.conf
-  ```
-  ```
-  [General]
-  Numlock=on
+  sudo cp -i ./files/sddm/10-custom.conf /etc/sddm.conf.d/
   
-  [Theme]
-  Current=breeze
-  ```
-  and then a custom config for the theme:
-  ```sh
-  sudo vim /usr/share/sddm/themes/breeze/theme.conf.user
-  ```
-  ```
-  [General]
-  background=/usr/share/wallpapers/Digital Stream Vanessa/contents/images/5034x2832.jpg
+  # Then a custom config for the theme, adjust values as you see fit (these changes will persist after theme updates)
+  sudo cp -i .files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
   ```
   
   You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme.
@@ -1475,13 +1321,7 @@ dconf load / < ~/settings.dconf
      ```
      - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
         ```sh
-        vim ~/.gitignore_global
-        ``` 
-        ```
-        # for visual clarity in VSCode
-        .git
-        ```
-        ```sh
+        cp -i ./files/.gitignore_global ~/
         git config --global core.excludesFile ~/.gitignore_global
         ```
   - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`) (or `CTRL+SHIFT+P`, `Preferences: Open Keyboard Shortcuts (JSON)`)
@@ -1613,12 +1453,7 @@ xev # prints out keycodes
   ```
   If you don't see any files with settings pertaining to `HandleLidSwitchExternalPower`, create a new one:
   ```sh
-  sudo vim /usr/lib/systemd/logind.conf.d/laptop-login.conf
-  ```
-  ```
-  [Login]
-  # don't suspend on login screen when plugged in
-  HandleLidSwitchExternalPower=ignore
+  sudo cp -i ./files/laptop-login.conf /usr/lib/systemd/logind.conf.d/
   ```
 </details>
 <br>

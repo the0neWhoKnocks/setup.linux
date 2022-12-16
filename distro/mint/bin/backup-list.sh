@@ -81,6 +81,7 @@
     # User stuff
     ~/.bash_history
     ~/.gitconfig
+    ~/.gitignore_global
     ~/.history
     ~/.nvidia-settings-rc
     ~/.oh-my-zsh
