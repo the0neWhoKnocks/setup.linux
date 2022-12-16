@@ -894,6 +894,7 @@ dconf load / < ~/settings.dconf
       ┃ Notifications ┃
       ┖───────────────┚
         Show empty tray: (checked)
+        Show notifications on the bottom: (checked)
         
       ┎───────────┒
       ┃ QRedShift ┃
@@ -1638,4 +1639,16 @@ xev # prints out keycodes
   You should then be able to boot normally with the default `nouveau` driver. Open up Driver Manager and reinstall the nvidia driver that matches your kernel.
   
   To find the driver that matches your kernel, run `uname -r` to view the current kernel. Then compare that against the available nvidia drivers in Driver Manager. For me it was recommending `nvidia-driver-525` when my kernel was `5.15.0-56-generic`. So it should've been recommending `nvidia-driver-515`.
+</details>
+
+**Issue: Chrome Saved Passwords Not Showing Up in Settings**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  First, close Chrome while you're troubleshooting.
+  
+  Possible reasons for this:
+  1. The `Login Data` file is missing from `~/.config/google-chrome/<Default|Profile>/` or it's read/write protected. Look at the other file permissions in a folder you haven't touched, and copy those. 
+  1. The passwords in the database (`Login Data` is a sqlite3 file) were encoded with a system key that aren't on your new system. It should be stored in `~/.local/share/keyrings`.
+  1. There's a corrupted value in `Login Data`. If Chrome can't read a value, it automatically considers everything broken and won't display anything. If you run [fix-chrome-creds.py](./bin/fix-chrome-creds.py) it'll create a fixed file on your desktop, and output all the values so you can see what may be broken, or worse case manually input the passwords. Example `./bin/fix-chrome-creds.py -f "~/.config/google-chrome/<PROFILE>/Login Data" -p "<KEY>"`. `<KEY>` would come from `Passwords and Keys > Login > Chrome Safe Storage`.
 </details>
