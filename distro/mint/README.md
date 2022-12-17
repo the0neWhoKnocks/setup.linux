@@ -285,7 +285,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -340,6 +340,7 @@ sudo apt install -y figlet obs-studio
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
+  | [sqlitebrowser](https://sqlitebrowser.org/) | A GUI based SQL toolkit |
 </details>
 
 
@@ -628,6 +629,9 @@ dconf load / < ~/settings.dconf
   
   # Panel plugins
   sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
+  
+  # File manager plugins
+  sudo apt install thunar-font-manager
   
   # May be required for redshift (may be optional, not sure if it's installed by default)
   sudo apt install redshift redshift-gtk

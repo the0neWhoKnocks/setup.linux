@@ -92,6 +92,8 @@
     ~/pkgs.list
     ~/settings-backup.dconf
     ~/settings-backup-imgs
+    # Shared file manager stuff
+    $(find ~/.config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
     # Passwords
     ~/.gnupg
     ~/.local/share/keyrings
@@ -105,7 +107,6 @@
       ~/.cinnamon
       ~/.local/share/cinnamon
       # Nemo
-      $(find ~/.config -path '*/gtk-*/bookmarks' -printf "\"%p\"\n")
       ~/.config/nemo
       ~/.local/share/nemo
     )
