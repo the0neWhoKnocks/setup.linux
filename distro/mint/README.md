@@ -10,6 +10,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Install Base Software](#install-base-software)
 - [Clone This Repo](#clone-this-repo)
 - [Set Up Shell](#set-up-shell)
+- [Set Up Repos](#set-up-repos)
 - [Set Up Shares](#set-up-shares)
 - [Install Software](#install-software)
   - [Via Software Manager or CLI](#via-software-manager-or-cli)
@@ -22,6 +23,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
 - [Theming](#theming)
+  - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
 - [Troubleshooting](#troubleshooting)
 
@@ -176,6 +178,8 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
 <details>
   <summary>[ Optional ] Expand for DisplayLink Install (for Targus dock)</summary>
   
+  There are issues syncing monitors with DisplayLink on Linux especially when using Nvidia drivers.
+  
   ```sh
   # Download and install DisplayLink driver
   wget https://cdn.targus.com/web/us/downloads/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu.zip -O ~/Downloads/driver__Targus_USB_DisplayLink.zip
@@ -254,6 +258,12 @@ Install oh-my-zsh, plugins, and my custom theme (requires [this step](#clone-thi
       (updated colors to match my zsh theme)
   ```
 </details>
+
+---
+
+## Set Up Repos
+
+I have a private gist that contains a shell script with all the `git clone` commands so I don't have to deal with finding all the repo URLs and remembering where everything should be cloned to. 
 
 ---
 
@@ -725,6 +735,12 @@ dconf load / < ~/settings.dconf
     ┖─────────┚
       Row size: 36
     
+    ┎────────────┒
+    ┃ Appearance ┃
+    ┖────────────┚
+      Adjust size automatically: (unchecked)
+      Fixed icon size: 24
+    
     ┎───────┒
     ┃ Items ┃
     ┖───────┚
@@ -772,9 +788,7 @@ dconf load / < ~/settings.dconf
         
       [Status Tray Plugin]
         Adjust size automatically: (checked)
-        Square items: (checked)
-      
-      [XApp Status Plugin]
+        Square items: (unchecked)
       
       [PulseAudio Plugin]
       
@@ -795,6 +809,21 @@ dconf load / < ~/settings.dconf
     
     [Display]
       Switch off after: 15 minutes | 15 minutes
+  ```
+  ```
+  ┎─────────────┒
+  ┃ Screensaver ┃
+  ┖─────────────┚
+    [Screensaver]
+      Theme: Pop art squares
+      Activate screensaver when computer is idle: (checked)
+      Regard the computer as idle after: 5 minutes
+      
+    [Lock Screen]
+      Enable Lock Screen: (checked)
+      Lock Screen with Screensaver: (checked)
+      Lock the screen after the screensaver is active for: 0 minutes
+      Lock Screen with System Sleep: (checked)
   ```
   ```
   ┎────────────────┒
@@ -1445,6 +1474,52 @@ xprop | grep WM_CLASS # (click on an open window) prints the window class of an 
 ---
 
 ## Theming
+
+### GTK Themes and Apps
+
+Recommended tools:
+- `GtkInspector`
+   ```sh
+   # If `libgtk-3-dev` isn't installed, do so
+   sudo apt install libgtk-3-dev
+   
+   # Enable with
+   gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true
+   ```
+- Color picker
+   ```sh
+   sudo apt install gpick
+   ```
+
+File locations:
+- CSS
+   ```
+   ~/.config/gtk-3.0/colors.css # color definitions
+   ~/.config/gtk-3.0/gtk.css # just imports `colors.css`
+   /usr/share/themes/<THEME>/gtk-3.0/gtk.css # theme specific styling/overrides
+   ```
+
+Sources:
+- https://gtkthemingguide.vercel.app/#/getting_started
+  - Source: https://github.com/surajmandalcell/Gtk-Theming-Guide/blob/master/getting_started.md
+- https://docs.gtk.org/gtk3/css-properties.html
+
+Updating Styles:
+- With an App focused (I right-clicked the bottom panel and opened Panel Preferences), hit `CTRL+SHIFT+I` and it should open with that App's items listed in the Objects view. If that doesn't work you can try running the App in the CLI prefixed with `GTK_DEBUG=interactive`. You may be in the Details view, if so click on the Show All Objects button (top left).
+- You can click on items in that view, and they'll blink/highlight if they're viewable. Once you find an item, double-click on it to open it's Details view. There's a drop-down, switch it to `CSS Nodes`. There you can find `ID`s, `Style Classes`, `CSS Property`s, and `Location`s. You can use `ID`s and `Style Classes` as you would ids and classes in CSS. `Location` is useful to determine if there's a hardcoded value in a CSS file somewhere, or if it's being controlled dynamically `<data>:##:##`.
+- With the info from that view, go to the `CSS` view. Anything you add in there will take effect immediately. Test it with something like
+   ```css
+   #XfcePanelWindow { 
+     background-color: #FF00FF;
+   }
+   ```
+  Most items you can just select their Properties, then inspect from there.
+- Add your custom styles to `~/.config/gtk-3.0/custom.css`, then open `~/.config/gtk-3.0/gtk.css` and add `@import "custom.css";`. For changes to take effect I logged out and back in.
+- When you're done, you may want to disable the `GtkInspector` key bindings so you don't get any unexpected keyboard conflicts
+   ```sh
+   gsettings set org.gtk.Settings.Debug enable-inspector-keybinding false
+   ```
+
 
 ### Icons
 
