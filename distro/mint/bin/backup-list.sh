@@ -88,7 +88,7 @@
     ~/.profile
     ~/.vimrc
     ~/.zshrc
-    $(find ~/Pictures/{app-icons,avatars,wallpapers} -maxdepth 1 -type f -printf "\"%p\"\n")
+    $(find ~/Pictures/{avatars,wallpapers} -maxdepth 1 -type f -printf "\"%p\"\n")
     ~/pkgs.list
     ~/settings-backup.dconf
     ~/settings-backup-imgs

@@ -21,6 +21,8 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Back Up or Restore Data](#back-up-or-restore-data)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
+- [Theming](#theming)
+  - [Icons](#icons)
 - [Troubleshooting](#troubleshooting)
 
 ---
@@ -1021,7 +1023,7 @@ dconf load / < ~/settings.dconf
   
   Note that when a launcher is added to the dock, a copy of it is added to `~/.config/cairo-dock/current_theme/launchers`. So if a launcher needs to be updated, I'll generally just delete it and add the new one, but you can go in and manually edit the launcher in that folder.
   
-  When manually creating a launcher I look to see if there's a good system icon via Cuttlefish instead of pointing to an image. Some apps like system binaries may not have an icon, so I created a folder in `~/Pictures/app-icons` to house custom icons.
+  When manually creating a launcher I look to see if there's a good system icon via `cuttlefish` instead of pointing to an image. Some apps like system binaries may not have an icon, so you can find/create one and add it to the appropriate folder in `~/.local/share/icons`. More info on that in the [Theming](#theming) section.
 </details>
 
 <details>
@@ -1428,7 +1430,7 @@ bup -r "<PATH_TO_BACKUP>"
 
 | Keys | Action |
 | ---- | ------ |
-| `ALT` | While clicking and dragging a window will move it |
+| `ALT` | Hold `ALT`, click and hold anywhere on a window, drag to move it |
 | `CTRL+ALT+ESC` | Refresh Desktop |
 
 ---
@@ -1436,8 +1438,31 @@ bup -r "<PATH_TO_BACKUP>"
 ## Useful Commands
 
 ```sh
-xev # prints out keycodes
+xev | grep keycode # prints out keycodes as you type
+xprop | grep WM_CLASS # (click on an open window) prints the window class of an app. Aids in finding things on the system
 ```
+
+---
+
+## Theming
+
+### Icons
+
+- [Icon Theme Spec](https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html)
+- [Icon Naming Spec](https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html)
+- Global icons (usually used by themes) are in `/usr/share/icons/<THEME>/<TYPE>/<SIZE>/`. So if there's an icon you like, but you want to modify it, that's where it may be.
+
+Before creating or finding my own icons I open up `cuttlefish` to see if there's something that'll work for me. If not, you can add a single icon in `~/.local/share/icons/`.
+For better compatibility (like having it show up in `cuttlefish`) I created a GIMP plugin to generate folders and the different sized icons.
+1. Close GIMP if it's running
+1. Symlink the plugin over `ln -s $PWD/files/gimp/nox_gen-freedesktop-icons.py ~/.config/GIMP/2.10/plug-ins/`
+1. The first time testing it, you can open GIMP via the terminal to see if there are any errors while loading.
+1. Add your full resolution icon to `~/.local/share/icons/hicolor/`. I tend to prefix my icons with `mine__` so I easily know what I've added.
+1. Open that image in GIMP
+1. In the top menu, go to NOX > (click) Gen Freedesktop Icons
+1. Choose the icon type
+1. (click) Generate
+1. In `cuttlefish` you should now be able to look up your icon, and use that icon name where ever.
 
 ---
 
