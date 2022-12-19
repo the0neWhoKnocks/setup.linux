@@ -361,7 +361,7 @@ sudo apt install -y figlet obs-studio
 ### Via Flatpak
 
 ```sh
-flatpak install flathub io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub io.bassi.Amberol it.mijorus.smile org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
@@ -376,6 +376,7 @@ flatpak install flathub io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [io.bassi.Amberol](https://flathub.org/apps/details/io.bassi.Amberol) | Amberol | Simple music player |
+  | [it.mijorus.smile](https://flathub.org/apps/details/it.mijorus.smile) | Smile | Emoji picker |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
