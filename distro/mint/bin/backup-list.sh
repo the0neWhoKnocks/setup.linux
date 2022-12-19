@@ -69,6 +69,8 @@
     ~/.config/lan-shares
     # Sticky Notes
     ~/.config/sticky
+    # Tumbler (thumbnailer)
+    ~/.config/tumbler
     # VLC
     ~/.config/vlc/skins
     ~/.config/vlc/vlc-qt-interface.conf
