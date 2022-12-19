@@ -20,8 +20,9 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
 - [Back Up or Restore Data](#back-up-or-restore-data)
-- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
+- [Useful Places](#useful-places)
 - [Theming](#theming)
   - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
@@ -361,7 +362,7 @@ sudo apt install -y figlet obs-studio
 ### Via Flatpak
 
 ```sh
-flatpak install flathub io.bassi.Amberol it.mijorus.smile org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub codes.merritt.FeelingFinder io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
@@ -375,8 +376,8 @@ flatpak install flathub io.bassi.Amberol it.mijorus.smile org.gimp.GIMP org.gimp
   
   | Package | Software | Description |
   | ------- | -------- | ----------- |
+  | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
   | [io.bassi.Amberol](https://flathub.org/apps/details/io.bassi.Amberol) | Amberol | Simple music player |
-  | [it.mijorus.smile](https://flathub.org/apps/details/it.mijorus.smile) | Smile | Emoji picker |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
@@ -384,7 +385,7 @@ flatpak install flathub io.bassi.Amberol it.mijorus.smile org.gimp.GIMP org.gimp
 </details>
 
 <details>
-  <summary>Expand for GIMP Settings</summary>
+  <summary>Expand for GIMP Tweaks</summary>
   
   | Software | Description |
   | -------- | ----------- |
@@ -404,6 +405,21 @@ flatpak install flathub io.bassi.Amberol it.mijorus.smile org.gimp.GIMP org.gimp
   )
   ```
 </details>
+
+<details>
+  <summary>Expand for FeelingFinder Tweaks</summary>
+  
+  Dunno how they came up with that name, but it doesn't cut it when searching in an App launcher.
+  ```sh
+  sudo vim /var/lib/flatpak/exports/share/applications/codes.merritt.FeelingFinder.desktop
+  ```
+  ```diff
+  - Name=Feeling Finder
+  + Name=Emoji Picker (Feeling Finder)
+  + Keywords=Emoji;Picker;
+  ```
+</details>
+
 
 
 ### Via deb
@@ -1521,7 +1537,7 @@ bup -r "<PATH_TO_BACKUP>"
 
 ---
 
-## Keyboard Shortcuts
+## Useful Keyboard Shortcuts
 
 | Keys | Action |
 | ---- | ------ |
@@ -1535,6 +1551,16 @@ bup -r "<PATH_TO_BACKUP>"
 ```sh
 xev | grep keycode # prints out keycodes as you type
 xprop | grep WM_CLASS # (click on an open window) prints the window class of an app. Aids in finding things on the system
+```
+
+---
+
+## Useful Places
+
+```sh
+# Applications (launcher) folders
+/usr/share/applications
+/var/lib/flatpak/exports/share/applications
 ```
 
 ---
