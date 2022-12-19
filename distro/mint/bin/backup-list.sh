@@ -35,6 +35,17 @@
     # autostart
     ~/.config/autostart
     # Chrome and Chromium
+    # The only files/folders that really matter in your profile are:
+    # 📁 Accounts
+    # 📁 Extension* (all of'm) 
+    # 📁 Session Storage
+    # 📁 Sessions
+    # 📄 Bookmarks
+    # 📄 Cookies (maybe, may cause issues)
+    # 📄 Favicons
+    # 📄 Login Data
+    # 📄 Login Data for Account
+    # 📄 Preferences
     $(find ~/.config/chromium \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/chromium/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
     $(find ~/.config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
