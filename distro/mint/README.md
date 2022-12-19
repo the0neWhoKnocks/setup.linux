@@ -297,7 +297,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -1053,6 +1053,8 @@ dconf load / < ~/settings.dconf
   Note that when a launcher is added to the dock, a copy of it is added to `~/.config/cairo-dock/current_theme/launchers`. So if a launcher needs to be updated, I'll generally just delete it and add the new one, but you can go in and manually edit the launcher in that folder.
   
   When manually creating a launcher I look to see if there's a good system icon via `cuttlefish` instead of pointing to an image. Some apps like system binaries may not have an icon, so you can find/create one and add it to the appropriate folder in `~/.local/share/icons`. More info on that in the [Theming](#theming) section.
+  
+  Had an issue where Cairo wasn't using my default File Manager to open folders. It must be caching it somewhere because after I went into Default Applications, and changed my File Manager to something else, and then back to what I wanted, it started behaving.
 </details>
 
 <details>
@@ -1256,6 +1258,7 @@ dconf load / < ~/settings.dconf
   - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
+  - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
   - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
   - dotenv https://marketplace.visualstudio.com/items?itemName=dotenv.dotenv-vscode
   - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
@@ -1353,6 +1356,9 @@ dconf load / < ~/settings.dconf
          }
        ]
      },
+     "blueprint.templatesPath": [
+       "~/.config/Code/User/FileTemplates",
+     ]
      ```
      - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
         ```sh
