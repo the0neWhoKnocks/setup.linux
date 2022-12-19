@@ -297,7 +297,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -334,6 +334,7 @@ sudo apt install -y figlet obs-studio
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
+  | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
   | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
@@ -342,6 +343,7 @@ sudo apt install -y figlet obs-studio
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
+  | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
@@ -1102,6 +1104,7 @@ dconf load / < ~/settings.dconf
     ```
     [Display]
       View new folders using: Compact View
+      Show thumbnails: Local Files Only
     ```
     View > [X] Show Hidden Files
   </details>
@@ -1224,6 +1227,40 @@ dconf load / < ~/settings.dconf
   Configuration doc: https://wiki.archlinux.org/title/SDDM#Configuration
   
   View the default config: `sddm --example-config | bat`
+</details>
+
+<details>
+  <summary>Expand for Sticky Settings</summary>
+  
+  Preferences
+  ```
+  [General]
+    Tray icon: (checked)
+    Show the main window automatically: (unchecked)
+  
+  [Notes]
+    Show spelling mistakes: (unchecked)
+  
+  [Automatic start]
+    Start automatically: (checked)
+    Show notes on the screen: (checked)
+  ```
+  
+  Fix [issue when copying and pasting text results in jumpled paste](https://github.com/linuxmint/sticky/issues/80)
+  ```sh
+  # Download working version
+  wget https://github.com/linuxmint/sticky/archive/refs/tags/1.11.zip -O ~/Downloads/sticky-v1.11.zip
+  # Stop sticky
+  killall sticky.py
+  # Back up bad file (just in case)
+  sudo mv /lib/sticky/note_buffer.py /lib/sticky/note_buffer.py.bak
+  # Patch with good file (requires `p7zip-full` to be installed)
+  sudo 7z e ~/Downloads/sticky-1.11.zip sticky-1.11/usr/lib/sticky/note_buffer.py -o/lib/sticky/
+  # Start sticky (NO_AT_BRIDGE used to ignore 'accessibility bus' warning)
+  NO_AT_BRIDGE=1 gtk-launch sticky.desktop
+  # Clean-up
+  rm ~/Downloads/sticky-1.11.zip
+  ```
 </details>
 
 <details>
