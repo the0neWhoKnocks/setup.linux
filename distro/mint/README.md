@@ -634,6 +634,26 @@ dconf load / < ~/settings.dconf
 </details>
 
 <details>
+  <summary>Expand for Thumbnail Settings</summary>
+
+  Mint uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
+  ```sh
+  # Clear any generated thumbnails
+  rm -rf  ~/.cache/thumbnails/*
+  # Create rc file for tumbler
+  mkdir ~/.config/tumbler
+  cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
+  # Exclude specific paths from having thumbnails generated
+  vi ~/.config/tumbler/tumbler.rc
+  ```
+  ```
+  # Find all the instances of `Excludes=` and add the paths
+  Excludes=<PATH1>;<PATH2>
+  ```
+  `tumblerd` can't be restarted so you have to log out/in
+</details>
+
+<details>
   <summary>Expand for XFCE System Settings</summary>
 
   First, install a few extra XFCE specific items:
@@ -791,6 +811,8 @@ dconf load / < ~/settings.dconf
       [Status Tray Plugin]
         Adjust size automatically: (checked)
         Square items: (unchecked)
+      
+      [XAapp Status Plugin]
       
       [PulseAudio Plugin]
       
@@ -1633,4 +1655,15 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   1. The `Login Data` file is missing from `~/.config/google-chrome/<Default|Profile>/` or it's read/write protected. Look at the other file permissions in a folder you haven't touched, and copy those. 
   1. The passwords in the database (`Login Data` is a sqlite3 file) were encoded with a system key that aren't on your new system. It should be stored in `~/.local/share/keyrings`.
   1. There's a corrupted value in `Login Data`. If Chrome can't read a value, it automatically considers everything broken and won't display anything. If you run [fix-chrome-creds.py](./bin/fix-chrome-creds.py) it'll create a fixed file on your desktop, and output all the values so you can see what may be broken, or worse case manually input the passwords. Example `./bin/fix-chrome-creds.py -f "~/.config/google-chrome/<PROFILE>/Login Data" -p "<KEY>"`. `<KEY>` would come from `Passwords and Keys > Login > Chrome Safe Storage`.
+</details>
+
+**Issue: How to Free Up Space?**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  ```sh
+  # There could be other folders in `.cache` that you may want to investigate.
+  # Deleting folders or their contents while certain Apps are running could cause issues.
+  rm -rf  ~/.cache/{thumbnails}/*
+  ```
 </details>
