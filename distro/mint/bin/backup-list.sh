@@ -73,6 +73,7 @@
     # # OBS Studio
     # ~/.config/obs-studio
     # Pulse Audio
+    /etc/pulse/daemon.conf
     ~/.config/pulse
     ~/.config/PulseEffects
     ~/.config/pavucontrol.ini
