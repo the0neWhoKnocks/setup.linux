@@ -298,7 +298,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects python3-notify2 sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -340,6 +340,7 @@ sudo apt install -y figlet obs-studio
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
   | [pulseeffects](https://github.com/wwmm/easyeffects) | Equalizer for PulseAudio |
+  | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
@@ -676,7 +677,7 @@ dconf load / < ~/settings.dconf
   First, install a few extra XFCE specific items:
   ```sh
   # System modules
-  sudo apt install xfce4-power-manager
+  sudo apt install xfce4-notifyd xfce4-power-manager
   
   # Panel plugins
   sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
@@ -1693,4 +1694,19 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   # Deleting folders or their contents while certain Apps are running could cause issues.
   rm -rf  ~/.cache/{thumbnails}/*
   ```
+</details>
+
+**Issue: Not All Desktop Notifications are displayed**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  I had this issue when I switched from Cinnamon to XFCE. First make sure you have the proper packages installed.
+  ```sh
+  libnotify-bin
+  libnotify4 # could be version based
+  notification-daemon
+  python3-notify2  # could be version based
+  xfce4-notifyd
+  ```
+  For me, the `xfce4-notifyd` daemon wasn't installed. Once it was I tested with `notify-send -t 3000 --icon=dialog-information "Test 1-2"`.
 </details>
