@@ -298,7 +298,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium elisa flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects python-is-python3 python3-notify2 sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -322,7 +322,6 @@ sudo apt install -y figlet obs-studio
   | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
-  | [elisa](https://invent.kde.org/multimedia/elisa) | Music player |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
@@ -342,6 +341,7 @@ sudo apt install -y figlet obs-studio
   | [pulseeffects](https://github.com/wwmm/easyeffects) | Equalizer for PulseAudio |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
+  | [sayonara](https://sayonara-player.com/) | Music player |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
@@ -364,7 +364,7 @@ sudo apt install -y figlet obs-studio
 ### Via Flatpak
 
 ```sh
-flatpak install flathub codes.merritt.FeelingFinder io.bassi.Amberol org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
@@ -379,7 +379,6 @@ flatpak install flathub codes.merritt.FeelingFinder io.bassi.Amberol org.gimp.GI
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
-  | [io.bassi.Amberol](https://flathub.org/apps/details/io.bassi.Amberol) | Amberol | Simple music player |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
@@ -1259,6 +1258,44 @@ dconf load / < ~/settings.dconf
         [General]
           [X] Enable system tray icon
         ```
+</details>
+
+<details>
+  <summary>Expand for Sayonara Settings</summary>
+  
+  ```
+  [File > Preferences]
+    [Application]
+      (untick) Update notifications
+    
+    [User Interface]
+      (untick) Show large cover
+    
+    [Playlist]
+      [Behavior]
+        Start up:
+          (tick) Load temporary playlists
+          (tick) Load last track on startup
+          (tick) Remember time of last track
+      
+      [Look]
+        (tick) Show footer
+        (untick) Show numbers
+        (tick) Show covers
+        Custom font color in dark theme: #2ad8ff
+        Playlist item text: %nr% - %title%
+      
+      [Covers]
+        (untick) Save found covers to database
+        (untick) Fetch missing covers from internet
+  
+  [Plugins]
+    [X] Level (customize colors by mousing over and clicking button)
+  
+  [View]
+    (untick) Show Library
+    (untick) Show Large Cover
+  ```
 </details>
 
 <details>
