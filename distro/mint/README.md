@@ -1403,6 +1403,33 @@ dconf load / < ~/settings.dconf
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
      ┎─────────────┒
+     ┃ Application ┃
+     ┖─────────────┚
+       Telemetry: off
+       Update Mode: manual
+     
+     ┎────────────┒
+     ┃ Extensions ┃
+     ┖────────────┚
+       Dotenv: Enable Autocloaking: (unchecked)
+       Git: Input Validation: Off
+       Javascript > Validate: Enable: (uncheck)
+       Markdown All In One: Math Enabled: (uncheck)
+       Markdown All In One: Ordered List: Auto Renumber: (uncheck)
+       Markdown All In One: Ordered List: Marker: one
+       Markdown All In One: Toc Levels: 2..6
+       Typescript > Validate: Enable: (uncheck)
+     
+     ┎──────────┒
+     ┃ Features ┃
+     ┖──────────┚
+       Extensions: Auto Check Updates: (uncheck)
+       Extensions: AUto Update: None
+       Extensions: Ignore Recomendations: (check)
+       SCM: Default View Mode: tree
+       Terminal > Integrated: Font Family: FantasqueSansMono NF
+     
+     ┎─────────────┒
      ┃ Text Editor ┃
      ┖─────────────┚
        Diff Editor: Render Side By Side: (uncheck)
@@ -1419,32 +1446,10 @@ dconf load / < ~/settings.dconf
        Files: Exclude: (remove the pattern for `.git`)
        Search: Use Global Ignore Files: (check)
      
-     ┎─────────────┒
-     ┃ Application ┃
-     ┖─────────────┚
-       Telemetry: off
-       Update Mode: manual
-     
-     ┎──────────┒
-     ┃ Features ┃
-     ┖──────────┚
-       Extensions: Auto Check Updates: (uncheck)
-       Extensions: AUto Update: None
-       Extensions: Ignore Recomendations: (check)
-       SCM: Default View Mode: tree
-       Terminal > Integrated: Font Family: FantasqueSansMono NF
-     
-     ┎────────────┒
-     ┃ Extensions ┃
-     ┖────────────┚
-       Dotenv: Enable Autocloaking: (unchecked)
-       Git: Input Validation: Off
-       Javascript > Validate: Enable: (uncheck)
-       Markdown All In One: Math Enabled: (uncheck)
-       Markdown All In One: Ordered List: Auto Renumber: (uncheck)
-       Markdown All In One: Ordered List: Marker: one
-       Markdown All In One: Toc Levels: 2..6
-       Typescript > Validate: Enable: (uncheck)
+     ┎────────┒
+     ┃ Window ┃
+     ┖────────┚
+       Window: New Window Dimensions: inherit
      
      ┎───────────┒
      ┃ Workbench ┃
