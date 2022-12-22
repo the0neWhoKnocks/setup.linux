@@ -833,7 +833,27 @@ dconf load / < ~/settings.dconf
       
       [XAapp Status Plugin]
       
+      [Notification Plugin]
+        [General]
+          Show notifications on: primary display
+          Theme: Greybird
+          Default position: Bottom right
+          Opacity: 100%
+        
+        [Applications]
+          (If notifications aren't showing, check here)
+        
+        [Log]
+          Log notifications: always (checked)
+          Log applications: all
+      
       [PulseAudio Plugin]
+        [General]
+          [X] Enable keyboard shortcuts for volume control
+          [X] Show notifications when volume changes
+        
+        [Media Players]
+          [X] Enable multimedia keys for playback control
       
       [Clock]
         Format: Custom Format: %b. %e 【%a.】【%l: %M %p】
@@ -1411,11 +1431,13 @@ dconf load / < ~/settings.dconf
        Extensions: Auto Check Updates: (uncheck)
        Extensions: AUto Update: None
        Extensions: Ignore Recomendations: (check)
+       SCM: Default View Mode: tree
        Terminal > Integrated: Font Family: FantasqueSansMono NF
      
      ┎────────────┒
      ┃ Extensions ┃
      ┖────────────┚
+       Dotenv: Enable Autocloaking: (unchecked)
        Git: Input Validation: Off
        Javascript > Validate: Enable: (uncheck)
        Markdown All In One: Math Enabled: (uncheck)
@@ -1582,6 +1604,9 @@ xprop | grep WM_CLASS # (click on an open window) prints the window class of an 
 # Applications (launcher) folders
 /usr/share/applications
 /var/lib/flatpak/exports/share/applications
+
+# System audio
+/usr/share/sounds
 ```
 
 ---
