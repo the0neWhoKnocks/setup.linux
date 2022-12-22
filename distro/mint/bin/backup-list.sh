@@ -77,6 +77,8 @@
     ~/.config/pulse
     ~/.config/PulseEffects
     ~/.config/pavucontrol.ini
+    # Sayonara
+    ~/.config/sayonara
     # Shares
     ~/.config/lan-shares
     # Sticky Notes
