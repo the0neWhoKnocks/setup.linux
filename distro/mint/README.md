@@ -1089,6 +1089,7 @@ dconf load / < ~/settings.dconf
     Terminal: Tilix
     Autostart on login: (checked)
     Theme: Dark Magenta
+    Display scrollbar: (check)
   
   ┎────────────┒
   ┃ Extensions ┃
@@ -1268,7 +1269,12 @@ dconf load / < ~/settings.dconf
       (untick) Update notifications
     
     [User Interface]
-      (untick) Show large cover
+      [General]
+        (untick) Show large cover
+      
+      [Icons]
+        (tick) Also apply this icon theme to the dark style (makes the volume icon look funny, but otherwise the icons in file picker are almost invisible, so it's required)
+        (tick) Mint-Y-Dark
     
     [Playlist]
       [Behavior]
@@ -1287,9 +1293,12 @@ dconf load / < ~/settings.dconf
       [Covers]
         (untick) Save found covers to database
         (untick) Fetch missing covers from internet
-  
+    
+    [Audio]
+      (tick) Alsa (was 'Automatic', which I think was defaulting to 'Pulseaudio', but when scrubbing a track back and forth quickly it'd freeze/lock up)
+    
   [Plugins]
-    [X] Level (customize colors by mousing over and clicking button)
+    (tick) Level (customize colors by mousing over and clicking button)
   
   [View]
     (untick) Show Library
@@ -1473,6 +1482,8 @@ dconf load / < ~/settings.dconf
        Editor: Detect Indentation: (uncheck)
        Editor: Folding Strategy: indentation
        Editor: Font Size: 14
+       Editor: Hover:Delay: 1000
+       Editor: Hover:Enabled: (uncheck)
        Editor: Insert Spaces: (check)
        Editor: Rulers: [80]
        Editor: Scroll Beyond Last Line: (uncheck)
@@ -1625,7 +1636,8 @@ bup -r "<PATH_TO_BACKUP>"
 
 | Keys | Action |
 | ---- | ------ |
-| `ALT` | Hold `ALT`, click and hold anywhere on a window, drag to move it |
+| `ALT + click on a window + drag` | Moves a window |
+| `ALT + right-click near window edge + drag up/down or left/right` | Resize a window |
 | `CTRL+ALT+ESC` | Refresh Desktop |
 
 ---
