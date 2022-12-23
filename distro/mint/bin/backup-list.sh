@@ -75,7 +75,6 @@
     # Pulse Audio
     /etc/pulse/daemon.conf
     ~/.config/pulse
-    ~/.config/PulseEffects
     ~/.config/pavucontrol.ini
     # Sayonara
     ~/.config/sayonara

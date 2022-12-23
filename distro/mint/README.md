@@ -298,7 +298,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk pulseeffects python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -338,7 +338,6 @@ sudo apt install -y figlet obs-studio
   | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
-  | [pulseeffects](https://github.com/wwmm/easyeffects) | Equalizer for PulseAudio |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [sayonara](https://sayonara-player.com/) | Music player |
@@ -1796,4 +1795,53 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   xfce4-notifyd
   ```
   For me, the `xfce4-notifyd` daemon wasn't installed. Once it was I tested with `notify-send -t 3000 --icon=dialog-information "Test 1-2"`.
+</details>
+
+**Issue: PulseAudio Volume Notification Keeps Popping Up**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  First you can debug Pulse's logs:
+  ```sh
+  systemctl --user stop pulseaudio.{socket,service}
+  # Terminal #1
+  LANG=C pulseaudio -vvvv --log-time=1 > ~/Desktop/pulseverbose.log 2>&1
+  # Terminal #2 (or just stop the above process when you see the notification pop up)
+  tail -f ~/Desktop/pulseverbose.log
+  ```
+  Most forums date this back to a long-standing issue with it detecting that the headphone jack is plugged in then unplugged. Sure enough I was seeing these random messages:
+  ```
+  [pulseaudio] module-alsa-card.c: Jack 'Headphone Jack' is now plugged in
+  ```
+  
+  I did a couple things. I think the first is what fixed it.
+  1. Go into **PulseAudio Volume Control** (`pavcontrol`). Under **Output Devices**, select the Port drop-down, choose `Headphones (unplugged)`, click the little `Mute Audio` button, then switch back to `Speakers`. Clicking on `Mute` seems to disable the device. Did the same for the on-board Microphone because I noticed it was picking up audio levels.
+  1. I also changed from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
+     ```sh
+     # First check and see if it's already installed and running
+     systemctl --user status pipewire pipewire-session-manager
+     
+     # If it's not installed
+     sudo apt install pipewire
+     # Install audio client and some libs
+     sudo apt install gstreamer1.0-pipewire libpipewire-0.3-{0,dev,modules} libspa-0.2-{bluetooth,dev,jack,modules} pipewire{,-{audio-client-libraries,pulse,bin,tests}}
+     # Install WirePlumber
+     sudo apt install wireplumber gir1.2-wp-0.4 libwireplumber-0.4-{0,dev}
+     
+     # Kill PulseAudio
+     systemctl --user --now disable pulseaudio.{socket,service}
+     systemctl --user mask pulseaudio
+     
+     # Copy over Pipewire configs
+     sudo cp -vRa /usr/share/pipewire /etc/
+     
+     # Start up Pipewire
+     systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+     
+     # Your system may require a log-off/in, or a reboot
+     ```
+     If you need/want Pipewire's equivelant to PulseEffects
+     ```sh
+     flatpak install flathub com.github.wwmm.easyeffects
+     ```
 </details>
