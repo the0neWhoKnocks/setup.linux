@@ -1440,8 +1440,11 @@ dconf load / < ~/settings.dconf
   - VS DocBlockr https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock
 
   If things aren't behaving as expected after installing extensions (like config pages not loading), run `CTRL+SHIFT+P > Reload Window`.
-
+  
   Settings:
+  - View > Appearance > Secondary Side Bar
+     - Go the Explorer view > (add) Open Editors
+        - Move Open Editors to the Secondary Side Bar
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
      ┎─────────────┒
@@ -1465,6 +1468,7 @@ dconf load / < ~/settings.dconf
      ┎──────────┒
      ┃ Features ┃
      ┖──────────┚
+       Explorer > Open Editors: Visible: 100
        Extensions: Auto Check Updates: (uncheck)
        Extensions: AUto Update: None
        Extensions: Ignore Recomendations: (check)
@@ -1474,6 +1478,7 @@ dconf load / < ~/settings.dconf
      ┎─────────────┒
      ┃ Text Editor ┃
      ┖─────────────┚
+       Diff Editor: Ignore Trim Whitespace (uncheck)
        Diff Editor: Render Side By Side: (uncheck)
        Editor: Accept Suggestion on Commit Character: (uncheck)
        Editor: Detect Indentation: (uncheck)
@@ -1498,6 +1503,7 @@ dconf load / < ~/settings.dconf
      ┎───────────┒
      ┃ Workbench ┃
      ┖───────────┚
+       Editor: Show Tabs (off)
        Window: Title: [${rootName}] ${activeEditorMedium}${separator}
        Window: Zoom Level: 1
      ```
