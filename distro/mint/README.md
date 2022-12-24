@@ -1294,9 +1294,6 @@ dconf load / < ~/settings.dconf
         (untick) Save found covers to database
         (untick) Fetch missing covers from internet
     
-    [Audio]
-      (tick) Alsa (was 'Automatic', which I think was defaulting to 'Pulseaudio', but when scrubbing a track back and forth quickly it'd freeze/lock up)
-    
   [Plugins]
     (tick) Level (customize colors by mousing over and clicking button)
   
@@ -1826,34 +1823,54 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   [pulseaudio] module-alsa-card.c: Jack 'Headphone Jack' is now plugged in
   ```
   
-  I did a couple things. I think the first is what fixed it.
-  1. Go into **PulseAudio Volume Control** (`pavcontrol`). Under **Output Devices**, select the Port drop-down, choose `Headphones (unplugged)`, click the little `Mute Audio` button, then switch back to `Speakers`. Clicking on `Mute` seems to disable the device. Did the same for the on-board Microphone because I noticed it was picking up audio levels.
-  1. I also changed from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
-     ```sh
-     # First check and see if it's already installed and running
-     systemctl --user status pipewire pipewire-session-manager
-     
-     # If it's not installed
-     sudo apt install pipewire
-     # Install audio client and some libs
-     sudo apt install gstreamer1.0-pipewire libpipewire-0.3-{0,dev,modules} libspa-0.2-{bluetooth,dev,jack,modules} pipewire{,-{audio-client-libraries,pulse,bin,tests}}
-     # Install WirePlumber
-     sudo apt install wireplumber gir1.2-wp-0.4 libwireplumber-0.4-{0,dev}
-     
-     # Kill PulseAudio
-     systemctl --user --now disable pulseaudio.{socket,service}
-     systemctl --user mask pulseaudio
-     
-     # Copy over Pipewire configs
-     sudo cp -vRa /usr/share/pipewire /etc/
-     
-     # Start up Pipewire
-     systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-     
-     # Your system may require a log-off/in, or a reboot
-     ```
-     If you need/want Pipewire's equivelant to PulseEffects
-     ```sh
-     flatpak install flathub com.github.wwmm.easyeffects
-     ```
+  ```sh
+  # stop the currently running service
+  systemctl --user stop pulseaudio.{socket,service}
+  # edit pulse's config
+  sudo vim /etc/pulse/default.pa
+  ```
+  ```
+  # Disable the below line
+  load-module module-switch-on-port-available
+  ```
+  ```sh
+  # start the service
+  systemctl --user start pulseaudio.{socket,service}
+  ```
+  What the modules do:
+  - `on-port-available` is the event that a port becomes usable, for example when you insert a mini jack.
+  - `on-connect` is the event that a new device is connected which has an audio port, such as a usb dock.
+  
+  ---
+  
+  **NOTE: Turns out the below didn't work**. Pipewire didn't help at all, in fact it kept crashing after extended use. Keeping this here in case I need it in the future.
+  
+  Change from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
+  ```sh
+  # First check and see if it's already installed and running
+  systemctl --user status pipewire pipewire-session-manager
+  
+  # If it's not installed
+  sudo apt install pipewire
+  # Install audio client and some libs
+  sudo apt install gstreamer1.0-pipewire libpipewire-0.3-{0,dev,modules} libspa-0.2-{bluetooth,dev,jack,modules} pipewire{,-{audio-client-libraries,pulse,bin,tests}}
+  # Install WirePlumber
+  sudo apt install wireplumber gir1.2-wp-0.4 libwireplumber-0.4-{0,dev}
+  
+  # Kill PulseAudio
+  systemctl --user --now disable pulseaudio.{socket,service}
+  systemctl --user mask pulseaudio
+  
+  # Copy over Pipewire configs
+  sudo cp -vRa /usr/share/pipewire /etc/
+  
+  # Start up Pipewire
+  systemctl --user --now enable pipewire{,-pulse}.{socket,service}
+  
+  # Your system may require a log-off/in, or a reboot
+  ```
+  If you need/want Pipewire's equivelant to PulseEffects
+  ```sh
+  flatpak install flathub com.github.wwmm.easyeffects
+  ```
 </details>
