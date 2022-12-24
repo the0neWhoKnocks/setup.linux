@@ -298,7 +298,7 @@ sudo add-apt-repository ppa:alex-p/aegisub
 sudo add-apt-repository ppa:danielrichter2007/grub-customizer
 sudo add-apt-repository ppa:kdenlive/kdenlive-stable
 sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
 # remove some stuff that tagged along
 sudo apt remove kwalletmanager
 
@@ -323,6 +323,7 @@ sudo apt install -y figlet obs-studio
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
+  | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
