@@ -1447,66 +1447,49 @@ dconf load / < ~/settings.dconf
         - Move Open Editors to the Secondary Side Bar
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
-     ┎─────────────┒
-     ┃ Application ┃
-     ┖─────────────┚
-       Telemetry: off
-       Update Mode: manual
-     
-     ┎────────────┒
-     ┃ Extensions ┃
-     ┖────────────┚
-       Dotenv: Enable Autocloaking: (unchecked)
-       Git: Input Validation: Off
-       Javascript > Validate: Enable: (uncheck)
-       Markdown All In One: Math Enabled: (uncheck)
-       Markdown All In One: Ordered List: Auto Renumber: (uncheck)
-       Markdown All In One: Ordered List: Marker: one
-       Markdown All In One: Toc Levels: 2..6
-       Typescript > Validate: Enable: (uncheck)
-     
-     ┎──────────┒
-     ┃ Features ┃
-     ┖──────────┚
-       Explorer > Open Editors: Visible: 100
-       Extensions: Auto Check Updates: (uncheck)
-       Extensions: AUto Update: None
-       Extensions: Ignore Recomendations: (check)
-       SCM: Default View Mode: tree
-       Terminal > Integrated: Font Family: FantasqueSansMono NF
-     
-     ┎─────────────┒
-     ┃ Text Editor ┃
-     ┖─────────────┚
-       Diff Editor: Ignore Trim Whitespace (uncheck)
-       Diff Editor: Render Side By Side: (uncheck)
-       Editor: Accept Suggestion on Commit Character: (uncheck)
-       Editor: Detect Indentation: (uncheck)
-       Editor: Folding Strategy: indentation
-       Editor: Font Size: 14
-       Editor: Hover:Delay: 1000
-       Editor: Hover:Enabled: (uncheck)
-       Editor: Insert Spaces: (check)
-       Editor: Rulers: [80]
-       Editor: Scroll Beyond Last Line: (uncheck)
-       Editor: Tab Size: 2
-       Editor: Token Color Customizations: (edit in JSON)
-       Editor: Trim Auto Whitespace: (uncheck)
-       Files: Exclude: (remove the pattern for `.git`)
-       Search: Use Global Ignore Files: (check)
-     
-     ┎────────┒
-     ┃ Window ┃
-     ┖────────┚
-       Window: New Window Dimensions: inherit
-     
-     ┎───────────┒
-     ┃ Workbench ┃
-     ┖───────────┚
-       Editor: Show Tabs (off)
-       Window: Title: [${rootName}] ${activeEditorMedium}${separator}
-       Window: Zoom Level: 1
+     Diff Editor: Ignore Trim Whitespace (uncheck)
+     Diff Editor: Render Side By Side: (uncheck)
+     Dotenv: Enable Autocloaking: (unchecked)
+     Editor: Accept Suggestion on Commit Character: (uncheck)
+     Editor: Detect Indentation: (uncheck)
+     Editor: Folding Strategy: indentation
+     Editor: Font Size: 14
+     Editor: Hover:Delay: 1000
+     Editor: Hover:Enabled: (uncheck)
+     Editor: Insert Spaces: (check)
+     Editor: Rulers: [80]
+     Editor: Scroll Beyond Last Line: (uncheck)
+     Editor: Show Tabs (off)
+     Editor: Tab Size: 2
+     Editor: Token Color Customizations: (edit in JSON)
+     Editor: Trim Auto Whitespace: (uncheck)
+     Explorer > Open Editors: Visible: 100
+     Extensions: Auto Check Updates: (uncheck)
+     Extensions: AUto Update: None
+     Extensions: Ignore Recomendations: (check)
+     Files: Exclude: (remove the pattern for `.git`)
+     Javascript > Validate: Enable: (uncheck)
+     Git: Input Validation: Off
+     Markdown All In One: Math Enabled: (uncheck)
+     Markdown All In One: Ordered List: Auto Renumber: (uncheck)
+     Markdown All In One: Ordered List: Marker: one
+     Markdown All In One: Toc Levels: 2..6
+     SCM: Default View Mode: tree
+     Search: Use Global Ignore Files: (check)
+     Telemetry: Telemetry Level: off
+     Terminal > Integrated: Font Family: FantasqueSansMono NF
+     Typescript > Validate: Enable: (uncheck)
+     Update Mode: manual
+     Window: New Window Dimensions: inherit
+     Window: Title: [${rootName}] ${activeEditorMedium}${separator}
+     Window: Zoom Level: 1
      ```
+     - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
+        ```sh
+        cp -i ./files/.gitignore_global ~/
+        git config --global core.excludesFile ~/.gitignore_global
+        ```
+  - There are some settings that can only be set in the JSON
      ```json
      "editor.tokenColorCustomizations": {
        "textMateRules": [
@@ -1534,11 +1517,6 @@ dconf load / < ~/settings.dconf
        "~/.config/Code/User/FileTemplates",
      ]
      ```
-     - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
-        ```sh
-        cp -i ./files/.gitignore_global ~/
-        git config --global core.excludesFile ~/.gitignore_global
-        ```
   - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`) (or `CTRL+SHIFT+P`, `Preferences: Open Keyboard Shortcuts (JSON)`)
      ```
      # Toggle the 'Record Keys' button in the input.
