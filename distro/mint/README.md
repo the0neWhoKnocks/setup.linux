@@ -1448,6 +1448,7 @@ dconf load / < ~/settings.dconf
         - Move Open Editors to the Secondary Side Bar
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
+     
      Diff Editor: Ignore Trim Whitespace (uncheck)
      Diff Editor: Render Side By Side: (uncheck)
      Dotenv: Enable Autocloaking: (unchecked)
@@ -1464,12 +1465,14 @@ dconf load / < ~/settings.dconf
      Editor: Tab Size: 2
      Editor: Token Color Customizations: (edit in JSON)
      Editor: Trim Auto Whitespace: (uncheck)
+     Editor > Parameter Hints: Enabled: (uncheck)
      Explorer > Open Editors: Visible: 100
      Extensions: Auto Check Updates: (uncheck)
      Extensions: AUto Update: None
      Extensions: Ignore Recomendations: (check)
      Files: Exclude: (remove the pattern for `.git`)
      Javascript > Validate: Enable: (uncheck)
+     Git: Close Diff On Operation: (check)
      Git: Input Validation: Off
      Markdown All In One: Math Enabled: (uncheck)
      Markdown All In One: Ordered List: Auto Renumber: (uncheck)
@@ -1479,6 +1482,12 @@ dconf load / < ~/settings.dconf
      Search: Use Global Ignore Files: (check)
      Telemetry: Telemetry Level: off
      Terminal > Integrated: Font Family: FantasqueSansMono NF
+     Todo-tree > General: Tags
+       (add) NOTE
+     Todo-tree > Highlights: Background Colour Scheme
+       (add) #FFFD8F
+     Todo-tree > Highlights: Foreground Colour Scheme
+       (add) black
      Typescript > Validate: Enable: (uncheck)
      Update Mode: manual
      Window: New Window Dimensions: inherit
