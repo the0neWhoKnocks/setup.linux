@@ -248,7 +248,7 @@ function mountShares {
     notify "${ICON__APP}" "Network Shares Already Mounted"
   else
     # NOTE: Add `-v` flag to get verbose mount output in case something goes wrong
-    sudo mount -t cifs -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",domain="${SHARE__DOMAIN}" "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" "${SHARE__MOUNT_DIR}"
+    sudo mount -t cifs -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",domain="${SHARE__DOMAIN}",iocharset=utf8 "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" "${SHARE__MOUNT_DIR}"
     
     if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
       notify "${ICON__APP}" "Network Shares Mounted"
