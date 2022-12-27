@@ -1859,3 +1859,18 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   flatpak install flathub com.github.wwmm.easyeffects
   ```
 </details>
+
+**Issue: File Managers randomly freeze when transfering CIFS files**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Had random issues in file managers when transfering lots of small files at once. Basically I'd start a transfer, the manager would hang, couldn't close the transfer dialog and would have to kill the manager proccess.
+  
+  When I added `vers=1.0` (like `sudo mount -t cifs -o vers=1.0`) the issue no longer happened but transfers were slower, and version `1.0` is less secure.
+  
+  After weeks of random troubleshooting I found an option in TrueNAS Scale, within each SMB share.
+  - Select a share to bring up it's properties panel
+  - Click **Advanced Options**
+  - Scroll down and check **Enable SMB2/3 Durable Handles**
+  - Save changes
+</details>
