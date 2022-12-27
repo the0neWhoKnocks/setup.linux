@@ -68,5 +68,7 @@ if tags:
 output = ''
 for key, val in fields:
   output += f"{key.ljust(longestKey, ' ')} | {val}\n"
+# escape any malicious characters
+output = output.translate(str.maketrans({ '"': r'\"' }))
 
 os.system(f'printf "{output}" | zenity --width=400 --height=400 --window-icon="/usr/share/icons/Mint-Y/status/32/dialog-information.png" --title="{fileName}" --text-info --no-wrap --font="DejaVu Sans Mono"')
