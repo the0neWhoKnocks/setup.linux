@@ -58,7 +58,7 @@ function closeDialog {
 export -f closeDialog
 
 function notify {
-  notify-send -t 3000 --icon="${1}" "${2}"
+  notify-send -t 3000 --hint="int:transient:1" --icon="${1}" "${2}"
 }
 export -f notify
 
