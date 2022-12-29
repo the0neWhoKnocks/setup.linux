@@ -129,16 +129,16 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   Open **Preferred Applications** and change Terminal to `Tilix`.
   
   To fix the warning you get when you open Preferences:
-     - In your `.bashrc` or `.zshrc` file add
-        ```sh
-        if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-          source /etc/profile.d/vte.sh
-        fi
-        ```
-     - If `/etc/profile.d/vte.sh` doesn't exist run:
-        ```sh
-        sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
-        ```
+  - In your `.bashrc` or `.zshrc` file add
+     ```sh
+     if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+       source /etc/profile.d/vte.sh
+     fi
+     ```
+  - If `/etc/profile.d/vte.sh` doesn't exist run:
+     ```sh
+     sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
+     ```
   
   Open Tilix **Preferences**
   
