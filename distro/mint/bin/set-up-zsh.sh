@@ -52,5 +52,5 @@ sudo cp "${PATH__ZSH_THEME}/fonts/Fantasque Sans Mono Regular Nerd Font Complete
 # update font cache.
 sudo fc-cache -fv
 
-# change shell (was using $(which zsh) but it pointed to /usr/bin/zsh which wasn't accepted by chsh)
-sudo chsh -s /bin/zsh && zsh
+# SHELL is usually only set during session login, so update it for clarity
+sudo chsh -s "$(which zsh)" "${USER}" && export SHELL="$(which zsh)" && zsh
