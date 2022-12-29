@@ -171,7 +171,7 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   <summary>Expand for Vim Settings</summary>
   
   ```sh
-  cp -i ./files/.vimrc ~/
+  wget https://raw.githubusercontent.com/the0neWhoKnocks/setup.linux/main/distro/mint/files/.vimrc -P ~/
   ```
 </details>
 <br>
