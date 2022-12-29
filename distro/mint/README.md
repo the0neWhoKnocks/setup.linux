@@ -299,10 +299,14 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove kwalletmanager
 )
+```
+These require a User to answer prompts
+```sh
+sudo apt install sddm sddm-theme-breeze ttf-mscorefonts-installer wireshark
 ```
 
 Optional
