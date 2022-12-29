@@ -1917,3 +1917,29 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   - Scroll down and check **Enable SMB2/3 Durable Handles**
   - Save changes
 </details>
+
+**Issue: System suspends at login screen**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Context: This happened on a fresh install of XFCE.
+  
+  - Open laptop lid, login
+  - Run
+     ```sh
+     systemd-analyze cat-config systemd/logind.conf
+     ```
+     to see what's configuring the login daemon
+  - If there aren't extra configs with any pertinent info, edit the config so it doesn't suspend when plugged in.
+     ```sh
+     sudo vim /etc/systemd/logind.conf
+     ```
+     ```diff
+     - HandleLidSwitchExternalPower=suspend
+     + HandleLidSwitchExternalPower=ignore
+     ```
+  - Save changes and run
+     ```sh
+     sudo systemctl restart systemd-logind
+     ```
+</details>
