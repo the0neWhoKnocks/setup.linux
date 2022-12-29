@@ -1,10 +1,38 @@
 #!/usr/bin/env bash
 
-if ! command -v nmap || ! command -v yad &> /dev/null; then
-  echo " ╭──────────────────────────────────╮ "
-  echo " │ Install missing dependency: nmap │ "
-  echo " ╰──────────────────────────────────╯ "
-  sudo apt install appmenu-gtk3-module nmap yad
+if ! command -v nmap &> /dev/null || ! command -v yad &> /dev/null; then
+  deps=(appmenu-gtk3-module nmap yad)
+  
+  # If run within a shell, the script should have SHLVL 2 or greater. When run 
+  # by double clicking, or from a desktop launcher, it should be 1.
+  if [ $SHLVL -ge 2 ]; then 
+    echo " ╭─────────────────────────────────╮ "
+    echo " │ Installing missing dependencies │ "
+    echo " ╰─────────────────────────────────╯ "
+    sudo apt install ${deps[@]}
+  else
+    pass=''
+    
+    if [[ "$(sudo -n false 2>&1)" == *"password is required"* ]]; then 
+      depsStr=$(printf '  - %s\n' "${deps[@]}")
+      pass=$(zenity --entry \
+        --title="Missing Dependencies" \
+        --text="Enter your password to install missing dependencies:\\n${depsStr}" \
+        --entry-text "" \
+        --hide-text
+      )
+    fi
+    
+    notify-send -t 3000 --hint="int:transient:1" --icon="info" "Installing Dependencies"
+    { echo "${pass}"; } | sudo -S apt install -y ${deps[@]}
+    
+    if [ $? -ne 0 ]; then
+      zenity --error --text="There was a problem installing the dependencies."
+      exit 0
+    else
+      notify-send -t 3000 --hint="int:transient:1" --icon="info" "Dependencies Installed"
+    fi
+  fi
 fi
 
 SCRIPT_NAME=$(basename "${0}" | sed 's/\.sh$//')
