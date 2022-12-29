@@ -447,7 +447,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
   done
   
   sudo dpkg -i "${DEBS_DIR}/"*.deb
-  sudo apt install -f
+  sudo apt install -f -y
 )
 ```
 
