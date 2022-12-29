@@ -299,7 +299,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove kwalletmanager
 )
@@ -311,7 +311,7 @@ sudo apt install sddm sddm-theme-breeze ttf-mscorefonts-installer wireshark
 
 Optional
 ```sh
-sudo apt install -y figlet obs-studio
+sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ```
 
 <details>
@@ -336,7 +336,6 @@ sudo apt install -y figlet obs-studio
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
-  | [kate](https://kate-editor.org/about-kate/) | Text editor |
   | [kdenlive](https://kdenlive.org/en/features/) | Video editor |
   | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
@@ -344,9 +343,7 @@ sudo apt install -y figlet obs-studio
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
   | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
-  | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
-  | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [sayonara](https://sayonara-player.com/) | Music player |
@@ -365,6 +362,8 @@ sudo apt install -y figlet obs-studio
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
+  | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
+  | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
   | [sqlitebrowser](https://sqlitebrowser.org/) | A GUI based SQL toolkit |
 </details>
 
