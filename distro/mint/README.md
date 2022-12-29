@@ -1665,10 +1665,10 @@ bup -r "<PATH_TO_BACKUP>"
 
 ## Useful Commands
 
-```sh
-xev | grep keycode # prints out keycodes as you type
-xprop | grep WM_CLASS # (click on an open window) prints the window class of an app. Aids in finding things on the system
-```
+| Command | Description |
+| ------- | ----------- |
+| `xev | grep keycode` | Prints out keycodes as you type |
+| `xprop | grep WM_CLASS` | (click on an open window) prints the window class of an app. Aids in finding things on the system |
 
 ---
 
@@ -1821,7 +1821,9 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
 <details>
   <summary>Expand for Solution</summary>
   
-  I had this issue when I switched from Cinnamon to XFCE. First make sure you have the proper packages installed.
+  Context: I had this issue when I switched from Cinnamon to XFCE.
+  
+  First make sure you have the proper packages installed.
   ```sh
   libnotify-bin
   libnotify4 # could be version based
@@ -1829,7 +1831,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   python3-notify2  # could be version based
   xfce4-notifyd
   ```
-  For me, the `xfce4-notifyd` daemon wasn't installed. Once it was I tested with `notify-send -t 3000 --icon=dialog-information "Test 1-2"`.
+  For me, the `xfce4-notifyd` daemon wasn't installed. Once it was, I tested with `notify-send -t 3000 --icon=dialog-information "Test 1-2"`.
 </details>
 
 **Issue: PulseAudio Volume Notification Keeps Popping Up**
@@ -1905,7 +1907,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
 <details>
   <summary>Expand for Solution</summary>
   
-  Had random issues in file managers when transfering lots of small files at once. Basically I'd start a transfer, the manager would hang, couldn't close the transfer dialog and would have to kill the manager proccess.
+  Had random issues in file managers when transfering lots of small files at once. Basically I'd start a transfer, the manager would hang, couldn't close the transfer dialog and would have to kill the manager's proccess.
   
   When I added `vers=1.0` (like `sudo mount -t cifs -o vers=1.0`) the issue no longer happened but transfers were slower, and version `1.0` is less secure.
   
