@@ -294,15 +294,19 @@ Here are some sources for finding alternatives to software you may have used on 
 ### Via Software Manager or CLI
 
 ```sh
-sudo add-apt-repository ppa:alex-p/aegisub
-sudo add-apt-repository ppa:danielrichter2007/grub-customizer
-sudo add-apt-repository ppa:kdenlive/kdenlive-stable
-sudo apt update
-sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
-# remove some stuff that tagged along
-sudo apt remove kwalletmanager
+(
+  sudo add-apt-repository -y ppa:alex-p/aegisub
+  sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
+  sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
+  sudo apt update
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kate kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full pavucontrol peek plasma-sdk python-is-python3 python3-notify2 sayonara sddm sddm-theme-breeze solaar soundconverter sticky ttf-mscorefonts-installer vlc wireshark xclip xserver-xorg-input-synaptics
+  # remove some stuff that tagged along
+  sudo apt remove kwalletmanager
+)
+```
 
-# optional
+Optional
+```sh
 sudo apt install -y figlet obs-studio
 ```
 
@@ -445,8 +449,10 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
   sudo dpkg -i "${DEBS_DIR}/"*.deb
   sudo apt install -f
 )
+```
 
-# optional URLs
+Optional
+```
 https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 ```
 
@@ -494,8 +500,10 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
     fi
   done
 )
+```
 
-# optional
+Optional
+```sh
 https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz
 https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ```
@@ -517,14 +525,16 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 <details>
   <summary>Expand for Tweaks</summary>
   
+  Have to run the install script for btop from within the directory
   ```sh
-  # have to run the install script for btop from within the directory
-  cd ~/Software/btop/v1.2.13/
-  ./install.sh
+  (
+    cd ~/Software/btop/v1.2.13/
+    ./install.sh
+  )
   ```
   
+  Has to be executable to run
   ```sh
-  # make it executable to run
   chmod +x ~/Software/jmkvpropedit/v1.5.2/JMkvpropedit.jar
   ```
 </details>
@@ -533,46 +543,51 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ### Via CLI
 
 ```sh
-# ┎────────┒
-# ┃ Docker ┃
-# ┖────────┚
-sudo apt install ca-certificates curl gnupg lsb-release
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-sudo usermod -aG docker $USER
-# Verify install
-systemctl is-enabled docker
-systemctl status docker
-sudo docker run hello-world
+(
+  # ┎────────┒
+  # ┃ Docker ┃
+  # ┖────────┚
+  sudo apt install ca-certificates curl gnupg lsb-release
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt update
+  sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  sudo usermod -aG docker $USER
+  # Verify install
+  systemctl is-enabled docker
+  systemctl status docker
+  sudo docker run hello-world
+  
+  # ┎────────────────────┒
+  # ┃ 'n' NodeJS manager ┃
+  # ┖────────────────────┚
+  curl -L https://bit.ly/n-install | bash
+  # The script will add an `export` line to your .bashrc. If you use another shell, copy that line to your *rc file and source your shell. 
+  n ls-remote # list available versions to download
+  n install 16
+  # Check version
+  node -v
 
-# ┎────────────────────┒
-# ┃ 'n' NodeJS manager ┃
-# ┖────────────────────┚
-curl -L https://bit.ly/n-install | bash
-# The script will add an `export` line to your .bashrc. If you use another shell, copy that line to your *rc file and source your shell. 
-n ls-remote # list available versions to download
-n install 16
-# Check version
-node -v
+  # ┎──────┒
+  # ┃ qemu ┃
+  # ┖──────┚
+  sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+  sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
+  # You'll have to log out/in for it to work with your current user, but you can test with
+  sudo virt-manager
+)
+```
 
-# ┎──────┒
-# ┃ qemu ┃
-# ┖──────┚
-sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
-sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
-# You'll have to log out/in for it to work with your current user, but you can test with
-sudo virt-manager
-
-# Optional ─────────────────────────────────────────────────────────────────────
-
-# ┎────────┒
-# ┃ lutris ┃
-# ┖────────┚
-sudo add-apt-repository ppa:lutris-team/lutris
-sudo apt update
-sudo apt install lutris
+Optional
+```sh
+(
+  # ┎────────┒
+  # ┃ lutris ┃
+  # ┖────────┚
+  sudo add-apt-repository -y ppa:lutris-team/lutris
+  sudo apt update
+  sudo apt install lutris
+)
 ```
 
 <details>
@@ -656,13 +671,15 @@ dconf load / < ~/settings.dconf
 
   Mint uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
   ```sh
-  # Clear any generated thumbnails
-  rm -rf  ~/.cache/thumbnails/*
-  # Create rc file for tumbler
-  mkdir ~/.config/tumbler
-  cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
-  # Exclude specific paths from having thumbnails generated
-  vi ~/.config/tumbler/tumbler.rc
+  (
+    # Clear any generated thumbnails
+    rm -rf  ~/.cache/thumbnails/*
+    # Create rc file for tumbler
+    mkdir ~/.config/tumbler
+    cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
+    # Exclude specific paths from having thumbnails generated
+    vi ~/.config/tumbler/tumbler.rc
+  )
   ```
   ```
   # Find all the instances of `Excludes=` and add the paths
@@ -676,17 +693,19 @@ dconf load / < ~/settings.dconf
 
   First, install a few extra XFCE specific items:
   ```sh
-  # System modules
-  sudo apt install xfce4-notifyd xfce4-power-manager
-  
-  # Panel plugins
-  sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
-  
-  # File manager plugins
-  sudo apt install thunar-font-manager
-  
-  # May be required for redshift (may be optional, not sure if it's installed by default)
-  sudo apt install redshift redshift-gtk
+  (
+    # System modules
+    sudo apt install xfce4-notifyd xfce4-power-manager
+    
+    # Panel plugins
+    sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
+    
+    # File manager plugins
+    sudo apt install thunar-font-manager
+    
+    # May be required for redshift (may be optional, not sure if it's installed by default)
+    sudo apt install redshift redshift-gtk
+  )
   ```
   
   Control your monitor's temperature (limit blue light):
@@ -1140,8 +1159,13 @@ dconf load / < ~/settings.dconf
   You can use **Grub Customizer** or CLI
   ```sh
   sudo vim /etc/default/grub
-  # Decrease duration that grub menu displays: `GRUB_TIMEOUT=2`
-  
+  ```
+  ```diff
+  # Decrease duration that grub menu displays
+  - GRUB_TIMEOUT=10
+  + GRUB_TIMEOUT=2
+  ```
+  ```sh
   sudo update-grub
   ```
 </details>
@@ -1150,86 +1174,53 @@ dconf load / < ~/settings.dconf
   <summary>Expand for LSD Settings</summary>
   
   ```sh
-  mkdir -p ~/.config/lsd
-  cp -i ./files/lsd/config.yaml ~/.config/lsd/
+  (
+    mkdir -p ~/.config/lsd
+    cp -i ./files/lsd/config.yaml ~/.config/lsd/
+  )
   ```
 </details>
 
 <details>
-  <summary>Expand for File Manager Settings</summary>
+  <summary>Expand for Nemo</summary>
   
-  <details>
-    <summary>Expand for Thunar</summary>
-    
-    `Edit > Preferences`
-    ```
-    [Display]
-      View new folders using: Compact View
-      Show thumbnails: Local Files Only
-    ```
-    View > [X] Show Hidden Files
-    
-    Custom Actions (you can input commands directly, but I prefer files):
-    - `mkdir -p ~/.config/Thunar/actions`
-    - Add your scripts (I symlink to ensure things keep in sync):
-       - `ln -s $PWD/files/thunar/view-metadata.py ~/.config/Thunar/actions/`
-    - In Thunar, go to `Edit > Configure custom actions...`
-       - (click) Add a new custom action
-          ```
-          [Basic]
-            Name: View Metadata
-            Description: View metadata for a file.
-            Command: ~/.config/Thunar/actions/view-metadata.py %f %n
-            Icon: dialog-information
-          
-          [Appearance Conditions]
-            [X] Audio Files
-            [X] Video Files
-          ```
-    - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
-  </details>
+  Preferences
+  ```
+  ┎───────┒
+  ┃ Views ┃
+  ┖───────┚
+    View new folders using: List View
+    Sort favorites before other files: (uncheck)
+    Default Zoom Level: (change all to) 66%
+    Tree View Defaults: (uncheck) Show only folders
   
-  <details>
-    <summary>Expand for Nemo</summary>
-    
-    Preferences
-    ```
-    ┎───────┒
-    ┃ Views ┃
-    ┖───────┚
-      View new folders using: List View
-      Sort favorites before other files: (uncheck)
-      Default Zoom Level: (change all to) 66%
-      Tree View Defaults: (uncheck) Show only folders
-    
-    ┎──────────┒
-    ┃ Behavior ┃
-    ┖──────────┚
-      Click on a file's name twice to rename it: (check)
-      Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
-    
-    ┎─────────┒
-    ┃ Display ┃
-    ┖─────────┚
-      Show advanced permissions in the file property dialog: (check)
-    
-    ┎─────────┒
-    ┃ Toolbar ┃
-    ┖─────────┚
-      (check) Refresh
-      (check) Open in Terminal
-      (check) New folder
-      (check) Show Thumbnails
-    
-    ┎───────────────┒
-    ┃ Context Menus ┃
-    ┖───────────────┚
-      [Selection]
-        (check) Make Link
-        (check) Copy to
-        (check) Move to
-    ```
-  </details>
+  ┎──────────┒
+  ┃ Behavior ┃
+  ┖──────────┚
+    Click on a file's name twice to rename it: (check)
+    Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
+  
+  ┎─────────┒
+  ┃ Display ┃
+  ┖─────────┚
+    Show advanced permissions in the file property dialog: (check)
+  
+  ┎─────────┒
+  ┃ Toolbar ┃
+  ┖─────────┚
+    (check) Refresh
+    (check) Open in Terminal
+    (check) New folder
+    (check) Show Thumbnails
+  
+  ┎───────────────┒
+  ┃ Context Menus ┃
+  ┖───────────────┚
+    [Selection]
+      (check) Make Link
+      (check) Copy to
+      (check) Move to
+  ```
 </details>
 
 <details>
@@ -1308,12 +1299,14 @@ dconf load / < ~/settings.dconf
   <summary>Expand for SDDM Settings</summary>
   
   ```sh
-  # To configure the theme, create a custom config for sddm
-  sudo mkdir -p /etc/sddm.conf.d
-  sudo cp -i ./files/sddm/10-custom.conf /etc/sddm.conf.d/
-  
-  # Then a custom config for the theme, adjust values as you see fit (these changes will persist after theme updates)
-  sudo cp -i .files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
+  (
+    # To configure the theme, create a custom config for sddm
+    sudo mkdir -p /etc/sddm.conf.d
+    sudo cp -i ./files/sddm/10-custom.conf /etc/sddm.conf.d/
+    
+    # Then a custom config for the theme, adjust values as you see fit (these changes will persist after theme updates)
+    sudo cp -i .files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
+  )
   ```
   
   You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme.
@@ -1371,25 +1364,58 @@ dconf load / < ~/settings.dconf
   
   Fix [issue when copying and pasting text results in jumpled paste](https://github.com/linuxmint/sticky/issues/80)
   ```sh
-  # Download working version
-  wget https://github.com/linuxmint/sticky/archive/refs/tags/1.11.zip -O ~/Downloads/sticky-v1.11.zip
-  # Stop sticky
-  killall sticky.py
-  # Back up bad file (just in case)
-  sudo mv /lib/sticky/note_buffer.py /lib/sticky/note_buffer.py.bak
-  # Patch with good file (requires `p7zip-full` to be installed)
-  sudo 7z e ~/Downloads/sticky-1.11.zip sticky-1.11/usr/lib/sticky/note_buffer.py -o/lib/sticky/
-  # Start sticky (NO_AT_BRIDGE used to ignore 'accessibility bus' warning)
-  NO_AT_BRIDGE=1 gtk-launch sticky.desktop
-  # Clean-up
-  rm ~/Downloads/sticky-1.11.zip
+  (
+    # Download working version
+    wget https://github.com/linuxmint/sticky/archive/refs/tags/1.11.zip -O ~/Downloads/sticky-v1.11.zip
+    # Stop sticky
+    killall sticky.py
+    # Back up bad file (just in case)
+    sudo mv /lib/sticky/note_buffer.py /lib/sticky/note_buffer.py.bak
+    # Patch with good file (requires `p7zip-full` to be installed)
+    sudo 7z e ~/Downloads/sticky-1.11.zip sticky-1.11/usr/lib/sticky/note_buffer.py -o/lib/sticky/
+    # Start sticky (NO_AT_BRIDGE used to ignore 'accessibility bus' warning)
+    NO_AT_BRIDGE=1 gtk-launch sticky.desktop
+    # Clean-up
+    rm ~/Downloads/sticky-1.11.zip
+  )
   ```
+</details>
+
+<details>
+  <summary>Expand for Thunar</summary>
+  
+  `Edit > Preferences`
+  ```
+  [Display]
+    View new folders using: Compact View
+    Show thumbnails: Local Files Only
+  ```
+  View > [X] Show Hidden Files
+  
+  Custom Actions (you can input commands directly, but I prefer files):
+  - `mkdir -p ~/.config/Thunar/actions`
+  - Add your scripts (I symlink to ensure things keep in sync):
+     - `ln -s $PWD/files/thunar/view-metadata.py ~/.config/Thunar/actions/`
+  - In Thunar, go to `Edit > Configure custom actions...`
+    - (click) Add a new custom action
+       ```
+       [Basic]
+         Name: View Metadata
+         Description: View metadata for a file.
+         Command: ~/.config/Thunar/actions/view-metadata.py %f %n
+         Icon: dialog-information
+       
+       [Appearance Conditions]
+         [X] Audio Files
+         [X] Video Files
+       ```
+  - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
 </details>
 
 <details>
   <summary>Expand for VLC Settings</summary>
   
-  Download custom skin
+  Download custom skin (I've stopped doing this because the skins don't always behave. Leaving for reference.)
   ```sh
   mkdir ~/.config/vlc/skins
   wget http://www.videolan.org/vlc/download-skins2-go.php?url=subX.vlt -O ~/.config/vlc/skins/
@@ -1561,10 +1587,12 @@ dconf load / < ~/settings.dconf
         ```
      - Now you can copy the contents of the repo's `gtksourceview-3.0/styles` folder over to the new folders.
         ```sh
-        wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
-        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
-        unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
-        rm ~/Downloads/geditcolors.zip
+        (
+          wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
+          unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
+          unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
+          rm ~/Downloads/geditcolors.zip
+        )
         ```
   - Open a file with Xed (Text Editor)
      - Go to Edit > Preferences
@@ -1589,8 +1617,10 @@ dconf load / < ~/settings.dconf
   
   When running some commands via `sudo` you may notice things don't look or behave the same. Here are some things I copy over:
   ```sh
-  sudo cp -r ~/.config/lsd /root/.config/
-  sudo cp ~/.vimrc /root/
+  (
+    sudo cp -r ~/.config/lsd /root/.config/
+    sudo cp ~/.vimrc /root/
+  )
   ```
 </details>
 
@@ -1753,9 +1783,11 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   
   From the menu I chose the Root shell option. Then I ran `ubuntu-drivers devices` (displays what Driver Manager shows). I found the bad driver name and ran:
   ```sh
-  apt purge nvidia-driver-525
-  apt autoremove
-  reboot
+  (
+    apt purge nvidia-driver-525
+    apt autoremove
+    reboot
+  )
   ```
   You should then be able to boot normally with the default `nouveau` driver. Open up Driver Manager and reinstall the nvidia driver that matches your kernel.
   
