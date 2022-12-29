@@ -443,7 +443,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
     'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
   )
   for url in "${urls[@]}"; do
-    wget "${url}" -P "${DEBS_DIR}/"
+    wget --content-disposition "${url}" -P "${DEBS_DIR}/"
   done
   
   sudo dpkg -i "${DEBS_DIR}/"*.deb
