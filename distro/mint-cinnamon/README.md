@@ -1,4 +1,4 @@
-# Mint
+# Mint: Cinnamon
 
 This setup is for creative/development tasks. Before blindly installing everything listed, go over the **Software Details** sections to see if the software could be useful.
 
@@ -39,13 +39,6 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 
 > **Issue: Can't install Linux due to RST being enabled**
 > **Solution:** Go into the Bios. Location may vary, for me I found it under Main &gt; Sata Mode &gt; Changed it from `RST Premium with Optane` to `AHCI`.
-
-**NOTE**: I use XFCE instead of Cinnamon because Cinnamon randomly spikes to 100% on the CPU after Suspend'ing the system multiple times. If you later choose that you want to try out a different Session Manager, install the appropriate package below via `apt install`, log out, and choose the new manager before you login (there should be a drop-down).
-```sh
-mint-meta-cinnamon
-mint-meta-mate
-mint-meta-xfce
-```
 
 ---
 
@@ -171,7 +164,7 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   <summary>Expand for Vim Settings</summary>
   
   ```sh
-  wget https://raw.githubusercontent.com/the0neWhoKnocks/setup.linux/main/distro/mint/files/.vimrc -P ~/
+  wget https://raw.githubusercontent.com/the0neWhoKnocks/setup.linux/main/distro/mint-cinnamon/files/.vimrc -P ~/
   ```
 </details>
 <br>
@@ -223,7 +216,7 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
 This is only required if you want to use the helper scripts.
 
 ```sh
-cd ~/Projects/Code/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint
+cd ~/Projects/Code/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint-cinnamon
 ```
 
 ---
@@ -299,7 +292,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cairo-dock-xfce-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove kwalletmanager
 )
@@ -690,6 +683,15 @@ If you have any back-ups of your keyrings, you'll need to install those especial
 - After initially copying over the `.local/share/keyrings` files, you'll need to open up the **System Monitor** and kill `gnome-keyring-daemon`.
    - If that doesn't work, then `systemctl --user stop gnome-keyring && systemctl --user start gnome-keyring`.
 - Then open up **Passwords and Keys** and unlock the **Login** item. Then you can open up stuff like Chrome or anything that has locally saved passwords.
+<br>
+
+
+Control your monitor's temperature (limit blue light). For now `redshift` and `redshift-gtk` come pre-installed so just do the below.
+```sh
+# NOTE: This file could conflict with the 'qredshift' applet so just use 'Redshift'
+cp -i ./files/redshift.conf ~/.config/
+```
+Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
 
 
 <br>
@@ -725,250 +727,8 @@ If you have any back-ups of your keyrings, you'll need to install those especial
 </details>
 
 <details>
-  <summary>Expand for XFCE System Settings</summary>
-
-  First, install a few extra XFCE specific items:
-  ```sh
-  (
-    # System modules
-    sudo apt install xfce4-notifyd xfce4-power-manager
-    
-    # Panel plugins
-    sudo apt install xfce4-genmon-plugin xfce4-pulseaudio-plugin
-    
-    # File manager plugins
-    sudo apt install thunar-font-manager
-    
-    # May be required for redshift (may be optional, not sure if it's installed by default)
-    sudo apt install redshift redshift-gtk
-  )
-  ```
+  <summary>Expand for System Settings</summary>
   
-  Control your monitor's temperature (limit blue light):
-  - ```sh
-    # NOTE: This file could conflict with the qredshift applet in Cinnamon
-    cp -i ./files/redshift.conf ~/.config/
-    ```
-  - Start Redshift from your launcher (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
-  
-  
-  ```
-  ┎──────────┒
-  ┃ About Me ┃
-  ┖──────────┚
-    Picture: (choose avatar)
-  ```
-  ```
-  ┎────────────┒
-  ┃ Appearance ┃
-  ┖────────────┚
-    [Style]
-      Mint-Y-Dark-Aqua
-    
-    [Icons]
-      Mint-Y-Dark-Aqua
-    
-    [Fonts]
-      Default Font: Ubuntu Regular 12
-      Default Monospace Font: Monospace Regular 12
-  ```
-  ```
-  ┎─────────┒
-  ┃ Display ┃
-  ┖─────────┚
-    [Advanced]
-      (create a 'Docked' profile once things are set up)
-      Configure new displays when connected (checked)
-      Automatically enable profiles when new display is connected (checked)
-      Show popup to identify displays (checked)
-    
-    [General]
-      Display 2 (main monitor plugged into laptop for GPU)
-        Primary Display (checked)
-        Reflection: None
-      
-      Display 3 (vertical monitor plugged into dock)
-        Rotation: Left
-    
-    Wallpaper
-      Just right-click each monitor (on the desktop) > Desktop Settings > choose a folder with images > pick an image and apply a style.
-  ```
-  ```
-  ┎──────────────┒
-  ┃ Login Window ┃
-  ┖──────────────┚
-    [Appearance]
-      Background: (choose image)
-      Icon theme: Mint-Y-Dark-Aqua
-    
-    [Users]
-      Allow guest sessions: (checked)
-      
-    [Settings]
-      Monitor: DP-3 (your main monitor)
-  ```
-  ```
-  ┎────────────────────┒
-  ┃ Mouse and Touchpad ┃
-  ┖────────────────────┚
-    [Devices]
-      [Mouse]
-        Acceleration: 3.5
-      
-      [Touchpad]
-        Reverse scrolling direction: (uncheck)
-        [X] Enable horizontal scrolling
-    
-    [Theme]: DMZ (White)
-  ```
-  ```
-  ┎───────┒
-  ┃ Panel ┃
-  ┖───────┚
-    ┎─────────┒
-    ┃ Display ┃
-    ┖─────────┚
-      Row size: 36
-    
-    ┎────────────┒
-    ┃ Appearance ┃
-    ┖────────────┚
-      Adjust size automatically: (unchecked)
-      Fixed icon size: 24
-    
-    ┎───────┒
-    ┃ Items ┃
-    ┖───────┚
-      [Whisker Menu]
-        [General]
-          Application icon size: Small
-          Category icon size: Small
-        
-        [Appearance]
-          [X] Position commands next to search entry
-          Display: Icon and title
-          Title: enu 
-          Icon: linuxmint-logo-simple
-        
-        [Behavior]
-          Default Category: Recently Used
-        
-        [Commands]
-          [X] Suspend
-      
-      [Show Desktop]
-      
-      [Separator]
-        Style: Separator
-      
-      [Separator]
-        Style: Transparent
-        [X] Expand
-      
-      [Window Buttons]
-        Sorting order: None, allow drag-and-drop
-      
-      [Separator]
-        Style: Transparent
-        [X] Expand
-      
-      [Separator]
-        Style: Separator
-      
-      [Generic Monitor]
-        Command: <THIS_REPO>/distro/mint/bin/key-lock-status.sh
-        Label: (uncheck)
-        Period: 0.25
-        Font: Monospace 9
-        
-      [Status Tray Plugin]
-        Adjust size automatically: (checked)
-        Square items: (unchecked)
-      
-      [XAapp Status Plugin]
-      
-      [Notification Plugin]
-        [General]
-          Show notifications on: primary display
-          Theme: Greybird
-          Default position: Bottom right
-          Opacity: 100%
-        
-        [Applications]
-          (If notifications aren't showing, check here)
-        
-        [Log]
-          Log notifications: always (checked)
-          Log applications: all
-      
-      [PulseAudio Plugin]
-        [General]
-          [X] Enable keyboard shortcuts for volume control
-          [X] Show notifications when volume changes
-        
-        [Media Players]
-          [X] Enable multimedia keys for playback control
-      
-      [Clock]
-        Format: Custom Format: %b. %e 【%a.】【%l: %M %p】
-  ```
-  ```
-  ┎───────────────┒
-  ┃ Power Manager ┃
-  ┖───────────────┚
-    [General]
-      When power button is pressed: Shutdown
-      When sleep button is pressed: Suspend
-      
-    [System]
-      Suspend when inactive for: Never | Never
-      When laptop lid is closed: Suspend | Lock screen
-    
-    [Display]
-      Switch off after: 15 minutes | 15 minutes
-  ```
-  ```
-  ┎─────────────┒
-  ┃ Screensaver ┃
-  ┖─────────────┚
-    [Screensaver]
-      Theme: Pop art squares
-      Activate screensaver when computer is idle: (checked)
-      Regard the computer as idle after: 5 minutes
-      
-    [Lock Screen]
-      Enable Lock Screen: (checked)
-      Lock Screen with Screensaver: (checked)
-      Lock the screen after the screensaver is active for: 0 minutes
-      Lock Screen with System Sleep: (checked)
-  ```
-  ```
-  ┎────────────────┒
-  ┃ Window Manager ┃
-  ┖────────────────┚
-    [Style]
-      Theme: Mint-Y-Dark-Aqua
-      Title font: Ubuntu Medium 12
-  ```
-  ```
-  ┎───────────────────────┒
-  ┃ Window Manager Tweaks ┃
-  ┖───────────────────────┚
-    [Compositor]
-      (uncheck) Show shadows under dock windows (to remove random shadow under Cairo-dock)
-  ```
-  
-  Shortcuts
-  | Keys | Action |
-  | ---- | ------ |
-  | `CTRL+ALT+d` | Hide/Show Desktop |
-</details>
-
-<details>
-  <summary>Expand for Cinnamon System Settings</summary>
-
-  **NOTE**: I switched to XFCE because Cinnamon randomly spikes to 100% on the CPU after Suspend'ing the system multiple times.
-
   ```
   ┎─────────────────┒
   ┃ Account Details ┃
@@ -986,7 +746,6 @@ If you have any back-ups of your keyrings, you'll need to install those especial
     ┖──────────┚
       CinnVIIStartMenu
       Lock keys indicator with notifications
-      QRedShift
     
     ┎────────┒
     ┃ Manage ┃
@@ -1030,15 +789,6 @@ If you have any back-ups of your keyrings, you'll need to install those especial
       ┖───────────────┚
         Show empty tray: (checked)
         Show notifications on the bottom: (checked)
-        
-      ┎───────────┒
-      ┃ QRedShift ┃
-      ┖───────────┚
-        [Settings]
-          [Day Settings]
-            Temperature (K): 4500
-            Brightness: 70
-            Gamma: 1.00
   
   ──────────────────────────────────────────────────────────────────────────────
   
@@ -1663,8 +1413,8 @@ I've created a couple helper scripts. One that generates a list of paths and fil
 
 Set up the script by adding an alias to your `*.rc` file
 ```sh
-alias bup="<PATH_TO_REPO>/distro/mint/bin/backup.sh"
-alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint/bin/backup-list.sh)"'
+alias bup="<PATH_TO_REPO>/distro/mint-cinnamon/bin/backup.sh"
+alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint-cinnamon/bin/backup-list.sh)"'
 ```
 Backups will be output to the Desktop unless otherwise specified. Run `bup -h` for script options.
 
@@ -1723,6 +1473,7 @@ Recommended tools:
 - Color picker
    ```sh
    sudo apt install gpick
+   # although I magically have mate-color-select installed as well...
    ```
 
 File locations:
@@ -1743,7 +1494,7 @@ Updating Styles:
 - You can click on items in that view, and they'll blink/highlight if they're viewable. Once you find an item, double-click on it to open it's Details view. There's a drop-down, switch it to `CSS Nodes`. There you can find `ID`s, `Style Classes`, `CSS Property`s, and `Location`s. You can use `ID`s and `Style Classes` as you would ids and classes in CSS. `Location` is useful to determine if there's a hardcoded value in a CSS file somewhere, or if it's being controlled dynamically `<data>:##:##`.
 - With the info from that view, go to the `CSS` view. Anything you add in there will take effect immediately. Test it with something like
    ```css
-   #XfcePanelWindow { 
+   #PanelWindow {
      background-color: #FF00FF;
    }
    ```
@@ -1792,6 +1543,8 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   If you don't see any files with settings pertaining to `HandleLidSwitchExternalPower`, create a new one:
   ```sh
   sudo cp -i ./files/laptop-login.conf /usr/lib/systemd/logind.conf.d/
+  # Save changes and run
+  sudo systemctl restart systemd-logind
   ```
 </details>
 <br>
@@ -1837,23 +1590,6 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   # Deleting folders or their contents while certain Apps are running could cause issues.
   rm -rf  ~/.cache/{thumbnails}/*
   ```
-</details>
-
-**Issue: Not All Desktop Notifications are displayed**
-<details>
-  <summary>Expand for Solution</summary>
-  
-  Context: I had this issue when I switched from Cinnamon to XFCE.
-  
-  First make sure you have the proper packages installed.
-  ```sh
-  libnotify-bin
-  libnotify4 # could be version based
-  notification-daemon
-  python3-notify2  # could be version based
-  xfce4-notifyd
-  ```
-  For me, the `xfce4-notifyd` daemon wasn't installed. Once it was, I tested with `notify-send -t 3000 --icon=dialog-information "Test 1-2"`.
 </details>
 
 **Issue: PulseAudio Volume Notification Keeps Popping Up**
@@ -1940,28 +1676,10 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   - Save changes
 </details>
 
-**Issue: System suspends at login screen**
+**Issue: System Freezes/Locks When Entering Suspend**
 <details>
   <summary>Expand for Solution</summary>
   
-  Context: This happened on a fresh install of XFCE.
-  
-  - Open laptop lid, login
-  - Run
-     ```sh
-     systemd-analyze cat-config systemd/logind.conf
-     ```
-     to see what's configuring the login daemon
-  - If there aren't extra configs with any pertinent info, edit the config so it doesn't suspend when plugged in.
-     ```sh
-     sudo vim /etc/systemd/logind.conf
-     ```
-     ```diff
-     - HandleLidSwitchExternalPower=suspend
-     + HandleLidSwitchExternalPower=ignore
-     ```
-  - Save changes and run
-     ```sh
-     sudo systemctl restart systemd-logind
-     ```
+  - Went into **Update Manager** > View > Linux Kernels > chose the oldest in the available `5.15` series (`5.15.0-25`). Waited for it to install, rebooted, used the Grub menu during boot to choose the older kernel. Tested suspend and logging out/in and things seem to be working now.
+  - If the need to manually download and add an older kernal arise: https://askubuntu.com/a/700221
 </details>
