@@ -674,6 +674,26 @@ dconf load / < ~/settings.dconf
 ```
 <br>
 
+
+If you have any self-signed certificates that your browsers utilize, you'll need to install them now.
+```sh
+sudo apt-get install -y ca-certificates
+sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates
+sudo update-ca-certificates
+```
+- In some cases, changes don't take effect right away and a restart may be required.
+- In some cases a restart doesn't work, for example Browsers sometimes have their own certificate area where you have to manually add a cert. For example, in Chrome you can go to Settings > search for `cert` > click Security > click Manage Certificates > go to Authorities and add your cert.
+<br>
+
+
+If you have any back-ups of your keyrings, you'll need to install those especially if any Browsers have saved credentials locally and you're bringing those profiles over.  
+- After initially copying over the `.local/share/keyrings` files, you'll need to open up the **System Monitor** and kill `gnome-keyring-daemon`.
+   - If that doesn't work, then `systemctl --user stop gnome-keyring && systemctl --user start gnome-keyring`.
+- Then open up **Passwords and Keys** and unlock the **Login** item. Then you can open up stuff like Chrome or anything that has locally saved passwords.
+
+
+<br>
+
 <details>
   <summary>Expand for Desktop Settings</summary>
 
@@ -1153,20 +1173,6 @@ dconf load / < ~/settings.dconf
   When manually creating a launcher I look to see if there's a good system icon via `cuttlefish` instead of pointing to an image. Some apps like system binaries may not have an icon, so you can find/create one and add it to the appropriate folder in `~/.local/share/icons`. More info on that in the [Theming](#theming) section.
   
   Had an issue where Cairo wasn't using my default File Manager to open folders. It must be caching it somewhere because after I went into Default Applications, and changed my File Manager to something else, and then back to what I wanted, it started behaving.
-</details>
-
-<details>
-  <summary>Expand for Certificates</summary>
-  
-  In order to add your own self-signed certs
-  ```sh
-  sudo apt-get install -y ca-certificates
-  sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates
-  sudo update-ca-certificates
-  ```
-  
-  - In some cases, changes don't take effect right away and a restart may be required.
-  - In some cases a restart doesn't work, for example Browsers sometimes have their own certificate area where you have to manually add a cert. For example, in Chrome you can go to Settings > search for `cert` > click Security > click Manage Certificates > go to Authorities and add your cert.
 </details>
 
 <details>
