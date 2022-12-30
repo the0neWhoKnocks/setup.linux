@@ -693,16 +693,16 @@ Control your monitor's temperature (limit blue light). For now `redshift` and `r
 cp -i ./files/redshift.conf ~/.config/
 ```
 Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
-
-
 <br>
+
 
 <details>
   <summary>Expand for Desktop Settings</summary>
 
-  Right-click &gt; Customize
-
-  Use the sliders on the bottom and side to change how icons are spaced. I usually reset both to zero, and do one tick over for the bottom, and two for the right slider.
+  Launch **Desktop**
+  ```
+  Desktop Layout: No desktop icons
+  ```
 </details>
 
 <details>
