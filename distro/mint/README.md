@@ -658,6 +658,8 @@ If you have a previous backup that utilized `dconf`, you can restore it now whic
 ```sh
 # Restore GNOME settings
 dconf load / < ~/settings.dconf
+
+# If you want to import keys for specific packages, the only thing I've found is to copy those sections to another `.dconf` file and run the same command above but with the new file. 
 ```
 <br>
 
