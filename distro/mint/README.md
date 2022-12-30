@@ -545,40 +545,51 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 
 ### Via CLI
 
+For packages that require more than a simple `apt install`.
+
+**Docker**
 ```sh
 (
-  # ┎────────┒
-  # ┃ Docker ┃
-  # ┖────────┚
   sudo apt install ca-certificates curl gnupg lsb-release
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
   echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt update
   sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
   sudo usermod -aG docker $USER
-  # Verify install
-  systemctl is-enabled docker
-  systemctl status docker
-  sudo docker run hello-world
-  
-  # ┎────────────────────┒
-  # ┃ 'n' NodeJS manager ┃
-  # ┖────────────────────┚
-  curl -L https://bit.ly/n-install | bash
-  # The script will add an `export` line to your .bashrc. If you use another shell, copy that line to your *rc file and source your shell. 
-  n ls-remote # list available versions to download
-  n install 16
-  # Check version
-  node -v
+)
+```
+Verify install
+```sh
+systemctl is-enabled docker
+systemctl status docker
+sudo docker run hello-world
+```
 
-  # ┎──────┒
-  # ┃ qemu ┃
-  # ┖──────┚
+**'n' NodeJS manager**  
+May want to [verify this hasn't changed in the repo](https://github.com/tj/n#third-party-installers).
+```sh
+curl -L https://bit.ly/n-install | bash
+```
+The script will add an `export` line to your `.bashrc`. If you use another shell, copy that line to your `*rc` file and source your shell. Once that's done, you can choose and install the version of NodeJS that you want.
+```sh
+# list available versions to download
+n ls-remote
+# install your preferred version
+n install 18
+# Check version
+node -v
+```
+
+**qemu**
+```sh
+(
   sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
   sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
-  # You'll have to log out/in for it to work with your current user, but you can test with
-  sudo virt-manager
 )
+```
+You'll have to log out/in for it to work with your current user, but you can test with
+```sh
+sudo virt-manager
 ```
 
 Optional
