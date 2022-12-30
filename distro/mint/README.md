@@ -531,7 +531,7 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   Have to run the install script for btop from within the directory
   ```sh
   (
-    cd ~/Software/btop/v1.2.13/
+    cd ~/Software/btop/v1.2.13/btop/
     ./install.sh
   )
   ```
