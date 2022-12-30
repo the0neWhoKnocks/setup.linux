@@ -709,6 +709,28 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   <summary>Expand for Thumbnail Settings</summary>
 
   Mint uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
+</details>
+
+<details>
+  <summary>Expand for File Manager</summary>
+  
+  I've tried `dolphin`, `nemo`, and `thunar`.
+  - `dolphin` had the benefit of natural sorting which all othe managers seem to lack currently, but it's slow to load and currently doesn't allow for excluding paths from thumbnail generation.
+  - `nemo` ships with Cinnamon but it currently suffers from thumbnail generation issues (sometimes works, sometimes doesn't, or doesn't generate thumbs for all types).
+  - `thunar` ships with XFCE. It's snappy, allows for **Custom Actions** via context menus that you can easily write yourself, and allows for defining rules for thumbnail generation.
+  
+  ---
+  
+  Install Thunar and dependencies
+  ```sh
+  (
+    sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
+    sudo apt update
+    sudo apt install fsearch thunar thunar-archive-plugin tumbler-plugins-extra
+  )
+  ```
+  
+  Thunar uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
   ```sh
   (
     # Clear any generated thumbnails
@@ -725,6 +747,68 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   Excludes=<PATH1>;<PATH2>
   ```
   `tumblerd` can't be restarted so you have to log out/in
+  
+  ---
+  
+  Launch **FSearch**, go to:
+  - `Edit > Preferences`
+     ```
+     [Database]
+       (uncheck) Update database on start
+       
+       [Include]
+         (add) /home/<USER>
+     ```
+  - `Search`
+     ```
+     (check) Search in Path
+     (check) Match Case
+     ```
+  
+  ---
+  
+  Prepare custom actions:
+  - You can add your own in Thunar by adding commands directly, but I prefer to use files
+     ```sh
+     mkdir -p ~/.config/Thunar/actions
+     ```
+  - Add your scripts (I symlink to ensure things keep in sync):
+     - `ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/`
+  - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
+  
+  ---
+  
+  Launch **Thunar** and go to:
+  - `Edit > Configure custom actions`
+     - Fix the **Search** option that ships misconfigured with `catfish` which doesn't get automatically installed. Double-click on it:
+        ```
+        [Basic]
+          Command: fsearch -s %f
+          Keyboard Shortcut: Ctrl+F
+        ```
+     - (click) Add a new custom action
+       ```
+       [Basic]
+         Name: View Metadata
+         Description: View metadata for a file.
+         Command: ~/.config/Thunar/actions/view-metadata.py %f %n
+         Icon: dialog-information
+       
+       [Appearance Conditions]
+         [X] Audio Files
+         [X] Video Files
+       ```
+  - `Edit > Preferences`
+     ```
+     [Display]
+       View new folders using: Compact View
+       Show thumbnails: Local Files Only
+     
+     [Behavior]
+       (check) Show action to permanently delete files and folders
+     ```
+  - `View` (check) Show Hidden Files
+  - You may have to change the current view to Compact View. Then I `CTRL++` or `CTRL+-` to get the icons and text to a size I like.
 </details>
 
 <details>
@@ -955,48 +1039,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 </details>
 
 <details>
-  <summary>Expand for Nemo</summary>
-  
-  Preferences
-  ```
-  ┎───────┒
-  ┃ Views ┃
-  ┖───────┚
-    View new folders using: List View
-    Sort favorites before other files: (uncheck)
-    Default Zoom Level: (change all to) 66%
-    Tree View Defaults: (uncheck) Show only folders
-  
-  ┎──────────┒
-  ┃ Behavior ┃
-  ┖──────────┚
-    Click on a file's name twice to rename it: (check)
-    Automatically close the device's tab, pane, or window when a device is unmounted or ejected: (check)
-  
-  ┎─────────┒
-  ┃ Display ┃
-  ┖─────────┚
-    Show advanced permissions in the file property dialog: (check)
-  
-  ┎─────────┒
-  ┃ Toolbar ┃
-  ┖─────────┚
-    (check) Refresh
-    (check) Open in Terminal
-    (check) New folder
-    (check) Show Thumbnails
-  
-  ┎───────────────┒
-  ┃ Context Menus ┃
-  ┖───────────────┚
-    [Selection]
-      (check) Make Link
-      (check) Copy to
-      (check) Move to
-  ```
-</details>
-
-<details>
   <summary>Expand for Pulse Audio Settings</summary>
   
   PulseEffects
@@ -1152,37 +1194,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     rm ~/Downloads/sticky-1.11.zip
   )
   ```
-</details>
-
-<details>
-  <summary>Expand for Thunar</summary>
-  
-  `Edit > Preferences`
-  ```
-  [Display]
-    View new folders using: Compact View
-    Show thumbnails: Local Files Only
-  ```
-  View > [X] Show Hidden Files
-  
-  Custom Actions (you can input commands directly, but I prefer files):
-  - `mkdir -p ~/.config/Thunar/actions`
-  - Add your scripts (I symlink to ensure things keep in sync):
-     - `ln -s $PWD/files/thunar/view-metadata.py ~/.config/Thunar/actions/`
-  - In Thunar, go to `Edit > Configure custom actions...`
-    - (click) Add a new custom action
-       ```
-       [Basic]
-         Name: View Metadata
-         Description: View metadata for a file.
-         Command: ~/.config/Thunar/actions/view-metadata.py %f %n
-         Icon: dialog-information
-       
-       [Appearance Conditions]
-         [X] Audio Files
-         [X] Video Files
-       ```
-  - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
 </details>
 
 <details>
