@@ -1123,7 +1123,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     sudo cp -i ./files/sddm/10-custom.conf /etc/sddm.conf.d/
     
     # Then a custom config for the theme, adjust values as you see fit (these changes will persist after theme updates)
-    sudo cp -i .files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
+    sudo cp -i ./files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
   )
   ```
   
