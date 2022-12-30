@@ -61,7 +61,7 @@ mint-meta-xfce
 
 There's a splash screen that can hide potential issues during boot, so disable it while settings things up.
 ```sh
-sudo vim /etc/default/grub
+sudo vi /etc/default/grub
 # Replace `splash` in GRUB_CMDLINE_LINUX_DEFAULT with `nosplash`
 
 sudo update-grub
