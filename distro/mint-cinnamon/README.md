@@ -5,6 +5,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Pre-Install](#pre-install)
 - [Install](#install)
 - [Initial Boot](#initial-boot)
+- [Set Up Display](#set-up-display)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -64,6 +65,16 @@ System Reports may prompt to install things like GPU drivers and language packs.
 - **IMPORTANT**: If you have a dock that has one monitor hooked up, and another monitor is hooked up to a laptop, you'll want to stick with the `nouveau` driver. It's the only one that's given me stable performance with a second monitor.
 
 Open the **Update Manager**, if there are updates for the GPU driver or kernel, install them.
+
+---
+
+## Set Up Display
+
+If you have multiple monitors, launch **Display**
+- Select your main monitor and toggle it to `Set as Primary` if it isn't already set.
+- Set the `Rotation` of other monitors if they're rotated.
+- Drag monitors roughly into the correct positions.
+- Apply, keep changes, rinse-and-repeat while adjusting monitor positions.
 
 ---
 
@@ -697,15 +708,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 
 
 <details>
-  <summary>Expand for Desktop Settings</summary>
-
-  Launch **Desktop**
-  ```
-  Desktop Layout: No desktop icons
-  ```
-</details>
-
-<details>
   <summary>Expand for Session Management</summary>
 
   XFCE has this exposed where you can choose to save sessions and delete the ones that exist. Cinnamon has it hidden away.
@@ -817,157 +819,166 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   <summary>Expand for System Settings</summary>
   
   ```
-  ┎─────────────────┒
-  ┃ Account Details ┃
-  ┖─────────────────┚
-    Picture: (choose avatar)
-    Name: (change to a preferred display name)
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎─────────┒
-  ┃ Applets ┃
-  ┖─────────┚
-    ┎──────────┒
-    ┃ Download ┃
-    ┖──────────┚
-      CinnVIIStartMenu
-      Lock keys indicator with notifications
+  [Appearance]
     
-    ┎────────┒
-    ┃ Manage ┃
-    ┖────────┚
-      (select and Add the downloaded items)
-      (disable the Menu applet, and replace it with CinnVIIStartMenu by going into 'Panel edit mode' in the taskbar)
-      
-      ┎──────────┒
-      ┃ Calendar ┃
-      ┖──────────┚
-        Use a custom date format: (checked)
-        Date format: %b. %e 【%a.】【%l: %M %p】
-      
-      ┎──────────────────┒
-      ┃ CinnVIIStartMenu ┃
-      ┖──────────────────┚
-        [Menu]
-          Menu layout: MATE-Menu
+    [Backgrounds]
+      [Images]
+        Vera > Sparkling
+    
+    [Font Selection]
+      Default font: Ubuntu Regular 12
+      Desktop font: Ubuntu Bold 12
+      Document font: Sans Regular 12
+      Monospace font: Monospace Regular 12
+      Window title font: Ubuntu Medium 12
+      Text scaling factor: 1.0
+  
+    [Themes]
+      [Themes]
+        Mouse Pointer: Bibata-Modern-Classic
+        Applications: Mint-Y-Dark-Aqua
+        Icons: Mint-Y-Legacy-Dark-Aqua
+        Desktop: Mint-Y-Legacy-Dark-Aqua
         
-        [Panel]
-          Use a custom icon and label: (checked)
-          Icon: linuxmint-logo-simple-symbolic
-          Text: enu
-        
-        [Sidebar]
-          Separator below user account info box: (checked)
+      [Settings]
+        Jump to position when clicking in a trough: (checked)
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  [Preferences]
+    
+    [Accessibility]
+      [Keyboard]
+        Use visual indicator on Caps and Num Lock (check) (if you don't want to use the 'betterlock' applet)
+  
+    [Account Details]
+      Picture: (choose avatar)
+      Name: (change to a preferred display name)
+  
+    [Applets]
+      [Download]
+        CinnVIIStartMenu
+        Lock keys indicator with notifications (betterlock)
+        Weather
       
-      ┎────────────────────────────────────────┒
-      ┃ Lock keys indicator with notifications ┃
-      ┖────────────────────────────────────────┚
-        Show caps lock indicator: (checked)
-        Show num lock indicator: (checked)
+      [Manage]
+        (select and Add the downloaded items)
         
-      ┎───────────────┒
-      ┃ Power Manager ┃
-      ┖───────────────┚
-        Display: Show percentage
+        [Calendar]
+          Use a custom date format: (checked)
+          Date format: 【 %a.  %b. %e 】【%l: %M %p 】
         
-      ┎───────────────┒
-      ┃ Notifications ┃
-      ┖───────────────┚
-        Show empty tray: (checked)
-        Show notifications on the bottom: (checked)
+        [CinnVIIStartMenu] (disable the Menu applet, and replace it with this by going into 'Panel edit mode' in the taskbar)
+          [Menu]
+            Menu layout: MATE-Menu
+          
+          [Panel]
+            Use a custom icon and label: (checked)
+            Icon: linuxmint-logo-simple-symbolic
+            Text: enu
+          
+          [Sidebar]
+            Separator below user account info box: (checked)
+        
+        [Lock keys indicator with notifications]
+          Show caps lock indicator: (checked)
+          Show num lock indicator: (checked)
+          
+        [Notifications]
+          Show empty tray: (checked)
+          (click 'Open notification settings')
+            Remove notifications after their timeout is reached: (checked)
+            Show notifications on the bottom: (checked)
+            Notification duration (seconds): 2
+            Media keys OSD size: Small
+        
+        [Power Manager]
+          Display: Show percentage  
+        
+        [Weather]
+          [Weather]
+            Data service: OpenWeatherMap
+            Forecast length (days): 7
+          
+          [Location]
+            (add locations in Saved Locations)
+            (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
+            (for the City I went with '<CITY>, <ABBREVIATED_STATE>')
+            (timezone America/Los_Angeles)
+            (Once items are added you can click on the panel item, and at the top of the forecast there'll be a location with horizontal arrows. Click on an arrow to go to a saved location)
   
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎────────────────┒
-  ┃ Font Selection ┃
-  ┖────────────────┚
-    Default font: Ubuntu Regular 12
-    Desktop font: Ubuntu Bold 12
-    Document font: Sans Regular 12
-    Monospace font: Monospace Regular 12
-    Window title font: Ubuntu Medium 12
-    Text scaling factor: 1.0
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎─────────────┒
-  ┃ Hot Corners ┃
-  ┖─────────────┚
-    Enable top left: Show the desktop
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎──────────────┒
-  ┃ Login Window ┃
-  ┖──────────────┚
-    ┎────────────┒
-    ┃ Appearance ┃
-    ┖────────────┚
-      Background: (choose image)
-      Icon theme: Mint-Y-Dark-Aqua
+    [Desktop]
+      Desktop Layout: No desktop icons
     
-    ┎───────┒
-    ┃ Users ┃
-    ┖───────┚
-      Allow guest sessions: (checked)
+    [Hot Corners]
+      Enable top left: Show the desktop
     
-    ┎──────────┒
-    ┃ Settings ┃
-    ┖──────────┚
-      Monitor: DP-3 (your main monitor)
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎────────────────────┒
-  ┃ Mouse and Touchpad ┃
-  ┖────────────────────┚
-    ┎──────────┒
-    ┃ Touchpad ┃
-    ┖──────────┚
-      Click actions: Use multiple fingers for right and middle click
-      Reverse scrolling direction: (uncheck)
-      Speed: Roughly 65%
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎──────────────────┒
-  ┃ Power Management ┃
-  ┖──────────────────┚
-    ┎───────┒
-    ┃ Power ┃
-    ┖───────┚
-      Turn off the screen when inactive for:  15 minutes | 15 minutes
-      Suspend when inactive for:                   Never | Never
-      When the lid is closed:                 Do Nothing | Suspend
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  ┎────────┒
-  ┃ Themes ┃
-  ┖────────┚
-    ┎────────┒
-    ┃ Themes ┃
-    ┖────────┚
-      Icons: Mint-Y-Dark-Aqua
-      Applications: Mint-Y-Dark-Aqua
-      Mouse Pointer: DMZ-White
-      Desktop: Mint-Y-Dark-Aqua
+    [Preferred Applications]
+      [Preferred applications]
+        Web: Google Chrome
+        Music: Sayonara Player
+        Video: VLC media player
+        File Manager: Thunar File Manager
+        Terminal: Tilix
+    
+    [Startup Applications]
+      Albert (check)
+      Cairo-Dock (check)
+      mintwelcome (un-check)
+      Notes (check)
+      Print Queue Applet (un-check)
+      Redshift (check)
+      Solaar (check)
+      Support for NVIDIA Prime (un-check)
+    
+    [Windows]
+      [Alt-Tab]
+        Alt-Tab switcher style: Coverflow (3D)
       
-    ┎──────────┒
-    ┃ Settings ┃
-    ┖──────────┚
-      Jump to position when clicking in a trough: (checked)
-    
   ──────────────────────────────────────────────────────────────────────────────
+  
+  [Hardware]
+  
+    [Mouse and Touchpad]
+      [Touchpad]
+        Click actions: Use multiple fingers for right and middle click
+        Reverse scrolling direction: (un-check)
+        Speed: Roughly 65%
     
-  ┎─────────┒
-  ┃ Windows ┃
-  ┖─────────┚
-    ┎─────────┒
-    ┃ Alt-Tab ┃
-    ┖─────────┚
-      Alt-Tab switcher style: Coverflow (3D)
+    [Network]
+      [Wi-Fi]
+        (disable while wired)
+    
+    [Power Management]
+      [Power]
+                                              |   on A/C   | on Battery
+        ---------------------------------------------------------------
+        Turn off the screen when inactive for:  15 minutes | 15 minutes
+        Suspend when inactive for:                   Never | Never
+        When the lid is closed:                 Do Nothing | Suspend
+        ---------------------------------------------------------------
+        When the battery is critically low: Shut down immediately
+    
+    [Sound]
+      [Input]
+        (Internal Microphone Built-in Audio)
+          (click the speaker icon to mute/disable it)
+      
+      [Sounds]
+        (customize system sounds)
+  
+  ──────────────────────────────────────────────────────────────────────────────
+  
+  [Administration]
+  
+    [Login Window] (only effects re-login from Suspend)
+      [Appearance]
+        Background: (choose image)
+        GTK theme: Mint-Y-Legacy-Dark-Aqua
+        Icon theme: Mint-Y-Legacy-Dark-Aqua
+      
+      [Users]
+        Allow guest sessions: (checked)
   ```
 </details>
 
