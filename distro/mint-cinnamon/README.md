@@ -292,7 +292,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium dconf-editor flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove kwalletmanager
 )
@@ -323,6 +323,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
+  | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
