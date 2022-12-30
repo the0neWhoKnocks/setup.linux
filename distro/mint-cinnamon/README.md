@@ -706,9 +706,11 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 </details>
 
 <details>
-  <summary>Expand for Thumbnail Settings</summary>
+  <summary>Expand for Session Management</summary>
 
-  Mint uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
+  XFCE has this exposed where you can choose to save sessions and delete the ones that exist. Cinnamon has it hidden away.
+  
+  Launch **dconf Editor** and navigate to `/org/cinnamon/cinnamon-session/` toggle on the `auto-save-session` option.
 </details>
 
 <details>
