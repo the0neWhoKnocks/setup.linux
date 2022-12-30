@@ -1052,16 +1052,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 </details>
 
 <details>
-  <summary>Expand for Pulse Audio Settings</summary>
-  
-  PulseEffects
-  ```
-  [General]
-    Start Service at Login
-  ```
-</details>
-
-<details>
   <summary>Expand for Qemu Settings</summary>
   
   - After the initial install, a reboot may be required to run `virsh` commands without `sudo`.
