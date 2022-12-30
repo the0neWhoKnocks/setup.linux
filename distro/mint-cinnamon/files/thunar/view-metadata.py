@@ -50,9 +50,12 @@ if duration:
     hrs = mins / 60
     mins = mins - (int(hrs) * 60)
   
+  hrsStr = f"{str(int(hrs)).zfill(2)}h:" if int(hrs) > 0 else ''
+  minsStr = f"{str(int(mins)).zfill(2)}m:" if int(mins) > 0 else ''
+  
   addField(
     'Duration',
-    f"{str(int(hrs)).zfill(2)}h:{str(int(mins)).zfill(2)}m:{str(int(secs)).zfill(2)}s"
+    f"{hrsStr}{minsStr}{str(int(secs)).zfill(2)}s"
   )
 
 if fileType == 'video':
