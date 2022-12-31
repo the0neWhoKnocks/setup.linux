@@ -1396,11 +1396,23 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <br>
 <br>
 
-Now that things are set up, you should back things up.
-```sh
-# Back up GNOME settings
-dconf dump / > ~/settings.dconf
-```
+Now that things are set up, you should:
+- Back things up
+   ```sh
+   # Back up GNOME settings
+   dconf dump / > ~/settings.dconf
+   ```
+- Change Grub to something less noisy
+   ```sh
+   sudo vim /etc/default/grub
+   ```
+   ```diff
+   - GRUB_CMDLINE_LINUX_DEFAULT="quiet nosplash loglevel=3"
+   + GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"
+   ```
+   ```sh
+   sudo update-grub
+   ```
 
 ---
 
