@@ -1172,31 +1172,14 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     Tray icon: (checked)
     Show the main window automatically: (unchecked)
   
-  [Notes]
-    Show spelling mistakes: (unchecked)
-  
   [Automatic start]
     Start automatically: (checked)
     Show notes on the screen: (checked)
   ```
   
-  Fix [issue when copying and pasting text results in jumpled paste](https://github.com/linuxmint/sticky/issues/80)
-  ```sh
-  (
-    # Download working version
-    wget https://github.com/linuxmint/sticky/archive/refs/tags/1.11.zip -O ~/Downloads/sticky-v1.11.zip
-    # Stop sticky
-    killall sticky.py
-    # Back up bad file (just in case)
-    sudo mv /lib/sticky/note_buffer.py /lib/sticky/note_buffer.py.bak
-    # Patch with good file (requires `p7zip-full` to be installed)
-    sudo 7z e ~/Downloads/sticky-1.11.zip sticky-1.11/usr/lib/sticky/note_buffer.py -o/lib/sticky/
-    # Start sticky (NO_AT_BRIDGE used to ignore 'accessibility bus' warning)
-    NO_AT_BRIDGE=1 gtk-launch sticky.desktop
-    # Clean-up
-    rm ~/Downloads/sticky-1.11.zip
-  )
-  ```
+  Fix [issue when copying and pasting text results in jumbled paste](https://github.com/linuxmint/sticky/issues/80)
+  - Download https://github.com/linuxmint/sticky/releases/download/master.mint21/packages.tar.gz
+  - Re-install with unzipped `.deb`.
 </details>
 
 <details>
