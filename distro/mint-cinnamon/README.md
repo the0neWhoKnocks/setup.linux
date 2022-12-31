@@ -1680,5 +1680,9 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   <summary>Expand for Solution</summary>
   
   - Went into **Update Manager** > View > Linux Kernels > chose the oldest in the available `5.15` series (`5.15.0-25`). Waited for it to install, rebooted, used the Grub menu during boot to choose the older kernel. Tested suspend and logging out/in and things seem to be working now.
-  - If the need to manually download and add an older kernal arise: https://askubuntu.com/a/700221
+  - To ensure it doesn't boot to the bad kernel:
+     - Launch **Update Manager** > View > Linux Kernels. Click on the bad installed kernel, click `Remove`.
+     - That kernel probably just popped up in the Update Manager as an available update. Right-click it and choose `Ignore the current update for this package`. If you mistakenly ignored the wrong package, go into Edit > Preferences > Blacklist, and remove what you ignored.
+  
+  If the need to manually download and add an older kernal arise: https://askubuntu.com/a/700221
 </details>
