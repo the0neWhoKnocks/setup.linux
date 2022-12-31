@@ -62,7 +62,7 @@
     # Hydrapaper
     ~/.config/hydrapaper.json
     # icons
-    ~/.icons
+    # ~/.icons
     ~/.local/share/icons
     # Inkscape
     ~/.config/inkscape/preferences.xml
@@ -75,7 +75,7 @@
     # Pulse Audio
     /etc/pulse/daemon.conf
     ~/.config/pulse
-    ~/.config/pavucontrol.ini
+    # ~/.config/pavucontrol.ini
     # Sayonara
     ~/.config/sayonara
     # Shares
@@ -98,7 +98,7 @@
     ~/.gitconfig
     ~/.gitignore_global
     ~/.history
-    ~/.nvidia-settings-rc
+    # ~/.nvidia-settings-rc
     ~/.oh-my-zsh
     ~/.profile
     ~/.vimrc
@@ -119,11 +119,12 @@
   if [[ "${DESKTOP_SESSION}" == "cinnamon" ]]; then
     list+=(
       # Cinnamon
-      ~/.cinnamon
+      ~/.config/cinnamon
       ~/.local/share/cinnamon
-      # Nemo
-      ~/.config/nemo
-      ~/.local/share/nemo
+      # Redshift
+      ~/.config/redshift.conf
+      # Thunar
+      ~/.config/Thunar
     )
   elif [[ "${DESKTOP_SESSION}" == "xfce" ]]; then
     list+=(
