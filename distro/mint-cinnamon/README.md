@@ -1211,6 +1211,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   Extensions:
   - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
+  - All Autocomplete https://marketplace.visualstudio.com/items?itemName=Atishay-Jain.All-Autocomplete
+     - VSCode has the built-in `Word Based Suggestions` but it's not smart enough to handle variable suggestions during a destructured `import` if the variable is assigned to an Object.
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
   - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
@@ -1236,14 +1238,16 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - VS DocBlockr https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock
 
   If things aren't behaving as expected after installing extensions (like config pages not loading), run `CTRL+SHIFT+P > Reload Window`.
-  
+  app
   Settings:
   - View > Appearance > Secondary Side Bar
      - Go the Explorer view > (add) Open Editors
         - Move Open Editors to the Secondary Side Bar
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
-     
+     All Autocomplete: Max Items in Single List: 10
+     All Autocomplete: Min Word Length: 5
+     All Autocomplete: Show Current Document: (uncheck)
      Diff Editor: Ignore Trim Whitespace (uncheck)
      Diff Editor: Render Side By Side: (uncheck)
      Dotenv: Enable Autocloaking: (unchecked)
