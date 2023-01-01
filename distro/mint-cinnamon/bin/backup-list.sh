@@ -72,16 +72,27 @@
     ~/.config/lsd/config.yaml
     # # OBS Studio
     # ~/.config/obs-studio
+    # OS
+    ~/.config/cinnamon
+    ~/.config/cinnamon-monitors.xml
+    ~/.config/mimeapps.list
+    ~/.config/powerdevilrc
+    ~/.config/powermanagementprofilesrc
+    ~/.local/share/cinnamon
     # Pulse Audio
     /etc/pulse/daemon.conf
     ~/.config/pulse
     # ~/.config/pavucontrol.ini
+    # Redshift
+    ~/.config/redshift.conf
     # Sayonara
     ~/.config/sayonara
     # Shares
     ~/.config/lan-shares
     # Sticky Notes
     ~/.config/sticky
+    # Thunar
+    ~/.config/Thunar
     # Tumbler (thumbnailer)
     ~/.config/tumbler
     # VLC
@@ -114,28 +125,6 @@
     ~/.local/share/keyrings
     ~/.ssh
   )
-  
-  # Session specific
-  if [[ "${DESKTOP_SESSION}" == "cinnamon" ]]; then
-    list+=(
-      # Cinnamon
-      ~/.config/cinnamon
-      ~/.local/share/cinnamon
-      # Redshift
-      ~/.config/redshift.conf
-      # Thunar
-      ~/.config/Thunar
-    )
-  elif [[ "${DESKTOP_SESSION}" == "xfce" ]]; then
-    list+=(
-      # Redshift
-      ~/.config/redshift.conf
-      # Thunar
-      ~/.config/Thunar
-      # XFCE
-      ~/.config/xfce4
-    )
-  fi
   
   # ensure items are surrounded in quotes for paths with spaces
   echo "${list[@]}" | xargs -n 1 printf "%s\n"
