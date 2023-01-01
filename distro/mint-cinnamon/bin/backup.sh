@@ -1,7 +1,16 @@
 #!/bin/bash
 
 outputPath="${HOME}/Desktop"
-outputName="$(date +"%Y-%m-%d_%H-%M-%S").user.${USER}.data.backup"
+rawSysInfo="$(dmesg | grep "DMI:" | sed -n 's|.*DMI: ||p' | sed -n 's|/.*||p')"
+formattedSysInfo="${rawSysInfo// /_}"
+rawOSInfo="$(cat /etc/os-release)"
+osName="$(echo "$rawOSInfo" | sed -nr 's|^NAME="([^"]+)"|\1|p')"
+osVersion="$(echo "$rawOSInfo" | sed -nr 's|^VERSION_ID="([^"]+)"|\1|p')"
+osInfoStr="${osName} ${osVersion}"
+formattedOSInfo="${osInfoStr// /_}"
+# NOTE: Using the unicode 'Division Slash' and 'Modifier Left Colon' instead of
+# the standard characters so it's safe on all platforms.
+outputName="[$(date +"%Y∕%m∕%d_%H꞉%M꞉%S")]_[${formattedSysInfo}]_[${formattedOSInfo}]_[${USER}]_backup"
 
 function error {
   echo;
