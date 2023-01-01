@@ -880,6 +880,15 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           [Sidebar]
             Separator below user account info box: (checked)
         
+        [Grouped window list]
+          [General]
+            Group windows by applications: (uncheck)
+          
+          [Panel]
+            Button label: Window title
+            Show window count numbers: (uncheck)
+            
+        
         [Lock keys indicator with notifications]
           Show caps lock indicator: (checked)
           Show num lock indicator: (checked)
@@ -924,15 +933,16 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Startup Applications]
       Albert (check)
       Cairo-Dock (check)
-      mintwelcome (un-check)
-      Print Queue Applet (un-check)
+      mintwelcome (uncheck)
+      Print Queue Applet (uncheck)
       Redshift (check)
       Solaar (check)
-      Support for NVIDIA Prime (un-check)
+      Support for NVIDIA Prime (uncheck)
     
     [Windows]
       [Alt-Tab]
-        Alt-Tab switcher style: Coverflow (3D)
+        Alt-Tab switcher style: Thumbnails only  (the 3D options seem to cause screen freezing issues)
+        Delay before displaying: 200  (when switching quickly, no need for extra overhead)
       
   ──────────────────────────────────────────────────────────────────────────────
   
@@ -941,7 +951,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Mouse and Touchpad]
       [Touchpad]
         Click actions: Use multiple fingers for right and middle click
-        Reverse scrolling direction: (un-check)
+        Reverse scrolling direction: (uncheck)
         Speed: Roughly 65%
     
     [Network]
@@ -1252,6 +1262,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      Diff Editor: Render Side By Side: (uncheck)
      Dotenv: Enable Autocloaking: (unchecked)
      Editor: Accept Suggestion on Commit Character: (uncheck)
+     Editor: Color Decorators: (uncheck)
      Editor: Detect Indentation: (uncheck)
      Editor: Folding Strategy: indentation
      Editor: Font Size: 14
@@ -1378,7 +1389,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           (check) Highlight matching brackets
           Tab width: 2
           (check) Automatic indentation
-          (un-check) Allow mouse wheel scrolling to change tabs
+          (uncheck) Allow mouse wheel scrolling to change tabs
           
         [Theme]
           Twilight
@@ -1444,7 +1455,8 @@ bup -r "<PATH_TO_BACKUP>"
 | ---- | ------ |
 | `ALT + click on a window + drag` | Moves a window |
 | `ALT + right-click near window edge + drag up/down or left/right` | Resize a window |
-| `CTRL+ALT+ESC` | Refresh Desktop |
+| `CTRL+ALT+ESC` | Restart Cinnamon (keeps current session, may jumble window positions) |
+| `CTRL+ALT+BACKSPACE` | Restart XOrg (exits to login) |
 
 ---
 
