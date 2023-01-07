@@ -68,6 +68,8 @@
     ~/.config/inkscape/preferences.xml
     # Insomnia
     ~/.config/Insomnia
+    # Kid3
+    ~/.config/Kid3
     # LSD
     ~/.config/lsd/config.yaml
     # # OBS Studio

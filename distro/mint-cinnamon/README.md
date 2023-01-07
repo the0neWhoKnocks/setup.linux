@@ -75,6 +75,7 @@ If you have multiple monitors, launch **Display**
 - Set the `Rotation` of other monitors if they're rotated.
 - Drag monitors roughly into the correct positions.
 - Apply, keep changes, rinse-and-repeat while adjusting monitor positions.
+- Under **Settings** I also unchecked `Enable fractional scaling controls`. Not sure if it was actually hurting anything, but I disabled at during some troubleshooting and things have been stable so it stays off for now.
 
 ---
 
@@ -832,13 +833,16 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - `Edit > Preferences`
      ```
      [Display]
-       View new folders using: Compact View
+       View new folders using: List View
        Show thumbnails: Local Files Only
+       Date > Format: Custom, %Y-%m-%d
      
      [Behavior]
        (check) Show action to permanently delete files and folders
      ```
-  - `View` (check) Show Hidden Files
+  - `View`
+     - Location selector: `Toolbar style`
+     - (check) Show Hidden Files
   - You may have to change the current view to Compact View. Then I `CTRL++` or `CTRL+-` to get the icons and text to a size I like.
 </details>
 
@@ -957,6 +961,9 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         File Manager: Thunar File Manager
         Terminal: Tilix
     
+    [Screensaver]
+      Delay before starting the screensaver: Never  (nothing else really works when running long CLI commands, I don't want it to lock in the middle of a process)
+    
     [Startup Applications]
       Albert (check)
       Cairo-Dock (check)
@@ -968,7 +975,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     
     [Windows]
       [Alt-Tab]
-        Alt-Tab switcher style: Thumbnails only  (the 3D options seem to cause screen freezing issues)
+        Alt-Tab switcher style: Icons and window preview  (the 3D options seem to cause screen freezing issues)
         Delay before displaying: 200  (when switching quickly, no need for extra overhead)
       
   ──────────────────────────────────────────────────────────────────────────────
@@ -1073,6 +1080,30 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
   ```sh
   sudo update-grub
+  ```
+</details>
+
+<details>
+  <summary>Expand for Inkscape Settings</summary>
+  
+  Keyboard Shortcuts
+  | Keys | Description |
+  | ---- | ----------- |
+  | `CTRL+SHIFT+R` | Resize canvas to content |
+  | `%` | Toggle snaps on/off |
+  
+  To move the tools on the right to the top, go to `View > (at bottom, change to) Custom`.
+  
+  Preferences
+  ```
+  [ Interface > Themeing ]
+    GTK theme: Adwaita
+    (check) Use dark theme
+    change icon theme: multicolor
+    (check) Use symbolic icons
+  
+  [ Behavior > Transforms ]
+    (uncheck) Scale stroke width
   ```
 </details>
 
@@ -1504,6 +1535,9 @@ bup -r "<PATH_TO_BACKUP>"
 # Applications (launcher) folders
 /usr/share/applications
 /var/lib/flatpak/exports/share/applications
+
+# Logs
+/var/log
 
 # System audio
 /usr/share/sounds
