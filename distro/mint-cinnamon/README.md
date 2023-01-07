@@ -777,13 +777,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      mkdir -p ~/.config/Thunar/actions
      ```
   - Add your scripts (I symlink to ensure things keep in sync):
-     - `ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/`
+     ```sh
+     ln -s "${PWD}/files/thunar/copy-filename.sh" ~/.config/Thunar/actions/
+     ln -s "${PWD}/files/thunar/copy-full-path.sh" ~/.config/Thunar/actions/
+     ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/
+     ```
   - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
   
   ---
   
   Launch **Thunar** and go to:
   - `Edit > Configure custom actions`
+     - Fix the **Open in Terminal**. Just change it's **Command** to `tilix` (or your preferred terminal).
      - Fix the **Search** option that ships misconfigured with `catfish` which doesn't get automatically installed. Double-click on it:
         ```
         [Basic]
@@ -793,8 +798,30 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      - (click) Add a new custom action
        ```
        [Basic]
+         Name: Copy Filename
+         Description: Copies a file's name without it's extension
+         Command: ~/.config/Thunar/actions/copy-filename.sh %f
+         Icon: edit-copy
+       
+       [Appearance Conditions]
+         (check all items)
+       ```
+     - (click) Add a new custom action
+       ```
+       [Basic]
+         Name: Copy Full Path
+         Description: Copies a file's full path
+         Command: ~/.config/Thunar/actions/copy-full-path.sh %f
+         Icon: edit-copy
+       
+       [Appearance Conditions]
+         (check all items)
+       ```
+     - (click) Add a new custom action
+       ```
+       [Basic]
          Name: View Metadata
-         Description: View metadata for a file.
+         Description: View metadata for a file
          Command: ~/.config/Thunar/actions/view-metadata.py %f %n
          Icon: dialog-information
        
