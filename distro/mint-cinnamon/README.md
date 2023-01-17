@@ -306,7 +306,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo apt update
   sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium dconf-editor flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
-  sudo apt remove kwalletmanager
+  sudo apt remove hypnotix kwalletmanager
 )
 ```
 These require a User to answer prompts
@@ -1406,12 +1406,19 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      # Type `CTRL + s`, select the 'File: Save' entry, hit `DELETE`
      # Toggle 'Record Keys'
      # Search for 'Save All (workbench.action.files.saveall', set it's shortcut to `CTRL + s`
+     
+     # OS friendly line moving (ALT conflicts with system bindings and opens menus)
+     Move Line Down: CTRL+UpArrow
+     Move Line Up: CTRL+DownArrow
      ```
   - You can right-click on icons in the left bar to hide them.
   - Toggle the Activity Bar <code>CTRL + `</code>, drag the Search icon down to the panel so that the global searches have more space.
   - Right-click on the bottom Status Bar
-    - Uncheck the second instance of Source Control
-    - Uncheck Feedback
+     - Uncheck the second instance of Source Control
+     - Uncheck Feedback
+  - Only option for vertical "tabs" right now is to:
+     - Go into View > Appearance > activate Secondary Side Bar. For some reason it doesn't remember your choice and you have to do this for every repo/project/folder you go into.
+     - Drag the **Open Editors** over to the Secondary Side Bar. This action is remembered, and will now permanetely live in the Secondary Side Bar.
 </details>
 
 <details>
