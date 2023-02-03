@@ -442,7 +442,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
 (
   DEBS_DIR=~/Downloads/debs
   urls=(
-    'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_22.04/amd64/albert_0.17.6-0_amd64.deb'
+    'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_18.04/amd64/albert_0.17.6-0_amd64.deb'
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
@@ -1029,14 +1029,20 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <details>
   <summary>Expand for Albert Settings</summary>
   
+  I use `QML Box Model` so that SVG icons show up clearly.
   ```
   ┎─────────┒
   ┃ General ┃
   ┖─────────┚
     Hot key: Ctrl+Space
+    Frontend: QML Box Model
     Terminal: Tilix
     Autostart on login: (checked)
-    Theme: Dark Magenta
+    Style: BoxModel (click the button next to it)
+      item_title_fontsize: 30
+      item_description_fontsize: 20
+      font_name: Ubuntu Mono
+    Apply theme: DarkMagenta
     Display scrollbar: (check)
   
   ┎────────────┒
