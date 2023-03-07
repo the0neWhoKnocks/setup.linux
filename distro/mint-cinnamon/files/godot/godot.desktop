@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Godot Engine
+GenericName=Libre game engine
+Comment=Multi-platform 2D and 3D game engine with a feature-rich editor
+Exec=bash -c "$HOME/.local/bin/godot %f"
+Icon=godot
+Terminal=false
+PrefersNonDefaultGPU=true
+Type=Application
+MimeType=application/x-godot-project;
+Categories=Development;IDE;
+StartupWMClass=Godot

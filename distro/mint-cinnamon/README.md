@@ -484,6 +484,18 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
 </details>
 
+<details>
+  <summary>Expand for Tweaks</summary>
+  
+  To make Discord not prompt for updates all the time
+  ```sh
+  vim ~/.config/discord/settings.json
+  
+  # add:
+  "SKIP_HOST_UPDATE": true
+  ```
+</details>
+
 
 ### Via Archives
 
@@ -493,13 +505,14 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   urls=(
     'https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
+    'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
   )
   for url in "${urls[@]}"; do
     wget --no-clobber "${url}" -P "${ARCH_DIR}/"
     file="$(basename "${url}")"
     version="$(basename $(dirname "${url}"))"
     pkg="$(echo "${file}" | awk -F '[-_]' -v name=1 '{print $name}')"
-    outputPath="${HOME}/Software/${pkg}/${version}/"
+    outputPath="${HOME}/.local/bin/${pkg}/${version}/"
     mkdir -p "${outputPath}"
     
     if [[ "${file}" == *.zip ]]; then
@@ -514,7 +527,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 Optional
 ```sh
 https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz
-https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
 ```
 
 <details>
@@ -523,12 +535,12 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   | Software | Description |
   | -------- | ----------- |
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
+  | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
   
   | Software | Description |
   | -------- | ----------- |
   | [Blender](https://www.blender.org) | 3D asset creation |
-  | [godot](https://godotengine.org/) | Game engine |
 </details>
 
 <details>
@@ -537,14 +549,19 @@ https://downloads.tuxfamily.org/godotengine/3.5.1/Godot_v3.5.1-stable_x11.64.zip
   Have to run the install script for btop from within the directory
   ```sh
   (
-    cd ~/Software/btop/v1.2.13/btop/
+    cd ~/.local/bin/btop/v1.2.13/btop/
     ./install.sh
   )
   ```
   
   Has to be executable to run
   ```sh
-  chmod +x ~/Software/jmkvpropedit/v1.5.2/JMkvpropedit.jar
+  chmod +x ~/.local/bin/jmkvpropedit/v1.5.2/JMkvpropedit.jar
+  ```
+  
+  ```sh
+  cp files/godot/godot.desktop ~/.local/share/applications/
+  cp files/godot/godot.svg ~/.icons/
   ```
 </details>
 
@@ -1292,7 +1309,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
   - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
   - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
-  - dotenv https://marketplace.visualstudio.com/items?itemName=dotenv.dotenv-vscode
+  - dotenv https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv
   - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
   - ESLint https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
   - File Icons https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons
@@ -1426,6 +1443,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Only option for vertical "tabs" right now is to:
      - Go into View > Appearance > activate Secondary Side Bar. For some reason it doesn't remember your choice and you have to do this for every repo/project/folder you go into.
      - Drag the **Open Editors** over to the Secondary Side Bar. This action is remembered, and will now permanetely live in the Secondary Side Bar.
+  - Install Python extension, but then remove auto-installed `isort` and `Jupyter` extensions. Seems to be a bug that'll spin up a few python processes for those extensions, and if you uninstall them, they keep running even after vscode is shut down, so you'll have to manually kill them. Open System Monitor, filter by `py`, the Process Name will be `python`, mouse over them to verify they were started by vscode. In some cases I'd have to delete `~/.config/Code/User/workspaceStorage/<HASH>` (sort by date, usually the newest one, but can verify by looking at the path in the `workspace.json` file)
+     - Remove MS Python extensions, syntax highlighting seems to work without them.
+     - Search for Typescript and disable everything under `Svelte > Plugin`
+     - `~/.vscode/argv.json`, add `"disable-hardware-acceleration": true`
 </details>
 
 <details>
@@ -1669,6 +1690,19 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   You should then be able to boot normally with the default `nouveau` driver. Open up Driver Manager and reinstall the nvidia driver that matches your kernel.
   
   To find the driver that matches your kernel, run `uname -r` to view the current kernel. Then compare that against the available nvidia drivers in Driver Manager. For me it was recommending `nvidia-driver-525` when my kernel was `5.15.0-56-generic`. So it should've been recommending `nvidia-driver-515`.
+</details>
+
+**Issue: "error: out of memory" on boot right after grub menu**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Seems to be linked to using nvidia drivers https://bugs.launchpad.net/oem-priority/+bug/1842320.
+  Add this to your Grub config, save and reboot.
+  ```
+  GRUB_GFXMODE=640x360
+  ```
+  
+  If that doesn't work, I also purged all nvidia packages via Synaptic Package Manager. Had to manually find all `nvidia` packages with a `version` matching what was installed. Rebooted, and the system should now be using the `nouveau` driver. Use Driver Manager to install the `nvidia` driver again.
 </details>
 
 **Issue: Chrome Saved Passwords Not Showing Up in Settings**
