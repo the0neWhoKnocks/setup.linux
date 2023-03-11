@@ -506,6 +506,7 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
     'https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
     'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
+    'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
   )
   for url in "${urls[@]}"; do
     wget --no-clobber "${url}" -P "${ARCH_DIR}/"
@@ -524,23 +525,15 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 )
 ```
 
-Optional
-```sh
-https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.xz
-```
-
 <details>
   <summary>Expand for Software Details</summary>
   
   | Software | Description |
   | -------- | ----------- |
+  | [Blender](https://www.blender.org) | 3D asset creation |
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
-  
-  | Software | Description |
-  | -------- | ----------- |
-  | [Blender](https://www.blender.org) | 3D asset creation |
 </details>
 
 <details>
@@ -561,7 +554,15 @@ https://www.blender.org/download/release/Blender3.3/blender-3.3.1-linux-x64.tar.
   
   ```sh
   cp files/godot/godot.desktop ~/.local/share/applications/
+  chmod +x ~/.local/share/applications/godot.desktop
   cp files/godot/godot.svg ~/.icons/
+  ```
+  
+  ```sh
+  # may have to update the version path for `Exec=` in `.desktop`
+  cp files/blender/blender.desktop ~/.local/share/applications/
+  chmod +x ~/.local/share/applications/blender.desktop
+  cp files/blender/blender.svg ~/.icons/
   ```
 </details>
 

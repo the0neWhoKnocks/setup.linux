@@ -51,7 +51,7 @@
     $(find ~/.config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/google-chrome/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
     # # Blender
-    # $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
+    $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
     # Discord
     ~/.config/discord/{Cookies,Preferences,settings.json}
     # Dock
