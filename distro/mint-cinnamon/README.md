@@ -304,7 +304,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in chromium dconf-editor flameshot git-gui grub-customizer handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git-gui grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove hypnotix kwalletmanager
 )
@@ -334,11 +334,13 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [aegisub](https://aeg-dev.github.io/AegiSite/) | Subtitle editor |
   | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
   | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
+  | [cheese](https://wiki.gnome.org/Apps/Cheese) | Allows you to take photos and videos with your webcam. |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
+  | [guvcview](https://community.linuxmint.com/software/view/guvcview) | Capture images or video with webcam. (It's the only thing I've found that gives the option to mirror video) |
   | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
@@ -373,6 +375,12 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [sqlitebrowser](https://sqlitebrowser.org/) | A GUI based SQL toolkit |
 </details>
 
+<details>
+  <summary>Expand for Tweaks</summary>
+  
+  Webcam apps may require a system reboot for them to work correctly.
+</details>
+
 
 ### Via Flatpak
 
@@ -392,6 +400,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
+  | [hu.irl.cameractrls](https://flathub.org/apps/details/hu.irl.cameractrls) | Camera Ctrls | Logi Tune alt for adjusting settings in Web apps |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
