@@ -450,6 +450,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
     'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
     'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
+    'https://torguard.net/downloads/new/torguard-latest-amd64.deb'
   )
   for url in "${urls[@]}"; do
     wget --content-disposition "${url}" -P "${DEBS_DIR}/"
@@ -477,6 +478,7 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
   | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
+  | [TorGuard](https://torguard.net/downloads.php) | VPN client |
   | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
   
   | Software | Description |
@@ -494,6 +496,8 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   # add:
   "SKIP_HOST_UPDATE": true
   ```
+  
+  TorGuard requires Wireguard `sudo apt install wireguard`
 </details>
 
 
