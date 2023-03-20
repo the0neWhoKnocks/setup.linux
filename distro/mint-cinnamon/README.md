@@ -1824,3 +1824,86 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   
   If the need to manually download and add an older kernal arise: https://askubuntu.com/a/700221
 </details>
+
+**Issue: Can't Boot Past Grub Menu**
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Recently updated my GPU driver and after I rebooted I kept getting an "out of memory" error from `initramfs`. No matter what I tried there was no way to get to a terminal or recover anything, everything just crapped out.
+  
+  Luckily you can use a Live ISO to recover:
+  - I loaded into Mint via VenToy
+  - Started a Terminal in Mint
+     ```sh
+     # mounting a ZFS pool takes a little extra work
+     (
+       # the root pool where you normally boot into
+       sudo zpool import -R /mnt rpool
+       # the boot pool where Grub lives
+       sudo zpool import -R /mnt/ bpool
+       sudo mount -t exfat UUID=7B55-ECA0 /mnt/boot/efi
+       # mount certain system folders so things can run normally
+       for i in dev dev/pts proc sys; do sudo mount -v --bind /$i /mnt/$i; done
+       sudo mount -v --bind /mnt/boot/efi/grub /mnt/boot/grub
+     )
+     # load into the pool like it's a new root system
+     sudo chroot /mnt
+     
+     # if you can't install packages due to mirrors not being resolvable
+     sudo vim /etc/resolv.conf
+       # add
+       nameserver 8.8.8.8
+     
+     # if mirrors are out of date
+     sudo vim /etc/apt/sources.list.d/official-packages-repositories.list
+     
+     # patch initramfs to keep it's file size down (fix 'out of memory')
+     sudo vim /etc/initramfs-tools/initramfs.conf
+       # update existing items to:
+       MODULES=dep
+       COMPRESS=xz
+     
+     # remove driver (adding or removing automatically re-builds initramfs)
+     sudo apt remove nvidia-driver-515
+     sudo apt autoremove
+     # list available drivers
+     ubuntu-drivers devices
+     # install driver
+     sudo apt install nvidia-driver-525
+     # make sure Grub references any new files that may have been generated
+     sudo update-grub
+     
+     exit
+     
+     # if you need to make any file back-ups, do so now while things are mounted
+     
+     reboot
+     ```
+  - The Grub menu wouldn't load after my changes, instead it was just the Grub console.
+     ```sh
+     # list available drives
+     grub> ls
+     # find which drive has the boot pool (without the slash it may print the label of `bpool`, otherwise look for a BOOT folder and make sure there isn't Windows stuff in it).
+     grub> ls (hd2,gpt3)/
+     
+     # load things up
+     # set root=(hd#,gpt#)
+     grub> set root=(hd2,gpt3)
+     # linux /BOOT/ubuntu_######/@/vmlinuz root=ZFS=rpool/ROOT/ubuntu_###### boot=zfs
+     grub> linux /BOOT/ubuntu_1yyx7k/@/vmlinuz root=ZFS=rpool/ROOT/ubuntu_1yyx7k boot=zfs
+     # initrd /BOOT/ubuntu_######/@/initrd.img
+     grub> initrd /BOOT/ubuntu_1yyx7k/@/initrd.img
+     grub> boot
+     ```
+  
+  If you need to back things up to a flash drive:
+  ```sh
+  # FAT drives have a limit of around 4GB per file, so split into `4294967295` chunks
+  # [Export]
+  sudo tar -cvzf - /mnt/home/<USER>/ | split -b 4294967295 - "/media/mint/<FLASH_ID>/backup.tar.gz.part"
+  
+  # [Import]
+  cd <DEST_FOLDER>
+  cat /<FLASH_ID>/backup.tar.gz.part.* | tar xzvf -
+  ```
+</details>
