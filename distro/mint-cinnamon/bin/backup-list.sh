@@ -51,13 +51,20 @@
     $(find ~/.config/google-chrome \( -name 'Profile*' -o -name 'Local State' \) -printf "\"%p\"\n")
     $(find ~/.config/google-chrome/Default -mindepth 1 -maxdepth 1 -not -path "*Cache*" -printf "\"%p\"\n" | sort)
     # # Blender
-    $(find .config/blender/ -path '*/config' -printf "\"%p\"\n")
+    $(find ~/.config/blender/ -path '*/config' -printf "\"%p\"\n")
     # Discord
     ~/.config/discord/{Cookies,Preferences,settings.json}
     # Dock
     ~/.config/cairo-dock
+    # Egg-Timer
+    ~/.config/eggtimer
     # Gimp
     $(find ~/.config/GIMP -maxdepth 1 -mindepth 1 -type d -printf "\"%p\"\n")
+    # Godot
+    ~/.config/godot
+    ~/.local/share/godot
+    # grsync
+    ~/.grsync
     # Handbrake
     ~/.config/ghb/preferences.json
     ~/.config/ghb/presets.json
@@ -105,6 +112,8 @@
     # VS Code
     ~/.config/Code/User
     ~/.vscode
+    # webcam
+    ~/.config/guvcview2
     # Xed
     ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
   
