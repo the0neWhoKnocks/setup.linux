@@ -750,6 +750,16 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 </details>
 
 <details>
+  <summary>Expand for Update Manager</summary>
+  
+  ```
+  [Edit > Preferences]
+    [Options]
+      - Uncheck "Refresh the list of updates automatically"
+  ```
+</details>
+
+<details>
   <summary>Expand for File Manager</summary>
   
   I've tried `dolphin`, `nemo`, and `thunar`.
@@ -1320,6 +1330,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - All Autocomplete https://marketplace.visualstudio.com/items?itemName=Atishay-Jain.All-Autocomplete
      - VSCode has the built-in `Word Based Suggestions` but it's not smart enough to handle variable suggestions during a destructured `import` if the variable is assigned to an Object.
+  - Alphabetical Sorter https://marketplace.visualstudio.com/items?itemName=ue.alphabetical-sorter
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
   - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
@@ -1406,7 +1417,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         cp -i ./files/.gitignore_global ~/
         git config --global core.excludesFile ~/.gitignore_global
         ```
-  - There are some settings that can only be set in the JSON
+  - There are some settings that can only be set in the `settings.json`
      ```json
      "editor.tokenColorCustomizations": {
        "textMateRules": [
@@ -1432,7 +1443,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      },
      "blueprint.templatesPath": [
        "~/.config/Code/User/FileTemplates",
-     ]
+     ],
+     "[css][html][javascript][svelte]": {
+        "editor.suggest.showWords": false,
+      },
      ```
   - File > Preferences > Keyboard Shortcuts (or `CTRL + k + s`) (or `CTRL+SHIFT+P`, `Preferences: Open Keyboard Shortcuts (JSON)`)
      ```
