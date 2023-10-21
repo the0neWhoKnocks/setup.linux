@@ -1293,10 +1293,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     Start automatically: (checked)
     Show notes on the screen: (checked)
   ```
-  
-  Fix [issue when copying and pasting text results in jumbled paste](https://github.com/linuxmint/sticky/issues/80)
-  - Download https://github.com/linuxmint/sticky/releases/download/master.mint21/packages.tar.gz
-  - Re-install with unzipped `.deb`.
 </details>
 
 <details>
