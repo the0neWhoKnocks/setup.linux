@@ -37,6 +37,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [File Managers randomly freeze when transfering CIFS files](#file-managers-randomly-freeze-when-transfering-cifs-files)
   - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
   - [Can't Boot Past Grub Menu](#cant-boot-past-grub-menu)
+  - ["Couldn't Connect to Accessibility Bus" Warnings When Opening/Starting Something From CLI](#couldnt-connect-to-accessibility-bus-warnings-when-openingstarting-something-from-cli)
 
 ---
 
@@ -1942,4 +1943,27 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   cd <DEST_FOLDER>
   cat /<FLASH_ID>/backup.tar.gz.part.* | tar xzvf -
   ```
+</details>
+
+### "Couldn't Connect to Accessibility Bus" Warnings When Opening/Starting Something From CLI
+<details>
+  <summary>Expand for Solution</summary>
+  
+  The fix is to `export` this variable:
+  ```sh
+  # `NO_AT_BRIDGE` to hide GTK "couldn't connect to accessibility bus" warnings (usually when running 'open'). It's been a known issue for a long time https://bugs.launchpad.net/ubuntu/+source/at-spi2-core/+bug/1193236.
+  export NO_AT_BRIDGE=1
+  ```
+  
+  The comment's not neccessary (for whatever file you dump it in), but it could be useful when trying to remember why you added it.
+  
+  There are different schools of thought as to where to add the `export`. Personally I added it to my `.*rc` file, but it can be added to these locations as well:
+  
+  | File | Description |
+  | ---- | ----------- |
+  | `/etc/profile` | Global exports. Executes first. Available to all shells. Just add the `export` line. |
+  | `/etc/profile.d/<FILENAME>` | Global exports. Anything in `profile.d` is loaded by `/etc/profile`. Available to all shells. `<FILENAME>` could be something like `01_accessibility_bus_fix.sh`, and in that file you'd add the `export` line. The leading number is just to ensure execution order. |
+  | `~/.profile` | User exports. Available to all shells. Just add the `export` line. |
+  | `~/.*rc` | User exports. Available to specific shell. Just add the `export` line to your Shell's `rc` file. So `.zshrc`, `.bashrc`, etc. |
+        
 </details>
