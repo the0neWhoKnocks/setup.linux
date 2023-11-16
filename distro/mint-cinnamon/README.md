@@ -28,6 +28,15 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
 - [Troubleshooting](#troubleshooting)
+  - [System going to sleep after a few seconds on the Login screen](#system-going-to-sleep-after-a-few-seconds-on-the-login-screen)
+  - [Kernel Panic error after choosing "recommended" nvidia driver](#kernel-panic-error-after-choosing-recommended-nvidia-driver)
+  - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
+  - [Chrome Saved Passwords Not Showing Up in Settings](#chrome-saved-passwords-not-showing-up-in-settings)
+  - [How to Free Up Space?](#how-to-free-up-space)
+  - [PulseAudio Volume Notification Keeps Popping Up](#pulseaudio-volume-notification-keeps-popping-up)
+  - [File Managers randomly freeze when transfering CIFS files](#file-managers-randomly-freeze-when-transfering-cifs-files)
+  - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
+  - [Can't Boot Past Grub Menu](#cant-boot-past-grub-menu)
 
 ---
 
@@ -1677,7 +1686,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
 
 ## Troubleshooting
 
-**Issue: System going to sleep after a few seconds on the Login screen**
+### System going to sleep after a few seconds on the Login screen
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1699,7 +1708,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
 <br>
 <br>
 
-**Issue: Kernel Panic error after choosing "recommended" nvidia driver**
+### Kernel Panic error after choosing "recommended" nvidia driver
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1718,7 +1727,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   To find the driver that matches your kernel, run `uname -r` to view the current kernel. Then compare that against the available nvidia drivers in Driver Manager. For me it was recommending `nvidia-driver-525` when my kernel was `5.15.0-56-generic`. So it should've been recommending `nvidia-driver-515`.
 </details>
 
-**Issue: "error: out of memory" on boot right after grub menu**
+### "error: out of memory" on boot right after grub menu
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1731,7 +1740,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   If that doesn't work, I also purged all nvidia packages via Synaptic Package Manager. Had to manually find all `nvidia` packages with a `version` matching what was installed. Rebooted, and the system should now be using the `nouveau` driver. Use Driver Manager to install the `nvidia` driver again.
 </details>
 
-**Issue: Chrome Saved Passwords Not Showing Up in Settings**
+### Chrome Saved Passwords Not Showing Up in Settings
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1743,7 +1752,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   1. There's a corrupted value in `Login Data`. If Chrome can't read a value, it automatically considers everything broken and won't display anything. If you run [fix-chrome-creds.py](./bin/fix-chrome-creds.py) it'll create a fixed file on your desktop, and output all the values so you can see what may be broken, or worse case manually input the passwords. Example `./bin/fix-chrome-creds.py -f "~/.config/google-chrome/<PROFILE>/Login Data" -p "<KEY>"`. `<KEY>` would come from `Passwords and Keys > Login > Chrome Safe Storage`.
 </details>
 
-**Issue: How to Free Up Space?**
+### How to Free Up Space?
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1754,9 +1763,11 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   ```
 </details>
 
-**Issue: PulseAudio Volume Notification Keeps Popping Up**
+### PulseAudio Volume Notification Keeps Popping Up
 <details>
   <summary>Expand for Solution</summary>
+  
+  Was having an issue where the PulseAudio volume change notification would keep popping up randomly when I wasn't adjusting volume. Usually would happen while using a Browser and a video would start playing.
   
   First you can debug Pulse's logs:
   ```sh
@@ -1772,7 +1783,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   ```
   
   ```sh
-  # stop the currently running service
+  # stop the currently running service (if it's running)
   systemctl --user stop pulseaudio.{socket,service}
   # edit pulse's config
   sudo vim /etc/pulse/default.pa
@@ -1791,7 +1802,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   
   ---
   
-  **NOTE: Turns out the below didn't work**. Pipewire didn't help at all, in fact it kept crashing after extended use. Keeping this here in case I need it in the future.
+  **NOTE: Turns out the below didn't work**. Pipewire didn't help at all, in fact it kept crashing after extended use. Keeping this for future reference.
   
   Change from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
   ```sh
@@ -1823,7 +1834,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   ```
 </details>
 
-**Issue: File Managers randomly freeze when transfering CIFS files**
+### File Managers randomly freeze when transfering CIFS files
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1838,7 +1849,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   - Save changes
 </details>
 
-**Issue: System Freezes/Locks When Entering Suspend**
+### System Freezes/Locks When Entering Suspend
 <details>
   <summary>Expand for Solution</summary>
   
@@ -1850,7 +1861,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   If the need to manually download and add an older kernal arise: https://askubuntu.com/a/700221
 </details>
 
-**Issue: Can't Boot Past Grub Menu**
+### Can't Boot Past Grub Menu
 <details>
   <summary>Expand for Solution</summary>
   
