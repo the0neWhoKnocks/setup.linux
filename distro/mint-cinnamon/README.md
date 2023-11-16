@@ -472,6 +472,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
     'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
     'https://torguard.net/downloads/new/torguard-latest-amd64.deb'
+    'https://gitlab.com/api/v4/projects/19921167/jobs/artifacts/release/raw/build/glaxnimate.deb?job=linux%3Adeb'
   )
   for url in "${urls[@]}"; do
     wget --content-disposition "${url}" -P "${DEBS_DIR}/"
@@ -496,6 +497,7 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
+  | [Glaxnimate](https://glaxnimate.mattbas.org/) | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
   | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
