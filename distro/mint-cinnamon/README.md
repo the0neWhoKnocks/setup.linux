@@ -393,6 +393,22 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   Webcam apps may require a system reboot for them to work correctly.
 </details>
 
+<details>
+  <summary>Expand for kdenlive Settings</summary>
+  
+  ```
+  [ Environment ]
+    
+    [ MLT env ]
+      (make sure paths point to current binaries (Melt was pointing to old path))
+    
+    [ Default Apps ]
+      Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
+      Audio editing: /usr/bin/audacity
+      Animation editing: /usr/bin/glaxnimate
+  ```
+</details>
+
 
 ### Via Flatpak
 
