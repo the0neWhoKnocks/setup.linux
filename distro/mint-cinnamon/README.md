@@ -1469,6 +1469,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      "blueprint.templatesPath": [
        "~/.config/Code/User/FileTemplates",
      ],
+     "eslint.validate": ["javascript", "javascriptreact", "svelte"],
      "[css][html][javascript][svelte]": {
         "editor.suggest.showWords": false,
       },
