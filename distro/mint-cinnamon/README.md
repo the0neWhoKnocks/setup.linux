@@ -315,7 +315,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt-add-repository -y ppa:lucioc/sayonara # only needed for below `jammy` 
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that tagged along
   sudo apt remove hypnotix kwalletmanager
 )
@@ -358,6 +358,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
   | [kdenlive](https://kdenlive.org/en/features/) | Video editor |
   | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
+  | [libnss3-tools](https://packages.ubuntu.com/focal/libnss3-tools) | Network Security Service tools (installs `certutil` which I use to install certs for Browsers) |
   | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
