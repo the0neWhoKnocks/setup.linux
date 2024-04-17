@@ -657,6 +657,7 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | -------- | ----------- |
   | [Blender](https://www.blender.org) | 3D asset creation |
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
+  | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
 </details>
@@ -695,83 +696,37 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 ### Via CLI
 
 For packages that require more than a simple `apt install`.
-
-**Docker**
-```sh
-(
-  sudo apt install ca-certificates curl gnupg lsb-release
-  sudo mkdir -p /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt update
-  sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-  sudo usermod -aG docker $USER
-)
-```
-Verify install
-```sh
-systemctl is-enabled docker
-systemctl status docker
-sudo docker run hello-world
-```
-
-**'n' NodeJS manager**  
-May want to [verify this hasn't changed in the repo](https://github.com/tj/n#third-party-installers).
-```sh
-curl -L https://bit.ly/n-install | bash
-```
-The script will add an `export` line to your `.bashrc`. If you use another shell, copy that line to your `*rc` file and source your shell. Once that's done, you can choose and install the version of NodeJS that you want.
-```sh
-# list available versions to download
-n ls-remote
-# install your preferred version
-n install 18
-# Check version
-node -v
-```
-
-**qemu**
-```sh
-(
-  sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
-  sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
-)
-```
-You'll have to log out/in for it to work with your current user, but you can test with
-```sh
-sudo virt-manager
-```
-
-Optional
-```sh
-(
-  # ┎────────┒
-  # ┃ lutris ┃
-  # ┖────────┚
-  sudo add-apt-repository -y ppa:lutris-team/lutris
-  sudo apt update
-  sudo apt install lutris
-)
-```
+  
+| Software | Description |
+| -------- | ----------- |
+| [docker](https://www.docker.com/why-docker/) | Containerize environments |
+| [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
+| [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
+| [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
 
 <details>
-  <summary>Expand for Software Details</summary>
+  <summary>Docker</summary>
   
-  | Software | Description |
-  | -------- | ----------- |
-  | [docker](https://www.docker.com/why-docker/) | Containerize environments |
-  | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
-  | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
-  | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
+  ```sh
+  (
+    sudo apt install ca-certificates curl gnupg lsb-release
+    sudo mkdir -p /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+    sudo usermod -aG docker $USER
+  )
+  ```
   
-  | Software | Description |
-  | -------- | ----------- |
-  | [lutris](https://lutris.net/) | Allows for playing games on Linux. Use to install [Origin](https://lutris.net/games/origin/) |
-</details>
-
-<details>
-  <summary>Expand for Docker Notes</summary>
+  Verify install
+  ```sh
+  systemctl is-enabled docker
+  systemctl status docker
+  sudo docker run hello-world
+  ```
   
+  Notes:<br/>
   The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
   ```sh
   cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||"
@@ -783,6 +738,59 @@ Optional
   - Trying to sell me something
   
   `docker-compose` has [been replaced](https://docs.docker.com/compose/compose-v2/) with `docker compose`. The new [compose spec](https://github.com/compose-spec/compose-spec/blob/master/spec.md) is more universal but it also deprecates some fields.
+</details>
+
+<details>
+  <summary>'n' NodeJS version manager</summary>
+  
+  May want to [verify this hasn't changed in the repo](https://github.com/tj/n#third-party-installers).
+  ```sh
+  curl -L https://bit.ly/n-install | bash
+  ```
+  The script will add an `export` line to your `.bashrc`. If you use another shell, copy that line to your `*rc` file and source your shell. Once that's done, you can choose and install the version of NodeJS that you want.
+  ```sh
+  # list available versions to download
+  n ls-remote
+  # install your preferred version
+  n install 18
+  # Check version
+  node -v
+  ```
+</details>
+
+<details>
+  <summary>Qemu (Virtual Machine Manager)</summary>
+  
+  ```sh
+  (
+    sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager
+    sudo adduser $USER libvirt && sudo adduser $USER kvm && sudo adduser $USER libvirt-qemu
+  )
+  ```
+  You'll have to log out/in for it to work with your current user, but you can test with
+  ```sh
+  sudo virt-manager
+  ```
+</details>
+
+<br/>
+
+**Optional**
+
+| Software | Description |
+| -------- | ----------- |
+| [lutris](https://lutris.net/) | Allows for playing games on Linux. Use to install [Origin](https://lutris.net/games/origin/) |
+
+<details>
+  <summary>Lutris</summary>
+  
+  ```sh
+  (
+    sudo add-apt-repository -y ppa:lutris-team/lutris
+    sudo apt update
+    sudo apt install lutris
+  )
+  ```
 </details>
 
 ---
@@ -1672,6 +1680,10 @@ Now that things are set up, you should:
 ---
 
 ## Back Up or Restore Data
+
+
+
+
 
 I've created a couple helper scripts. One that generates a list of paths and files ([backup-list.sh](./bin/backup-list.sh)), and the other creates an archive based on the list ([backup.sh](./bin/backup.sh)).
 
