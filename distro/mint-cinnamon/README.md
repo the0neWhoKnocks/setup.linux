@@ -6,6 +6,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Install](#install)
 - [Initial Boot](#initial-boot)
 - [Set Up Display](#set-up-display)
+- [Installing / Updating the Kernel](#installing--updating-the-kernel)
 - [System Tweaks](#system-tweaks)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
@@ -72,14 +73,49 @@ sudo vi /etc/default/grub
 sudo update-grub
 ```
 
-System Reports may prompt to install things like GPU drivers and language packs. If it doesn't (it's set to wait 40 seconds after login), launch the Driver Manager, see if there's a "recommended" one like `nvidia-driver-515` (just make sure it matches your kernel number `uname -r`).
-- **IMPORTANT**: If you have a dock that has one monitor hooked up, and another monitor is hooked up to a laptop, you'll want to stick with the `nouveau` driver. It's the only one that's given me stable performance with a second monitor.
-
-Open the **Update Manager**, if there are updates for the GPU driver or kernel, install them.
-
 ---
 
 ## Set Up Display
+
+I've had mixed results with Driver Manager (for installing the video driver), so this is the manual way of doing what it does.
+- Check what video driver is currently being used
+    ```sh
+    lspci -k | grep -EA3 'VGA|3D|Display' | grep 'Kernel driver in use'
+    # Should output a line with `nouveau` or `nvidia`.
+    ```
+    
+    If using an `nvidia` driver, you can find the version with
+    ```sh
+    cat /proc/driver/nvidia/version | grep -E 'Kernel Module  [0-9]+'
+    # or
+    nvidia-smi | grep -E 'Driver Version: [0-9]+'
+    
+    # Should output a line with a highlighted number, which is the major version.
+    ```
+- List available drivers to install
+    ```sh
+    ubuntu-drivers devices | grep 'driver  ' | grep -v '-server - '
+    # Should output lines like
+    # driver   : nvidia-driver-<VERSION> - distro non-free recommended
+    # driver   : nvidia-driver-<VERSION> - distro non-free
+    # --
+    # driver   : xserver-xorg-video-nouveau - distro free builtin
+    ```
+    
+    Generally use the `recommended` driver, then try the versions below it if you have issues.
+- Install the driver
+    ```sh
+    sudo apt install <DRIVER>
+    # <DRIVER> being something like `nvidia-driver-450` or `xserver-xorg-video-nouveau`
+    ```
+    
+    If you want to uninstall a driver
+    ```sh
+    sudo apt remove nvidia-driver-<VERSION> && sudo apt autoremove
+    ```
+
+<br />
+<br />
 
 If you have multiple monitors, launch **Display**
 - Select your main monitor and toggle it to `Set as Primary` if it isn't already set.
@@ -87,6 +123,29 @@ If you have multiple monitors, launch **Display**
 - Drag monitors roughly into the correct positions.
 - Apply, keep changes, rinse-and-repeat while adjusting monitor positions.
 - Under **Settings** I also unchecked `Enable fractional scaling controls`. Not sure if it was actually hurting anything, but I disabled at during some troubleshooting and things have been stable so it stays off for now.
+
+<br/>
+
+Notes:
+- If you have a dock that has one monitor hooked up, and another monitor is hooked up to a laptop, you may want to stick with the `nouveau` driver. It's the only one that's given me stable performance with a second monitor (via a dock).
+
+---
+
+## Installing / Updating the Kernel
+
+I usually handle the kernel update via the Update Manager. Just be careful not to reboot before recompiling the NVidia modules (if you're using an NVidia video driver).
+
+The theory is that after a kernel upgrade the new kernel is not active before the system is rebooted. To recompile the nvidia modules the new kernel needs to be active so this hasn’t been done as part of the upgrade process. So when one reboots after a kernel upgrade, the nvidia module is not able to communicate with the kernel (which usually leads to a user not being able to boot to the Desktop). The solution is to simply upgrade the `linux-headers-<VERSION>` which will automatically trigger a recompile of the nvidia kernels.
+    ```sh
+    sudo apt -y install "linux-headers-$(uname -r)"
+    ```
+    
+    The drivers should start working again even without a reboot.
+    ```sh
+    # list installed driver
+    dkms status
+    # <ndvidia_driver_ver>, <kernel_ver>
+    ```
 
 ---
 
