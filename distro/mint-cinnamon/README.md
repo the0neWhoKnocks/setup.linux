@@ -312,11 +312,12 @@ Here are some sources for finding alternatives to software you may have used on 
 (
   sudo add-apt-repository -y ppa:alex-p/aegisub
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
+  sudo add-apt-repository -y ppa:git-core/ppa
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt-add-repository -y ppa:lucioc/sayonara
   sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that gets installed that I don't need
   sudo apt remove hypnotix kwalletmanager
 )
@@ -350,6 +351,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
+  | git | Installed by default, but including to ensure newest is brought in. |
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
