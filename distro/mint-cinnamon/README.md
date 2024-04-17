@@ -6,6 +6,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Install](#install)
 - [Initial Boot](#initial-boot)
 - [Set Up Display](#set-up-display)
+- [System Tweaks](#system-tweaks)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -86,6 +87,23 @@ If you have multiple monitors, launch **Display**
 - Drag monitors roughly into the correct positions.
 - Apply, keep changes, rinse-and-repeat while adjusting monitor positions.
 - Under **Settings** I also unchecked `Enable fractional scaling controls`. Not sure if it was actually hurting anything, but I disabled at during some troubleshooting and things have been stable so it stays off for now.
+
+---
+
+## System Tweaks
+
+- Reduce swap. First check current value with `cat /proc/sys/vm/swappiness`. It's usually set to `60` which is good for Servers, but overkill for normal users. General rule is if you have 1GB or more of RAM, set to `10`, if you have less than 1GB, set to `1`.
+    ```sh
+    sudo vim /etc/sysctl.conf
+    # (at bottom, add)
+    
+    # Reduce the swap tendency
+    vm.swappiness = 10
+
+    # (save, and restart system)
+    ```
+    Noticed heavy CPU usage from `tracker-miner-fs-3` after restart. If it continues to be an issue
+    may have to run `tracker3 reset -s`.
 
 ---
 
