@@ -23,6 +23,8 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
 - [Back Up or Restore Data](#back-up-or-restore-data)
+  - [Backing up data](#backing-up-data)
+  - [Restoring data](#restoring-data)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
 - [Useful Places](#useful-places)
@@ -657,7 +659,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | -------- | ----------- |
   | [Blender](https://www.blender.org) | 3D asset creation |
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
-  | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
 </details>
@@ -696,11 +697,12 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
 ### Via CLI
 
 For packages that require more than a simple `apt install`.
-  
+
 | Software | Description |
 | -------- | ----------- |
 | [docker](https://www.docker.com/why-docker/) | Containerize environments |
 | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
+| [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
 | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
 
@@ -770,6 +772,30 @@ For packages that require more than a simple `apt install`.
   You'll have to log out/in for it to work with your current user, but you can test with
   ```sh
   sudo virt-manager
+  ```
+</details>
+
+<details>
+  <summary>FreeFileSync</summary>
+  
+  ```sh
+  (
+    cd "${HOME}/Downloads/archives"
+    ver="13.5"
+    tarFileName="FreeFileSync_${ver}_Linux.tar.gz"
+    runFileName="FreeFileSync_${ver}_Install.run"
+    
+    if [ -f "$tarFileName" ]; then rm "$tarFileName"; fi
+    if [ -f "$runFileName" ]; then rm "$runFileName"; fi
+    
+    curl -L -O "https://freefilesync.org/download/${tarFileName}"
+    tar zxvf "$tarFileName"
+    chmod +x "$runFileName"
+    
+    "./$runFileName"
+    
+    rm "$runFileName"
+  )
   ```
 </details>
 
@@ -1681,23 +1707,56 @@ Now that things are set up, you should:
 
 ## Back Up or Restore Data
 
+### Backing up data
+
+1. I created a folder on my backup drive called `Linux_Mint__Laptop__Pred`.
+    - `Pred` is just a manufactures identifier in case I make a backup from another laptop also running Linux Mint.
+1. Open up `FreeFileSync`
+1. Set up a config: <br/>
+    Generally these are my synchronization settings:
+    ```
+    [ Comparison ]
+      Variant: File Content
+    
+    [ Filter ]
+      Include:
+        *:
+      
+      Exclude:
+        */.Trash-*/
+        */.recycle/
+    
+    [ Synchronization ]
+      Variant: Mirror
+      Delete and overwrite: Recycle bin
+    ```
+    You have to set them for every config, unless you start working on another config with previous config settings loaded. If you do start working from a previous config, be careful not to overwrite it. I generally click `Save As` when I know I'm starting on a new config.
+    
+    <br/>
+    
+    Note: System environment variables can be used in paths. So instead of hardcoded paths to a User directory like `/home/johndoe/stuff` you'd use `%HOME%/stuff`.
+    ```
+    [ Compare column ]
+      Drag & drop (input): (You can directly input a path, or click 'Browse')
+      (click the '+' to add another path, though sometimes it's better to add a top-level folder and exclude what you don't want)
+    
+    [ Synchronize ]
+      Drag & drop (input): (You can directly input a path, or click 'Browse')
+    ```
+1. Run the backup
+    - With a config loaded and selected, click the `Compare` button.
+    - Take note of the icons in the Action column (swirling green arrows). If it's a trash icon, the files/folders will be deleted. Just be mindful of that before proceeding.
+    - If things look good, click `Synchronize`.
+1. If you want, you can zip up that backup folder and store it somewhere as a snapshot.
 
 
+### Restoring data
 
-
-I've created a couple helper scripts. One that generates a list of paths and files ([backup-list.sh](./bin/backup-list.sh)), and the other creates an archive based on the list ([backup.sh](./bin/backup.sh)).
-
-Set up the script by adding an alias to your `*.rc` file
-```sh
-alias bup="<PATH_TO_REPO>/distro/mint-cinnamon/bin/backup.sh"
-alias createbup='bup -c -f "$(${HOME}/<PATH_TO_REPO>/distro/mint-cinnamon/bin/backup-list.sh)"'
-```
-Backups will be output to the Desktop unless otherwise specified. Run `bup -h` for script options.
-
-Restore a backup with
-```sh
-bup -r "<PATH_TO_BACKUP>"
-```
+1. Load and select a config.
+1. There's a `Swap Sites` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.
+1. Click `Compare`, review what will be changed.
+1. If things look good, click `Synchronize`.
+1. **Important**: Be sure not to save the config in the reversed state.
 
 ---
 

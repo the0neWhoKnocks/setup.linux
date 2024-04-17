@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FreeFileSync XmlType="GUI" XmlFormat="23">
+    <Notes/>
+    <Compare>
+        <Variant>Content</Variant>
+        <Symlinks>Exclude</Symlinks>
+        <IgnoreTimeShift/>
+    </Compare>
+    <Synchronize>
+        <Differences LeftOnly="right" LeftNewer="right" RightNewer="right" RightOnly="right"/>
+        <DeletionPolicy>RecycleBin</DeletionPolicy>
+        <VersioningFolder Style="Replace"/>
+    </Synchronize>
+    <Filter>
+        <Include>
+            <Item>.bash_history</Item>
+            <Item>.gitconfig</Item>
+            <Item>.gitconfig.github</Item>
+            <Item>.gitignore_global</Item>
+            <Item>.gnupg</Item>
+            <Item>.history</Item>
+            <Item>.local/share/keyrings</Item>
+            <Item>.nvidia-settings-rc</Item>
+            <Item>.npmrc</Item>
+            <Item>.oh-my-zsh</Item>
+            <Item>.profile</Item>
+            <Item>.ssh</Item>
+            <Item>.vimrc</Item>
+            <Item>.zshrc</Item>
+            <Item>Pictures/avatars</Item>
+            <Item>Pictures/wallpapers</Item>
+            <Item>pkgs.list</Item>
+            <Item/>
+            <Item>.config/albert</Item>
+            <Item/>
+            <Item>.config/autostart</Item>
+            <Item/>
+            <Item>.config/blender/*/config</Item>
+            <Item/>
+            <Item>.config/cairo-dock</Item>
+            <Item/>
+            <Item>.config/chromium/Default</Item>
+            <Item>.config/chromium/Profile*</Item>
+            <Item>.config/chromium/Local State</Item>
+            <Item/>
+            <Item>.config/cinnamon</Item>
+            <Item>.config/cinnamon-monitors.xml</Item>
+            <Item>.config/mimeapps.list</Item>
+            <Item>.config/powerdevilrc</Item>
+            <Item>.config/powermanagementprofilesrc</Item>
+            <Item>.local/share/cinnamon</Item>
+            <Item/>
+            <Item>.config/Code/User</Item>
+            <Item>.vscode</Item>
+            <Item/>
+            <Item>.config/discord/Cookies</Item>
+            <Item>.config/discord/Preferences</Item>
+            <Item>.config/discord/settings.json</Item>
+            <Item/>
+            <Item>.config/eggtimer</Item>
+            <Item/>
+            <Item>.config/ghb/preferences.json</Item>
+            <Item>.config/ghb/presets.json</Item>
+            <Item/>
+            <Item>.config/GIMP</Item>
+            <Item/>
+            <Item>.config/godot</Item>
+            <Item>.local/share/godot</Item>
+            <Item/>
+            <Item>.config/google-chrome/Default</Item>
+            <Item>.config/google-chrome/Profile*</Item>
+            <Item>.config/google-chrome/Local State</Item>
+            <Item/>
+            <Item>.config/*/gtk-*/bookmarks</Item>
+            <Item/>
+            <Item>.config/guvcview2</Item>
+            <Item/>
+            <Item>.config/hydrapaper.json</Item>
+            <Item/>
+            <Item>.config/inkscape/preferences.xml</Item>
+            <Item/>
+            <Item>.config/Insomnia</Item>
+            <Item/>
+            <Item>.config/Kid3</Item>
+            <Item/>
+            <Item>.config/lan-shares</Item>
+            <Item/>
+            <Item>.config/lsd/config.yaml</Item>
+            <Item/>
+            <Item>.config/obs-studio</Item>
+            <Item/>
+            <Item>.config/pulse</Item>
+            <Item/>
+            <Item>.config/redshift.conf</Item>
+            <Item/>
+            <Item>.config/remmina</Item>
+            <Item>.local/share/remmina</Item>
+            <Item/>
+            <Item>.config/sayonara</Item>
+            <Item/>
+            <Item>.config/sticky</Item>
+            <Item/>
+            <Item>.config/Thunar</Item>
+            <Item/>
+            <Item>.config/tumbler</Item>
+            <Item/>
+            <Item>.config/vlc/skins</Item>
+            <Item>.config/vlc/vlc-qt-interface.conf</Item>
+            <Item/>
+            <Item/>
+            <Item>.icons</Item>
+            <Item>.local/share/icons</Item>
+            <Item/>
+            <Item>.local/share/gtksourceview-3.0/styles</Item>
+            <Item>.local/share/gtksourceview-4/styles</Item>
+        </Include>
+        <Exclude>
+            <Item>*/.Trash-*/</Item>
+            <Item>*/.recycle/</Item>
+            <Item>*cache*|*Cache*</Item>
+            <Item>*/logs</Item>
+            <Item>*.log</Item>
+        </Exclude>
+        <SizeMin Unit="None">0</SizeMin>
+        <SizeMax Unit="None">0</SizeMax>
+        <TimeSpan Type="None">0</TimeSpan>
+    </Filter>
+    <FolderPairs>
+        <Pair>
+            <Left>%HOME%</Left>
+            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/user</Right>
+        </Pair>
+    </FolderPairs>
+    <Errors Ignore="false" Retry="0" Delay="5"/>
+    <PostSyncCommand Condition="Completion"/>
+    <LogFolder/>
+    <EmailNotification Condition="Always"/>
+    <GridViewType>Difference</GridViewType>
+</FreeFileSync>

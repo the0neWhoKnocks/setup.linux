@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FreeFileSync XmlType="GUI" XmlFormat="23">
+    <Notes/>
+    <Compare>
+        <Variant>Content</Variant>
+        <Symlinks>Exclude</Symlinks>
+        <IgnoreTimeShift/>
+    </Compare>
+    <Synchronize>
+        <Differences LeftOnly="right" LeftNewer="right" RightNewer="right" RightOnly="right"/>
+        <DeletionPolicy>RecycleBin</DeletionPolicy>
+        <VersioningFolder Style="Replace"/>
+    </Synchronize>
+    <Filter>
+        <Include>
+            <Item>*:</Item>
+        </Include>
+        <Exclude>
+            <Item>*/.Trash-*/</Item>
+            <Item>*/.recycle/</Item>
+        </Exclude>
+        <SizeMin Unit="None">0</SizeMin>
+        <SizeMax Unit="None">0</SizeMax>
+        <TimeSpan Type="None">0</TimeSpan>
+    </Filter>
+    <FolderPairs>
+        <Pair>
+            <Left>/etc</Left>
+            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/etc</Right>
+            <Filter>
+                <Include>
+                    <Item>pulse/daemon.conf</Item>
+                    <Item>sddm.conf.d</Item>
+                </Include>
+                <Exclude/>
+                <SizeMin Unit="None">0</SizeMin>
+                <SizeMax Unit="None">0</SizeMax>
+                <TimeSpan Type="None">0</TimeSpan>
+            </Filter>
+        </Pair>
+        <Pair>
+            <Left>/var/lib/AccountsService/icons</Left>
+            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/var</Right>
+        </Pair>
+        <Pair>
+            <Left>/usr/share/sddm/themes/breeze</Left>
+            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/usr</Right>
+            <Filter>
+                <Include>
+                    <Item>theme.conf.user</Item>
+                </Include>
+                <Exclude/>
+                <SizeMin Unit="None">0</SizeMin>
+                <SizeMax Unit="None">0</SizeMax>
+                <TimeSpan Type="None">0</TimeSpan>
+            </Filter>
+        </Pair>
+    </FolderPairs>
+    <Errors Ignore="false" Retry="0" Delay="5"/>
+    <PostSyncCommand Condition="Completion"/>
+    <LogFolder/>
+    <EmailNotification Condition="Always"/>
+    <GridViewType>Action</GridViewType>
+</FreeFileSync>
