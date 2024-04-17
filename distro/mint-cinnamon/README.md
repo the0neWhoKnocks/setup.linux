@@ -1493,6 +1493,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      Editor: Rulers: [80]
      Editor: Scroll Beyond Last Line: (uncheck)
      Editor: Show Tabs (off)
+     Editor > Sticky Scroll: Enabled (uncheck)
      Editor: Tab Size: 2
      Editor: Token Color Customizations: (edit in JSON)
      Editor: Trim Auto Whitespace: (uncheck)
@@ -1509,10 +1510,12 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      Markdown All In One: Ordered List: Auto Renumber: (uncheck)
      Markdown All In One: Ordered List: Marker: one
      Markdown All In One: Toc Levels: 2..6
+     Notebook > Sticky Scroll: Enabled (uncheck)
      SCM: Default View Mode: tree
      Search: Use Global Ignore Files: (check)
      Telemetry: Telemetry Level: off
      Terminal > Integrated: Font Family: FantasqueSansMono NF
+     Terminal > Integrated > Sticky Scroll: Enabled (uncheck)
      Todo-tree > General: Tags
        (add) NOTE
      Todo-tree > Highlights: Background Colour Scheme
@@ -1524,6 +1527,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      Window: New Window Dimensions: inherit
      Window: Title: [${rootName}] ${activeEditorMedium}${separator}
      Window: Zoom Level: 1
+     Workbench > Tree: Enable Sticky Scroll (uncheck) 
      ```
      - NOTE: Once you remove the `.git` exclusion it'll look like it's no longer excluded from version control. It will be, but for visual clarity you can do this:
         ```sh
