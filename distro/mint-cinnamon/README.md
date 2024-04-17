@@ -315,9 +315,10 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:git-core/ppa
   sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt-add-repository -y ppa:lucioc/sayonara
+  sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
   sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that gets installed that I don't need
   sudo apt remove hypnotix kwalletmanager
 )
@@ -370,6 +371,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
+  | [remmina](https://remmina.org/) | Remote Desktop client |
   | [sayonara](https://sayonara-player.com/) | Music player |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
@@ -1217,6 +1219,12 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         [General]
           [X] Enable system tray icon
         ```
+</details>
+
+<details>
+  <summary>Expand for Remmina Settings</summary>
+  
+  - Preferences > Applet > [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
 </details>
 
 <details>
