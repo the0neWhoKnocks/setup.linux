@@ -96,6 +96,9 @@
     # ~/.config/pavucontrol.ini
     # Redshift
     ~/.config/redshift.conf
+    # Remmina
+    ~/.config/remmina
+    ~/.local/share/remmina
     # Sayonara
     ~/.config/sayonara
     # Shares
@@ -120,6 +123,7 @@
     # User stuff
     ~/.bash_history
     ~/.gitconfig
+    ~/.gitconfig.github
     ~/.gitignore_global
     ~/.history
     # ~/.nvidia-settings-rc
