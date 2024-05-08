@@ -153,18 +153,10 @@ The theory is that after a kernel upgrade the new kernel is not active before th
 
 ## System Tweaks
 
-- Reduce swap. First check current value with `cat /proc/sys/vm/swappiness`. It's usually set to `60` which is good for Servers, but overkill for normal users. General rule is if you have 1GB or more of RAM, set to `10`, if you have less than 1GB, set to `1`.
+- There's a limit of 15 characters for the `hostname` for `netbios`. You can run `testparm -s` to see if your hostname length is ok (when it's not you'll see `WARNING: The 'netbios name' is too long`).
     ```sh
-    sudo vim /etc/sysctl.conf
-    # (at bottom, add)
-    
-    # Reduce the swap tendency
-    vm.swappiness = 10
-
-    # (save, and restart system)
+    hostnamectl set-hostname '<NEW_NAME>'
     ```
-    Noticed heavy CPU usage from `tracker-miner-fs-3` after restart. If it continues to be an issue
-    may have to run `tracker3 reset -s`.
 
 ---
 
