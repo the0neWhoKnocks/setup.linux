@@ -695,6 +695,7 @@ For packages that require more than a simple `apt install`.
 | [docker](https://www.docker.com/why-docker/) | Containerize environments |
 | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
 | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
+| [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
 | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
 
@@ -788,6 +789,16 @@ For packages that require more than a simple `apt install`.
     
     rm "$runFileName"
   )
+  ```
+</details>
+
+<details>
+  <summary>git lfs</summary>
+  
+  ```sh
+  curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+  sudo apt install git-lfs
+  git lfs install
   ```
 </details>
 
