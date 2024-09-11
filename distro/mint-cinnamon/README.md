@@ -388,8 +388,9 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo apt-add-repository -y ppa:lucioc/sayonara
   sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
   sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
+  sudo apt-add-repository -y multiverse
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara solaar soundconverter sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara solaar soundconverter steam sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that gets installed that I don't need
   sudo apt remove hypnotix kwalletmanager
 )
@@ -448,6 +449,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
+  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
@@ -483,6 +485,22 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
       Audio editing: /usr/bin/audacity
       Animation editing: /usr/bin/glaxnimate
   ```
+</details>
+
+<details>
+  <summary>Expand for Steam settings</summary>
+  
+  1. Open Steam.
+  1. Settings > Interface.
+  1. On the "Interface" tab, find `Client Beta Participation`. There should be a dropdown menu with `no beta chosen` as the default option.
+  1. Select the dropdown menu and select the `Steam Beta Update` option.
+  1. Restart Steam.
+  1. Settings > Compatibility.
+      ```
+      [X] Enable Steam Play for supported titles
+      [X] Enable Steam Play for all other titles
+      Run other titles with: Proton Experimental
+      ```
 </details>
 
 
@@ -575,11 +593,6 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
 )
 ```
 
-Optional
-```
-https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
-```
-
 <details>
   <summary>Expand for Software Details</summary>
   
@@ -595,10 +608,6 @@ https://cdn.cloudflare.steamstatic.com/client/installer/steam.deb
   | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
   | [TorGuard](https://torguard.net/downloads.php) | VPN client |
   | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
-  
-  | Software | Description |
-  | -------- | ----------- |
-  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
 </details>
 
 <details>
