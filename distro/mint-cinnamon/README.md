@@ -1721,6 +1721,17 @@ Now that things are set up, you should:
 
 ### Backing up data
 
+Note: You may get `EACCESS` errors for certain system files/folders if not running as `root`. One way to get around that is to disable locking.
+```sh
+# run
+code ~/.config/FreeFileSync/GlobalSettings.xml
+```
+```diff
+- <LockDirectoriesDuringSync Enabled="true"/>
++ <LockDirectoriesDuringSync Enabled="false"/>
+```
+This could have unexpected syncing results if applications are running in the background so try to exit everything before starting a sync.
+
 1. I created a folder on my backup drive called `Linux_Mint__Laptop__Pred`.
     - `Pred` is just a manufactures identifier in case I make a backup from another laptop also running Linux Mint.
 1. Open up `FreeFileSync`
