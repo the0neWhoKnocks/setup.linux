@@ -25,6 +25,9 @@
             <Item>.oh-my-zsh</Item>
             <Item>.profile</Item>
             <Item>.ssh</Item>
+            <Item>.steam/debian-installation/config</Item>
+            <Item>.steam/debian-installation/steamapps/compatdata</Item>
+            <Item>.steam/debian-installation/userdata</Item>
             <Item>.vimrc</Item>
             <Item>.zshrc</Item>
             <Item>Pictures/avatars</Item>
