@@ -42,6 +42,8 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
   - [Can't Boot Past Grub Menu](#cant-boot-past-grub-menu)
   - ["Couldn't Connect to Accessibility Bus" Warnings When Opening/Starting Something From CLI](#couldnt-connect-to-accessibility-bus-warnings-when-openingstarting-something-from-cli)
+  - [USB Drive Slow to Eject or Suffers Data Loss](#usb-drive-slow-to-eject-or-suffers-data-loss)
+  - [Steam Not Recognizing Bluetooth Controller](#steam-not-recognizing-bluetooth-controller)
 
 ---
 
@@ -2171,4 +2173,69 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   | `~/.profile` | User exports. Available to all shells. Just add the `export` line. |
   | `~/.*rc` | User exports. Available to specific shell. Just add the `export` line to your Shell's `rc` file. So `.zshrc`, `.bashrc`, etc. |
         
+</details>
+
+### USB Drive Slow to Eject or Suffers Data Loss
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Linux has a caching/buffering layer when writing files to a disk. Basically the file manager's copy progress dialog is inaccurate and none of them display the actual written to disk progress, but instead display the written to RAM progress. So if you safely eject the disk, it'll disappear from the system tray list making you think it's safe to remove, but if you are viewing the drive in the **Disks** tool you may see a spinner indicating that something is still going on. Basically if you don't wait for the tray notification saying that it's ok to remove the drive, you may suffer data loss or an unreadable drive.
+  
+  If you want accurate copy progress you have to alter the automount options for USB disks to either `flush` (which is the fastest) or `sync`. Unfortunately `flush` isn't supported by all disks so I was only able to try `sync` which was much slower than just transferring and waiting.
+  
+  To change the automount rules:
+  - Run:
+      ```sh
+      # First run `mount` on the mounted drive to see what it's defaults are
+      mount | grep <DISK_LABEL>
+      
+      # You may have to create/copy the mount_options.conf if it doesn't exist
+      sudo cp /etc/udisks2/mount_options.conf.example /etc/udisks2/mount_options.conf
+      ```
+  - Open `mount_options.conf` and add the appropriate value.
+      ```sh
+      sudo vim /etc/udisks2/mount_options.conf
+      ```
+      ```
+      [defaults]
+      defaults=rw,nosuid,nodev,noatime,sync
+      
+      # or
+      
+      [defaults]
+      defaults=rw,nosuid,nodev,noatime,flush
+      ```
+  - Eject, remove, and then re-insert your drive. The changes should be applied.
+      ```sh
+      # Run mount again to verify changes.
+      mount | grep <DISK_LABEL>
+      ```
+  
+  Further debugging can achieved by running these commands:
+  ```sh
+  # udev is the hotplug management daemon. Run the below to see what happens when you plug in a device.
+  udevadm monitor --udev
+  
+  # The path for User rules is:
+  /etc/udev/rules.d/
+  # If you add a new rules file, reload the rules with:
+  sudo udevadm control --reload-rules
+  
+  # The path for System rules is:
+  /usr/lib/udev/rules.d/
+  
+  # Print info about your mounted drive (get the generated name from Disks)
+  udisksctl info -b /dev/<DRIVE>
+  
+  # To see what happens when you plug a drive in, first plug the drive in, then run:
+  udevadm test -a add $(udevadm info -q path -n /dev/<DRIVE>)
+  ```
+</details>
+
+
+### Steam Not Recognizing Bluetooth Controller 
+<details>
+  <summary>Expand for Solution</summary>
+  
+  In my case I had to turn on the controller before starting Steam for it to detect it and map controls to games.
 </details>
