@@ -1101,8 +1101,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       [Themes]
         Mouse Pointer: Bibata-Modern-Classic
         Applications: Mint-Y-Dark-Aqua
-        Icons: Mint-Y-Legacy-Dark-Aqua
-        Desktop: Mint-Y-Legacy-Dark-Aqua
+        Icons: Mint-L-Aqua
+        Desktop: Mint-L-Dark-Aqua
         
       [Settings]
         Jump to position when clicking in a trough: (checked)
@@ -1301,6 +1301,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   Note that when a launcher is added to the dock, a copy of it is added to `~/.config/cairo-dock/current_theme/launchers`. So if a launcher needs to be updated, I'll generally just delete it and add the new one, but you can go in and manually edit the launcher in that folder.
   
   When manually creating a launcher I look to see if there's a good system icon via `cuttlefish` instead of pointing to an image. Some apps like system binaries may not have an icon, so you can find/create one and add it to the appropriate folder in `~/.local/share/icons`. More info on that in the [Theming](#theming) section.
+    - After an update in Mint, I noticed some icons I was previously using were no longer available in the current theme. You can see what icon theme is in use under `Cairo-dock > Configuration > Appearance > Icons`. It seems to default to `_Custom Icons_` which is located at `/home/<USER>/.config/cairo-dock/current_theme/icons/`, and allows you to drop custom icons (SVG or PNG) directly in there. You can reference the files the same way as system icons, for example if you have `code.svg` you can reference it as `code` in the Launcher `Icon > Image's name or path` section. Missing icons may still exist within a different theme, so in a file browser you can open up `/usr/share/icons/` and search for the name that was previously being used, then just copy that file over to `<CAIRO>/current_theme/icons/`.
   
   Had an issue where Cairo wasn't using my default File Manager to open folders. It must be caching it somewhere because after I went into Default Applications, and changed my File Manager to something else, and then back to what I wanted, it started behaving.
 </details>
