@@ -613,7 +613,20 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
 </details>
 
 <details>
-  <summary>Expand for Tweaks</summary>
+  <summary>Expand for Chrome Tweaks</summary>
+  
+  To stop making it prompt for updates:
+  - Update all shortcuts and add
+    ```sh
+    --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'
+    ```
+    There may be a shortcut on your desktop and in `/usr/share/applications/google-chrome.desktop`.
+    
+    Search for `Exec` and add the argument to every instance. For the one that ends in `%U`, put it before `%U`.
+</details>
+
+<details>
+  <summary>Expand for Discord Tweaks</summary>
   
   To make Discord not prompt for updates all the time
   ```sh
@@ -622,8 +635,12 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
   # add:
   "SKIP_HOST_UPDATE": true
   ```
+</details>
+
+<details>
+  <summary>Expand for TorGuard Tweaks</summary>
   
-  TorGuard requires Wireguard `sudo apt install wireguard`
+  For now, TorGuard requires Wireguard so install via: `sudo apt install wireguard`.
 </details>
 
 
@@ -983,6 +1000,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      ```sh
      ln -s "${PWD}/files/thunar/copy-filename.sh" ~/.config/Thunar/actions/
      ln -s "${PWD}/files/thunar/copy-full-path.sh" ~/.config/Thunar/actions/
+     ln -s "${PWD}/files/thunar/open-as-root.sh" ~/.config/Thunar/actions/
      ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/
      ```
   - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
@@ -1019,6 +1037,19 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
        
        [Appearance Conditions]
          (check all items)
+       ```
+     - (click) Add a new custom action
+       ```
+       [Basic]
+         Name: Open as Root
+         Description: Open item with root privelages
+         Command: ~/.config/Thunar/actions/open-as-root.sh %f
+         Icon: applications-utilities (or system-run)
+       
+       [Appearance Conditions]
+         [X] Directories
+         [X] Text Files
+         [X] Other Files
        ```
      - (click) Add a new custom action
        ```
