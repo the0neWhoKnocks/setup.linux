@@ -42,6 +42,7 @@ PATH__USER_APPS="${HOME}/.local/share/application"
 mkdir -p "${CONFS_PATH}"
 
 export ICON__APP="drive-multidisk"
+export ICON__THEME="breeze-dark"
 export LAUNCHER_NAME="${SCRIPT_NAME}.desktop"
 export PATH__SCRIPT="${0}"
 export PATH__USR_SCRIPT="/usr/local/bin/${SCRIPT_NAME}"
@@ -162,6 +163,7 @@ function openConfigDialog {
     sudo yad \
       --width=470 \
       --center \
+      --icon-theme="${ICON__THEME}" \
       --image=drive-harddisk \
       --window-icon=drive-harddisk \
       --title="Configure Shares" \
@@ -306,6 +308,7 @@ function openGUI {
     --title "${GUI__TITLE}" \
     --center \
     --text="${GUI__TITLE}" \
+    --icon-theme="${ICON__THEME}" \
     --image="${GUI__ICON}" \
     --window-icon="${GUI__ICON}" \
     --width=300 \
