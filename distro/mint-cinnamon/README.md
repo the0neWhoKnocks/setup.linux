@@ -579,6 +579,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
     'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
     'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
     'https://discord.com/api/download?platform=linux&format=deb'
+    'https://github.com/jgraph/drawio-desktop/releases/download/v25.0.2/drawio-amd64-25.0.2.deb'
     'https://updates.insomnia.rest/downloads/ubuntu/latest?&app=com.insomnia.app&source=website'
     'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
@@ -604,6 +605,7 @@ flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
   | [Discord](https://discord.com/) | Group text/voice/video communication |
+  | [Draw.io](https://app.diagrams.net/) | [Desktop version](https://github.com/jgraph/drawio-desktop/) of the [Web-App](https://app.diagrams.net/) to draw flowcharts and diagrams. |
   | [Glaxnimate](https://glaxnimate.mattbas.org/) | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
