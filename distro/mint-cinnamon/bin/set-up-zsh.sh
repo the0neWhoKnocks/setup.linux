@@ -49,8 +49,10 @@ sed -i -E 's|ZSH_THEME=".*"|ZSH_THEME="zsh-theme-boom/skin"|' "${RCFILE}"
 TTF_DIR=/usr/share/fonts/truetype
 sudo mkdir -p "${TTF_DIR}"
 sudo cp "${PATH__ZSH_THEME}/fonts/Fantasque Sans Mono Regular Nerd Font Complete Mono Windows Compatible.ttf" "${TTF_DIR}"
-# update font cache.
-sudo fc-cache -fv
+# update font cache (headless systems likely won't have this)
+if command -v fc-cache &> /dev/null; then
+  sudo fc-cache -fv
+fi
 
 # SHELL is usually only set during session login, so update it for clarity
 sudo chsh -s "$(which zsh)" "${USER}" && export SHELL="$(which zsh)" && zsh
