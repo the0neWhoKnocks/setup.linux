@@ -278,7 +278,26 @@ function mountShares {
     notify "${ICON__APP}" "Network Shares Already Mounted"
   else
     # NOTE: Add `-v` flag to get verbose mount output in case something goes wrong
-    sudo mount -t cifs -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",domain="${SHARE__DOMAIN}",iocharset=utf8 "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" "${SHARE__MOUNT_DIR}"
+    # NOTE: Putting a share in /media or /home/<USER> can interfer with `systemd`s auto-mount functionality.
+    
+    # Only allow the current User read,write,execute access.
+    USER_ACCESS=0700
+    
+    # `credentials=$HOME/.creds/share.txt`
+    #    ```
+    #    username=<NAME>
+    #    password=<PASS>
+    #    ```
+    # - Would be an option `-o`
+    # - Won't work in `fstab` since User's Home wouldn't be available until after login.
+    
+    # Dialects are not versions of samba or CIFS. They are the underlying protocol of the SMB system
+    SMB_DIALECT=3.0
+    
+    sudo mount -t cifs \
+      -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",dir_mode=$USER_ACCESS,file_mode=$USER_ACCESS,domain="${SHARE__DOMAIN}",vers=$SMB_DIALECT,iocharset=utf8 \
+      "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" \
+      "${SHARE__MOUNT_DIR}"
     
     if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
       notify "${ICON__APP}" "Network Shares Mounted"
