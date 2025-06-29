@@ -537,28 +537,6 @@ flatpak install flathub \
 </details>
 
 <details>
-  <summary>Expand for GIMP Tweaks</summary>
-  
-  | Software | Description |
-  | -------- | ----------- |
-  | [PhotoGIMP](https://github.com/Diolinux/PhotoGIMP) | Makes GIMP look like Photoshop |
-  
-  
-  ```sh
-  (
-    mv ~/.config/GIMP/2.10 ~/.config/GIMP/2.10.bak
-    wget "https://github.com/Diolinux/PhotoGIMP/releases/download/1.1/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak.zip" -O ~/Downloads/archives/PhotoGIMP_v2020.1.zip
-    unzip ~/Downloads/archives/PhotoGIMP_v2020.1.zip -d ~/Downloads/archives/
-    cd ~/Downloads/archives/PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak
-    rsync -r ./.local/share/applications/ ~/.local/share/applications/
-    rsync --mkpath -r ./.local/share/icons/hicolor/ ~/.local/share/icons/hicolor/
-    rsync -r ./.var/app/org.gimp.GIMP/config/GIMP/2.10 ~/.config/GIMP/
-    cd ../ && rm -rf PhotoGIMP.by.Diolinux.v2020.1.for.Flatpak
-  )
-  ```
-</details>
-
-<details>
   <summary>Expand for FeelingFinder Tweaks</summary>
   
   Dunno how they came up with that name, but it doesn't cut it when searching in an App launcher.
