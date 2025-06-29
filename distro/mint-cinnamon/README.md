@@ -509,7 +509,12 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ### Via Flatpak
 
 ```sh
-flatpak install flathub codes.merritt.FeelingFinder org.gimp.GIMP org.gimp.GIMP.Plugin.GMic org.gimp.GIMP.Plugin.LiquidRescale org.gimp.GIMP.Plugin.Resynthesizer
+flatpak install flathub \
+  codes.merritt.FeelingFinder \
+  org.gimp.GIMP \
+  org.gimp.GIMP.Plugin.GMic \
+  org.gimp.GIMP.Plugin.LiquidRescale \
+  org.gimp.GIMP.Plugin.Resynthesizer
 ```
 
 <details>
