@@ -392,7 +392,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
   sudo apt-add-repository -y multiverse
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara solaar soundconverter steam sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor featherpad flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara simplescreenrecorder simplescreenrecorder-lib solaar soundconverter steam sticky vlc xclip xserver-xorg-input-synaptics
   # remove some stuff that gets installed that I don't need
   sudo apt remove hypnotix kwalletmanager
 )
@@ -425,6 +425,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [cheese](https://wiki.gnome.org/Apps/Cheese) | Allows you to take photos and videos with your webcam. |
   | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
+  | [featherpad](https://github.com/tsujan/featherpad) | Simple text editor. Nice and snappy on remote hosts. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
@@ -441,13 +442,13 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
   | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
-  | [peek](https://github.com/phw/peek) | Simple screen recorder with an easy to use interface. Captures a specific parts of the screen, and can output '.apng', '.gif', '.mp4', and '.webm' |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [remmina](https://remmina.org/) | Remote Desktop client |
   | [sayonara](https://sayonara-player.com/) | Music player |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
+  | [simplescreenrecorder](https://www.maartenbaert.be/simplescreenrecorder/ ) | A simple screen recorder. Peek is depricated, so using this. |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
@@ -471,6 +472,31 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   <summary>Expand for Tweaks</summary>
   
   Webcam apps may require a system reboot for them to work correctly.
+</details>
+
+<details>
+  <summary>Expand for Aegisub</summary>
+  
+  This isn't something I keep on all the time, but sometimes when editing subs this is handy for creating line breaks.
+  - Open the system Keyboard > Layouts > Options > Non-breaking space input (set to Non-breaking space at the 2nd level), now you can hit SHIFT+SPACE to insert a non-breaking space.
+</details>
+
+<details>
+  <summary>Expand for git-gui</summary>
+  
+  Create a shortcut:
+  ```sh
+  sudo vim /usr/share/applications/git-gui.desktop
+  ```
+  ```
+  [Desktop Entry]
+  Name=Git GUI
+  Exec=git gui
+  Icon=gitg
+  Type=Application
+  Categories=Utility;
+  Comment=Launch the Git Graphical User Interface
+  ```
 </details>
 
 <details>
@@ -639,6 +665,7 @@ flatpak install flathub \
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
     'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
     'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
+    'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
   )
   for url in "${urls[@]}"; do
     wget --no-clobber "${url}" -P "${ARCH_DIR}/"
@@ -666,6 +693,7 @@ flatpak install flathub \
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
+  | [VideoOCR](https://github.com/timminator/VideOCR) | Rips hard-coded subs from video. |
 </details>
 
 <details>
@@ -695,6 +723,13 @@ flatpak install flathub \
   cp files/blender/blender.desktop ~/.local/share/applications/
   chmod +x ~/.local/share/applications/blender.desktop
   cp files/blender/blender.svg ~/.icons/
+  ```
+  
+  ```sh
+  mv ~/.local/bin/VideOCR-GPU-v1.2.1 ~/.local/lib/
+  # Creates app shortcut
+  ~/.local/lib/VideOCR-GPU-v1.2.1/install_videocr.sh
+  # There's also an `uninstall_` script
   ```
 </details>
 
@@ -1534,16 +1569,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - VS DocBlockr https://marketplace.visualstudio.com/items?itemName=jeremyljackson.vs-docblock
 
   If things aren't behaving as expected after installing extensions (like config pages not loading), run `CTRL+SHIFT+P > Reload Window`.
-  app
+  
   Settings:
   - View > Appearance > Secondary Side Bar
      - Go the Explorer view > (add) Open Editors
         - Move Open Editors to the Secondary Side Bar
+     - Remove Chat from secondary panel - `CTRL + SHIFT + P` > (start typing `Hide Copilot`) and select the `Chat: Hide Copilot` option.
   - File > Preferences > Settings > User (or `CTRL + ,`)
      ```
      All Autocomplete: Max Items in Single List: 10
      All Autocomplete: Min Word Length: 5
      All Autocomplete: Show Current Document: (uncheck)
+     Chat: (kill anything related to 'AI Chat' or 'Copilot')
      Diff Editor: Ignore Trim Whitespace (uncheck)
      Diff Editor: Render Side By Side: (uncheck)
      Dotenv: Enable Autocloaking: (unchecked)
@@ -1652,6 +1689,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Right-click on the bottom Status Bar
      - Uncheck the second instance of Source Control
      - Uncheck Feedback
+  - Disabled the Copilot status icon in bottom right of UI.
   - Only option for vertical "tabs" right now is to:
      - Go into View > Appearance > activate Secondary Side Bar. For some reason it doesn't remember your choice and you have to do this for every repo/project/folder you go into.
      - Drag the **Open Editors** over to the Secondary Side Bar. This action is remembered, and will now permanetely live in the Secondary Side Bar.
