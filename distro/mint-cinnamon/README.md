@@ -665,6 +665,7 @@ flatpak install flathub \
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
     'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
     'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
+    'https://github.com/SubtitleEdit/subtitleedit/releases/download/4.0.12/SubtitleEdit-4.0.12.zip'
     'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
   )
   for url in "${urls[@]}"; do
@@ -693,9 +694,35 @@ flatpak install flathub \
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
+  | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
   | [VideoOCR](https://github.com/timminator/VideOCR) | Rips hard-coded subs from video. |
 </details>
 
+<details>
+  <summary>Finish setting up SubtitleEdit</summary>
+  
+  Be sure that the Portable version (the non-Setup zip) was downloaded.
+  
+  ```sh
+  mv ~/.local/bin/SubtitleEdit-v4.0.12 ~/.local/lib/
+  
+  # You can delete these folders/files since they are for Windows only:
+  cd ~/.local/lib/SubtitleEdit-v4.0.12
+  rm -rf Tesseract302 Hunspellx64.dll Hunspellx86.dll
+  
+  # Install dependencies
+  sudo apt install mono-complete libhunspell-dev libmpv-dev tesseract-ocr vlc ffmpeg
+  ```
+  
+  Right-click the `SubtitleEdit.exe` file and select `Create Desktop Shortcut` (requires script setup in Thunar).
+  ```
+  Version: 4.0.12
+  Bin Path: mono %e%
+  Name: %n%
+  Comment: Edit subtitles
+  ```
+  Move the shortcut to `~/.local/share/applications`
+</details>
 <details>
   <summary>Expand for Tweaks</summary>
   
