@@ -1020,6 +1020,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      ```sh
      ln -s "${PWD}/files/thunar/copy-filename.sh" ~/.config/Thunar/actions/
      ln -s "${PWD}/files/thunar/copy-full-path.sh" ~/.config/Thunar/actions/
+     ln -s "${PWD}/files/thunar/create-desktop-shortcut.py" ~/.config/Thunar/actions/
      ln -s "${PWD}/files/thunar/open-as-root.sh" ~/.config/Thunar/actions/
      ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/
      ```
@@ -1057,6 +1058,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
        
        [Appearance Conditions]
          (check all items)
+       ```
+     - (click) Add a new custom action
+       ```
+       [Basic]
+         Name: Create Desktop Shortcut
+         Description: Creates a Desktop Shortcut so you can easily launch applications or scripts.
+         Command: ~/.config/Thunar/actions/create-desktop-shortcut.py %f
+         Icon: application-x-desktop
+       
+       [Appearance Conditions]
+         [X] Text Files
+         [X] Other Files
        ```
      - (click) Add a new custom action
        ```
