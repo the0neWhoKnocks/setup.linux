@@ -361,7 +361,15 @@ I have a private gist that contains a shell script with all the `git clone` comm
 
 Only required if you need access to a network share.
 
-This an on-demand approach, like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
+First create the folder(s) that the share will mount to:
+```sh
+# make the folder
+sudo mkdir -p "/mnt/<FOLDER>"
+# set it's permissions
+sudo chown <USER>:<GROUP> "/mnt/<FOLDER>"
+```
+
+This is an on-demand approach, like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
 ```sh
 (
   cd ./bin
@@ -370,7 +378,7 @@ This an on-demand approach, like for a laptop that may not always be on your net
 ```
 - Run the new Launcher that was added to the Desktop
   - Configure the settings for the share.
-    - The mounted folder needs to be in `/media`, or it won't be automatically detected.
+    - The mounted folder needs to be in `/mnt`, or it won't be automatically detected.
 
 ---
 
@@ -1035,6 +1043,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      (check) Search in Path
      (check) Match Case
      ```
+  
+  ---
+  
+  If you want to batch edit Bookmarks, edit `~/.config/gtk-3.0/bookmarks`. It's much faster than manually adding new items, and if all you want to do is edit some paths - editing that file is your only option unless you want to delete and re-create the bookmark. The folder view updates as soon as you save as well.
+  
+  Example:
+  ```txt
+  file:///home/<USER>/Documents Documents
+  file:///mnt/mount_folder/path/to/network/folder [Mount] Some Folder
+  sftp://<USER>@<IP>/home/<USER> [SFTP] User Folder
+  smb://WORKGROUP;<USER>@<IP>/<SHARE>/ [SMB] Share Folder
+  ```
   
   ---
   
