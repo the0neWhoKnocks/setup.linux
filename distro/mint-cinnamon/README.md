@@ -486,7 +486,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   <summary>Expand for Aegisub</summary>
   
   This isn't something I keep on all the time, but sometimes when editing subs this is handy for creating line breaks.
-  - Open the system Keyboard > Layouts > Options > Non-breaking space input (set to Non-breaking space at the 2nd level), now you can hit SHIFT+SPACE to insert a non-breaking space.
+  - Open the system Keyboard > Layouts > Options > Non-breaking space input (set to Non-breaking space at the 2nd level), now you can hit SHIFT+SPACE to insert a non-breaking space.
 </details>
 
 <details>
@@ -543,20 +543,27 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ### Via Flatpak
 
 ```sh
-flatpak install flathub \
+flatpak install flathub --system \
   codes.merritt.FeelingFinder \
+  hu.irl.cameractrls \
   org.gimp.GIMP \
-  org.gimp.GIMP.Plugin.GMic \
-  org.gimp.GIMP.Plugin.LiquidRescale \
-  org.gimp.GIMP.Plugin.Resynthesizer
+  org.gimp.GIMP.Plugin.GMic/x86_64/3 \
+  org.gimp.GIMP.Plugin.LiquidRescale/x86_64/2-40 \
+  org.gimp.GIMP.Plugin.Resynthesizer/x86_64/3
 ```
 
 <details>
   <summary>Expand for Software Details</summary>
   
-  List what's currently installed `flatpak list`.
-  
-  Search for packages with `flatpak search <PACKAGE>`, like `flatpak search org.gimp.GIMP.Plugin`.
+  Useful commands:
+  | Command | Description |
+  | ------- | ----------- |
+  | `flatpak info --show-location <APP_ID>` |  |
+  | `flatpak list` | List what's installed along with info like `Application ID` and `Version`. Add `--app` or `--runtime` for grouped listings. |
+  | `flatpak run <APP_ID>` | Start app from CLI (good for debugging). |
+  | `flatpak search <APP_ID>` | Search for packages like `flatpak search org.gimp.GIMP.Plugin`. |
+  | `flatpak uninstall --delete-data <APP_ID>` | Remove installed package. |
+  | `flatpak update <APP_ID>` | Update package like `flatpak update org.gimp.GIMP`. |
   
   `bin` path for apps: `/var/lib/flatpak/exports/bin`.
   
@@ -566,7 +573,6 @@ flatpak install flathub \
   | [hu.irl.cameractrls](https://flathub.org/apps/details/hu.irl.cameractrls) | Camera Ctrls | Logi Tune alt for adjusting settings in Web apps |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
-  | [org.gimp.GIMP.Plugin.LiquidRescale](https://github.com/glimpse-editor/Glimpse/wiki/How-to-Install-the-Liquid-Rescale-Plugin#install-liquid-rescale-on-linux) | LiquidRescale | Scale an image, but don't scale selected items |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
 </details>
 
@@ -582,6 +588,21 @@ flatpak install flathub \
   + Name=Emoji Picker (Feeling Finder)
   + Keywords=Emoji;Picker;
   ```
+</details>
+
+<details>
+  <summary>Expand for GIMP plugin notes</summary>
+  
+  | Plugin | Notes |
+  | ------ | ----- |
+  | G'MIC | Shows up at the bottom of the `Filters` menu as `G'MIC-QT...` |
+  | Resynthesizer | Shows up under `Filters > Enhance` with items for `Heal Selection` and `Heal Transparency`. |
+  
+  Since G'MIC has a ton of options, I'll try to keep track of what I've found useful:
+      - Deformations:
+          - Seamcarve: Replacement for the `LiquidRescale` plugin since it doesn't seem to run on Linux.
+      - Lights & Shadow:
+          - Drop Shadow: Found this easier to use than the default filter.
 </details>
 
 
@@ -1000,32 +1021,58 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   ---
   
-  Install Thunar and dependencies
-  ```sh
-  (
-    sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
-    sudo apt update
-    sudo apt install fsearch thunar thunar-archive-plugin tumbler-plugins-extra
-  )
-  ```
-  
-  Thunar uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
-  ```sh
-  (
-    # Clear any generated thumbnails
-    rm -rf  ~/.cache/thumbnails/*
-    # Create rc file for tumbler
-    mkdir ~/.config/tumbler
-    cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
-    # Exclude specific paths from having thumbnails generated
-    vi ~/.config/tumbler/tumbler.rc
-  )
-  ```
-  ```
-  # Find all the instances of `Excludes=` and add the paths
-  Excludes=<PATH1>;<PATH2>
-  ```
-  `tumblerd` can't be restarted so you have to log out/in
+  - Install Thunar and dependencies
+      ```sh
+      (
+        sudo add-apt-repository ppa:christian-boxdoerfer/fsearch-stable
+        sudo apt update
+        sudo apt install fsearch thunar thunar-archive-plugin tumbler-plugins-extra
+      )
+      ```
+  - Thunar uses `tumbler` for generating thumbnails. Most File Managers have options to not show thumbnails on network paths, but `cifs` mounts may not fall under that category even though they can be. This will instruct `tumbler` what paths to ignore in that case.
+      ```sh
+      (
+        # Clear any generated thumbnails
+        rm -rf  ~/.cache/thumbnails/*
+        # Create rc file for tumbler
+        mkdir ~/.config/tumbler
+        cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
+        # Exclude specific paths from having thumbnails generated
+        vi ~/.config/tumbler/tumbler.rc
+      )
+      ```
+      ```
+      # Find all the instances of `Excludes=` and add the paths
+      Excludes=<PATH1>;<PATH2>
+      ```
+      Kill the tumbler session via `pkill tumblerd`
+  - To [use `folder.jpg` for folders](https://docs.xfce.org/xfce/thunar/4.14/tumbler#customized_thumbnailer_for_folders)
+      - `sudo vim /usr/share/thumbnailers/folder.thumbnailer`
+          ```
+          [Thumbnailer Entry]
+          Version=1.0
+          Encoding=UTF-8
+          Type=X-Thumbnailer
+          Name=Folder Thumbnailer
+          MimeType=inode/directory;
+          Exec=/usr/bin/folder-thumbnailer %s %i %o %u
+          ```
+      - `sudo vim /usr/bin/folder-thumbnailer`
+          ```
+          #!/bin/bash
+          
+          convert -thumbnail "$1" "$2/folder.jpg" "$3" 1>/dev/null 2>&1 ||\
+          convert -thumbnail "$1" "$2/.folder.jpg" "$3" 1>/dev/null 2>&1 ||\
+          convert -thumbnail "$1" "$2/folder.png" "$3" 1>/dev/null 2>&1 ||\
+          convert -thumbnail "$1" "$2/cover.jpg" "$3" 1>/dev/null 2>&1 ||\
+          rm -f "$HOME/.cache/thumbnails/normal/$(echo -n "$4" | md5sum | cut -d " " -f1).png" ||\
+          rm -f "$HOME/.thumbnails/normal/$(echo -n "$4" | md5sum | cut -d " " -f1).png" ||\
+          rm -f "$HOME/.cache/thumbnails/large/$(echo -n "$4" | md5sum | cut -d " " -f1).png" ||\
+          rm -f "$HOME/.thumbnails/large/$(echo -n "$4" | md5sum | cut -d " " -f1).png" ||\
+          exit 1
+          ```
+      - `sudo chmod +x /usr/bin/folder-thumbnailer`
+      - Close thunar via `thunar -q`, and kill the tumbler session via `pkill tumblerd`. Then re-open the folder and folders should now use the `folder.jpg/png`.
   
   ---
   
