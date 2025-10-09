@@ -1383,6 +1383,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       [Users]
         Allow guest sessions: (checked)
   ```
+  
+  If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. There are a couple ways to disable it:
+      - Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
+      - If nothing in the Sound Settings worked, you can try the CLI tool `alsamixer`. Once it's running in your CLI, hit `F6` to choose your sound device. Then arrow Left/Right to choose an output channel, and arrow Up/Down to change the volume.
 </details>
 
 <details>
