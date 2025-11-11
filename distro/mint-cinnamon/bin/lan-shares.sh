@@ -125,7 +125,7 @@ function scanNetwork {
 export -f scanNetwork
 
 function buildComboBoxOpts {
-  local lines="${1}"
+  local lines=$(echo "${1}" | sort)
   
   local opts=$(echo "${lines}" | sed -z 's/\n/!/g' | sed 's/!$//')
   
