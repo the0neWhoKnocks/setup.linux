@@ -299,7 +299,7 @@ function unMountShares {
     # import config variables
     source "${CONFS_PATH}/${conf}"
     
-    if [ "$(ls -A ${SHARE__MOUNT_DIR})" ]; then
+    if [[ "$(mountpoint ${SHARE__MOUNT_DIR})" == *"is a mountpoint" ]]; then
       err="$(sudo umount -l "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
       
       if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
@@ -324,7 +324,7 @@ function mountShares {
       continue
     fi
     
-    if [ "$(ls -A ${SHARE__MOUNT_DIR})" ]; then
+    if [[ "$(mountpoint ${SHARE__MOUNT_DIR})" == *"is a mountpoint" ]]; then
       notify "${ICON__APP}" "Share '${SHARE__SHARE_NAME}' Already Mounted"
     else
       # NOTE: Add `-v` flag to get verbose mount output in case something goes wrong
