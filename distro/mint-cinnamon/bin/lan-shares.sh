@@ -170,6 +170,7 @@ function openConfigDialog {
     SHARE__DOMAIN=""
     SHARE__MOUNT_DIR=""
     SHARE__SHARE_NAME=""
+    SHARE__DISABLED=""
   fi
   
   if [ ! -f "${FILE__IP_LIST}" ]; then
@@ -203,6 +204,7 @@ function openConfigDialog {
         --field="Domain" "${SHARE__DOMAIN:-$DEFAULT__DOMAIN}" \
         --field="Mount Directory":CDIR "${SHARE__MOUNT_DIR:-$DEFAULT__MOUNT_DIR}" \
         --field="Share Name" "${SHARE__SHARE_NAME:-}" \
+        --field="Disabled":CHK "${SHARE__DISABLED:-FALSE}" \
       --button="Back:${EXIT_CODE__OPEN_GUI}" \
       --button="Re-Scan Network:${EXIT_CODE__RESCAN}" \
       --button="Save:${EXIT_CODE__SUCCESS}" \
@@ -229,6 +231,7 @@ function openConfigDialog {
   SHARE__DOMAIN="${formData[3]}"
   SHARE__MOUNT_DIR="${formData[4]}"
   SHARE__SHARE_NAME="${formData[5]}"
+  SHARE__DISABLED="${formData[6]}"
   
   # proceed only if the user hasn't canceled
   if [[ "$?" == "${EXIT_CODE__SUCCESS}" ]]; then
@@ -280,6 +283,7 @@ function saveConfigData {
     echo "SHARE__DOMAIN=\"${SHARE__DOMAIN}\""
     echo "SHARE__MOUNT_DIR=\"${SHARE__MOUNT_DIR}\""
     echo "SHARE__SHARE_NAME=\"${SHARE__SHARE_NAME}\""
+    echo "SHARE__DISABLED=\"${SHARE__DISABLED}\""
   } > "${conf}"
   
   chmod 0600 "${conf}"
@@ -310,6 +314,10 @@ function mountShares {
   for conf in "${confs[@]}"; do
     # import config variables
     source "${CONFS_PATH}/${conf}"
+    
+    if [[ "${SHARE__DISABLED}" == "TRUE" ]]; then
+      continue
+    fi
     
     if [ "$(ls -A ${SHARE__MOUNT_DIR})" ]; then
       notify "${ICON__APP}" "Share '${SHARE__SHARE_NAME}' Already Mounted"
