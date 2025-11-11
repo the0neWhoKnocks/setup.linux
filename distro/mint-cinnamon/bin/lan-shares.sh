@@ -272,7 +272,11 @@ function verifyConfigData {
 export -f verifyConfigData
 
 function saveConfigData {
-  local conf="${CONFS_PATH}/${FILE__CONF_PATTERN//'*'/$SHARE__SHARE_NAME}"
+  local mDir=$(basename "${SHARE__MOUNT_DIR}")
+  local mDir="${mDir//' '/'_'}" # replace spaces
+  local mDir="${mDir//'/'/'_'}" # replace slashes
+  local conf="${CONFS_PATH}/${FILE__CONF_PATTERN//'*'/${mDir}__${SHARE__SHARE_NAME}}"
+  local conf="${conf,,}" # convert to lowercase
   
   # construct and output config file
   {
@@ -299,7 +303,8 @@ function unMountShares {
       err="$(sudo umount -l "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
       
       if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
-        notify "${ICON__APP}" "Share '${SHARE__SHARE_NAME}' Un-Mounted"
+        local mDir=$(basename "${SHARE__MOUNT_DIR}")
+        notify "${ICON__APP}" "Share '${mDir} | ${SHARE__SHARE_NAME}' Un-Mounted"
       else
         notify "${ICON__APP}" "Error Un-Mounting Share '${SHARE__SHARE_NAME}'\r${err}" 0
       fi
@@ -345,7 +350,8 @@ function mountShares {
         "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
       
       if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
-        notify "${ICON__APP}" "Share '${SHARE__SHARE_NAME}' Mounted"
+        local mDir=$(basename "${SHARE__MOUNT_DIR}")
+        notify "${ICON__APP}" "Share '${mDir} | ${SHARE__SHARE_NAME}' Mounted"
       else
         notify "${ICON__APP}" "Error Mounting Share '${SHARE__SHARE_NAME}'\r${err}" 0
       fi
