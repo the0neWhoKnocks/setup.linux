@@ -6,6 +6,10 @@
 # - dialog types: https://yad-guide.ingk.se/
 # - marginal styling of items with Pango: https://docs.gtk.org/Pango/pango_markup.html
 
+# NOTE: To debug, open a terminal and run `lan-shares -gui`, then just `echo`
+# out anything you're trying to debug. Be mindful that `echo` may cancel out or
+# interfere with some functions.
+
 if ! command -v nmap &> /dev/null || ! command -v yad &> /dev/null; then
   deps=(appmenu-gtk3-module nmap yad)
   
@@ -57,16 +61,17 @@ export FILE__IP_LIST="${CONFS_PATH}/ips.conf"
 export FILE__LAUNCHER="${PATH__USER_APPS}/${LAUNCHER_NAME}"
 export DEFAULT__DOMAIN='WORKGROUP'
 export DEFAULT__MOUNT_DIR='/mnt'
+# https://manpages.org/yad#exit-status (even numbers need to be used, other wise they're treated like an actual exit code)
 export EXIT_CODE__CANCELED=1
-export EXIT_CODE__EDIT_CONFIG=102
+export EXIT_CODE__EDIT_CONFIG=106
 export EXIT_CODE__ESC=252
-export EXIT_CODE__MOUNT=104
-export EXIT_CODE__NEW_CONFIG=103
-export EXIT_CODE__OPEN_GUI=101
+export EXIT_CODE__MOUNT=108
+export EXIT_CODE__NEW_CONFIG=104
+export EXIT_CODE__OPEN_GUI=102
 export EXIT_CODE__RESCAN=100
 export EXIT_CODE__SUCCESS=0
 export EXIT_CODE__TIMEOUT=70
-export EXIT_CODE__UNMOUNT=105
+export EXIT_CODE__UNMOUNT=110
 
 # ==============================================================================
 
@@ -294,10 +299,17 @@ function saveConfigData {
 }
 export -f saveConfigData
 
-function unMountShares {
-  for conf in "${confs[@]}"; do
+function unmountShare {
+  if [[ "${currConf}" == "--" ]]; then
+    notify "${ICON__APP}" "You must select a share config to unmount."
+    openGUI
+    return
+  fi
+  
+  # for conf in "${confs[@]}"; do
     # import config variables
-    source "${CONFS_PATH}/${conf}"
+    source "${CONFS_PATH}/${currConf}"
+    # source "${CONFS_PATH}/${conf}"
     
     if [[ "$(mountpoint ${SHARE__MOUNT_DIR})" == *"is a mountpoint" ]]; then
       err="$(sudo umount -l "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
@@ -311,14 +323,21 @@ function unMountShares {
     else
       notify "${ICON__APP}" "Share '${SHARE__SHARE_NAME}' Wasn't Mounted"
     fi
-  done
+  # done
 }
-export -f unMountShares
+export -f unmountShare
 
-function mountShares {
-  for conf in "${confs[@]}"; do
+function mountShare {
+  if [[ "${currConf}" == "--" ]]; then
+    notify "${ICON__APP}" "You must select a share config to mount."
+    openGUI
+    return
+  fi
+  
+  # for conf in "${confs[@]}"; do
     # import config variables
-    source "${CONFS_PATH}/${conf}"
+    source "${CONFS_PATH}/${currConf}"
+    # source "${CONFS_PATH}/${conf}"
     
     if [[ "${SHARE__DISABLED}" == "TRUE" ]]; then
       continue
@@ -356,9 +375,9 @@ function mountShares {
         notify "${ICON__APP}" "Error Mounting Share '${SHARE__SHARE_NAME}'\r${err}" 0
       fi
     fi
-  done
+  # done
 }
-export -f mountShares
+export -f mountShare
 
 function openGUI {
   GUI__ICON=drive-multidisk
@@ -390,16 +409,18 @@ function openGUI {
     --button="Mount":$EXIT_CODE__MOUNT \
     --button="Un-Mount":$EXIT_CODE__UNMOUNT
   )
+  local formExitCode=$?
   
-  case $? in
+  formData=($(parseFormData "$formData"))
+  currConf="${formData[0]}"
+  
+  case $formExitCode in
     $EXIT_CODE__EDIT_CONFIG)
-      formData=($(parseFormData "$formData"))
-      currConf="${formData[0]}"
       openConfigDialog
       ;;
     
     $EXIT_CODE__MOUNT)
-      mountShares
+      mountShare
       ;;
     
     $EXIT_CODE__NEW_CONFIG)
@@ -408,7 +429,7 @@ function openGUI {
       ;;
     
     $EXIT_CODE__UNMOUNT)
-      unMountShares
+      unmountShare
       ;;
   esac
 }
@@ -442,11 +463,11 @@ if ! $configExists || $configureApp; then
 fi
 
 if [[ "${1}" == "-u" ]]; then
-  unMountShares
+  unmountShare
 fi
 
 if [[ "${1}" == "-m" ]]; then
-  mountShares
+  mountShare
 fi
 
 if $showGUI; then
