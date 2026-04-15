@@ -32,6 +32,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
 - [Troubleshooting](#troubleshooting)
+  - [System boots to blank screen after failed update](#system-boots-to-blank-screen-after-failed-update)
   - [System going to sleep after a few seconds on the Login screen](#system-going-to-sleep-after-a-few-seconds-on-the-login-screen)
   - [Kernel Panic error after choosing "recommended" nvidia driver](#kernel-panic-error-after-choosing-recommended-nvidia-driver)
   - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
@@ -2059,6 +2060,21 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
 ---
 
 ## Troubleshooting
+
+### System boots to blank screen after failed update
+<details>
+  <summary>Expand for Solution</summary>
+  
+  Updated the kernel and GPU driver, the output froze for over half an hour while it was supposedly compiling something for the kernel so I had to do a forced shutdown. During the boot, the OS logo popped up, then eventually went to a blank screen.
+  
+  - I rebooted and spammed `F11` until the boot menu appeared.
+  - Choose the last functional kernel.
+  - This should get you back into a functional state where you can log in.
+  - I then opened a terminal and ran `sudo dpkg --configure -a` to finish the updates that previously failed. Some may take a while, just let them do their thing.
+  - Reboot and verify that the new kernel is being used after you log in again.
+</details>
+<br>
+<br>
 
 ### System going to sleep after a few seconds on the Login screen
 <details>
