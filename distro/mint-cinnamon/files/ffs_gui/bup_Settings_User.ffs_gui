@@ -123,6 +123,7 @@
             <Item>*cache*|*Cache*</Item>
             <Item>*/logs</Item>
             <Item>*.log</Item>
+            <Item>/.steam/debian-installation/steamapps/compatdata/</Item>
         </Exclude>
         <SizeMin Unit="None">0</SizeMin>
         <SizeMax Unit="None">0</SizeMax>
