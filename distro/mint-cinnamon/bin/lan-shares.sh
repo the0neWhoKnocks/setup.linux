@@ -312,7 +312,7 @@ function unmountShare {
     # source "${CONFS_PATH}/${conf}"
     
     if [[ "$(mountpoint ${SHARE__MOUNT_DIR})" == *"is a mountpoint" ]]; then
-      err="$(sudo umount -l "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
+      err="$(sudo umount -t cifs -l "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
       
       if [[ "${?}" == "${EXIT_CODE__SUCCESS}" ]]; then
         local mDir=$(basename "${SHARE__MOUNT_DIR}")
