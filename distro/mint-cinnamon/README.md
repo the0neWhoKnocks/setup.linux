@@ -8,6 +8,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Set Up Display](#set-up-display)
 - [Installing / Updating the Kernel](#installing--updating-the-kernel)
 - [System Tweaks](#system-tweaks)
+- [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -161,6 +162,28 @@ The theory is that after a kernel upgrade the new kernel is not active before th
     ```sh
     hostnamectl set-hostname '<NEW_NAME>'
     ```
+
+---
+
+## Make Extra Internal Drives Available
+
+If you have extra internal drives, you'll need to format them, and then set them up to mount on boot.
+- Open `gparted`
+- Select the drive from the top-left drop-down.
+- Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
+- Apply the changes (the bottom should read `0 operations pending`).
+- `sudo vim /etc/fstab`
+- Add something like `/dev/sda1 /mnt/extra1 ext4 defaults 0 0`
+    ```
+    /dev/sda1    being the path of the disk (you can see the names in gparted)
+    /mnt/extra1  will be the location where it'll be mounted to.
+    ext4         the filesystem format
+    defaults     use default options  
+    0 0          dump, check disk priority (zero is off)
+    ```
+- Create the mount folder `sudo /mnt/extra1`.
+- Verify the mount will work `sudo mount -a`.
+- Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra1`.
 
 ---
 
