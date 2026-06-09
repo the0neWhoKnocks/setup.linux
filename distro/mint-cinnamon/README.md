@@ -425,7 +425,7 @@ Here are some sources for finding alternatives to software you may have used on 
   sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
   sudo apt-add-repository -y multiverse
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor featherpad flameshot git git-gui grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara simplescreenrecorder simplescreenrecorder-lib solaar soundconverter steam sticky vlc xclip xserver-xorg-input-synaptics
+  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor featherpad flameshot git git-gui gparted grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara simplescreenrecorder simplescreenrecorder-lib solaar soundconverter sqlitebrowser steam sticky vlc wireshark xclip xserver-xorg-input-synaptics
   # remove some stuff that gets installed that I don't need
   sudo apt remove hypnotix kwalletmanager
 )
@@ -461,6 +461,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [featherpad](https://github.com/tsujan/featherpad) | Simple text editor. Nice and snappy on remote hosts. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
+  | [gparted](https://gparted.org/) | Disk partitioning |
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [guvcview](https://community.linuxmint.com/software/view/guvcview) | Capture images or video with webcam. (It's the only thing I've found that gives the option to mirror video) |
@@ -484,6 +485,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [simplescreenrecorder](https://www.maartenbaert.be/simplescreenrecorder/ ) | A simple screen recorder. Peek is depricated, so using this. |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
+  | [sqlitebrowser](https://sqlitebrowser.org/) | GUI to browse/edit SQL database files |
   | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
@@ -570,11 +572,13 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ```sh
 flatpak install flathub --system \
   codes.merritt.FeelingFinder \
+  com.rafaelmardojai.Blanket \
   hu.irl.cameractrls \
   org.gimp.GIMP \
   org.gimp.GIMP.Plugin.GMic/x86_64/3 \
   org.gimp.GIMP.Plugin.LiquidRescale/x86_64/2-40 \
-  org.gimp.GIMP.Plugin.Resynthesizer/x86_64/3
+  org.gimp.GIMP.Plugin.Resynthesizer/x86_64/3 \
+  rs.ruffle.Ruffle
 ```
 
 <details>
@@ -595,10 +599,12 @@ flatpak install flathub --system \
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
+  | [com.rafaelmardojai.Blanket](https://flathub.org/en/apps/com.rafaelmardojai.Blanket) | Blanket | plays a mix of ambient sounds |
   | [hu.irl.cameractrls](https://flathub.org/apps/details/hu.irl.cameractrls) | Camera Ctrls | Logi Tune alt for adjusting settings in Web apps |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
+  | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
 </details>
 
 <details>
@@ -826,6 +832,7 @@ For packages that require more than a simple `apt install`.
 | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
 | [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
 | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
+| [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) | Configure containers to leverage NVIDIA GPUs |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
 
 <details>
@@ -879,6 +886,30 @@ For packages that require more than a simple `apt install`.
   n install 18
   # Check version
   node -v
+  ```
+</details>
+
+<details>
+  <summary>nvidia-container-toolkit</summary>
+  
+  ```sh
+  curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+  && curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list | \
+  sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+  sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+
+  sudo apt-get update
+
+  export NVIDIA_CONTAINER_TOOLKIT_VERSION=1.18.0-1
+  sudo apt-get install -y \
+  nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+  nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+  libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+  libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
+
+  sudo nvidia-ctk runtime configure --runtime=docker
+
+  sudo systemctl restart docker
   ```
 </details>
 
@@ -1042,6 +1073,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   I've tried `dolphin`, `nemo`, and `thunar`.
   - `dolphin` had the benefit of natural sorting which all othe managers seem to lack currently, but it's slow to load and currently doesn't allow for excluding paths from thumbnail generation.
   - `nemo` ships with Cinnamon but it currently suffers from thumbnail generation issues (sometimes works, sometimes doesn't, or doesn't generate thumbs for all types).
+      - Note that Nemo manages Cinnamon's desktop, so even if you're using a different file manager, Nemo can't be uninstalled. Also, if you need to restart it (like you may have restarted `explorer` on Windows), you can run:
+          ```sh
+          pkill nemo-desktop && nohup nemo-desktop &
+          ```
   - `thunar` ships with XFCE. It's snappy, allows for **Custom Actions** via context menus that you can easily write yourself, and allows for defining rules for thumbnail generation.
   
   ---
