@@ -29,6 +29,7 @@
             <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/etc</Right>
             <Filter>
                 <Include>
+                    <Item>libvirt/qemu</Item>
                     <Item>pulse/daemon.conf</Item>
                     <Item>sddm.conf.d</Item>
                 </Include>

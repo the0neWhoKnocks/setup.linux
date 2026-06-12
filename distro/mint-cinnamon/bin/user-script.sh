@@ -64,6 +64,10 @@ if [[ "${1}" == '--install' ]]; then
     
     # set launcher permissions
     chmod +x "${PATH__USER_APPS_LAUNCHER}"
+    # account for "Checksum-based launcher trusts - new functionality added in Thunar 4.17.4"
+    if hash gio 2>/dev/null; then
+      gio set -t string "${PATH__USER_APPS_LAUNCHER}" metadata::xfce-exe-checksum "$(sha256sum "${PATH__USER_APPS_LAUNCHER}" | awk '{print $1}')"
+    fi
     
     # add launcher shortcut to Dekstop
     ln -s "${PATH__USER_APPS_LAUNCHER}" "${HOME}/Desktop/"

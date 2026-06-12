@@ -8,7 +8,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Set Up Display](#set-up-display)
 - [Installing / Updating the Kernel](#installing--updating-the-kernel)
 - [System Tweaks](#system-tweaks)
-- [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -23,6 +22,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via Archives](#via-archives)
   - [Via CLI](#via-cli)
 - [Configure Software](#configure-software)
+- [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Back Up or Restore Data](#back-up-or-restore-data)
   - [Backing up data](#backing-up-data)
   - [Restoring data](#restoring-data)
@@ -40,7 +40,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
   - [Chrome Saved Passwords Not Showing Up in Settings](#chrome-saved-passwords-not-showing-up-in-settings)
   - [How to Free Up Space?](#how-to-free-up-space)
-  - [PulseAudio Volume Notification Keeps Popping Up](#pulseaudio-volume-notification-keeps-popping-up)
   - [File Managers randomly freeze when transfering CIFS files](#file-managers-randomly-freeze-when-transfering-cifs-files)
   - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
   - [Can't Boot Past Grub Menu](#cant-boot-past-grub-menu)
@@ -65,8 +64,37 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 ## Install
 
 1. Once the distro boots into it's live environment, double-click the **Install** item that should be on the Desktop.
-1. Choose the option to **Erase disk**, which should then ask you to choose the file system. I chose **ZFS**.
-1. The next screen prompts to choose the disk to install to. I want to dual-boot Windows and Linux and am installing Linux to a freshly installed unformatted drive.
+1. When setting up the OS, choose **Something Else** to manually set up partitions.
+1. In the disks table, select the same disk (it's root item, not any partitions if they exist).
+    - Click **New Partition Table**
+    - Select the **free space** entry (sometimes there's a `1 MB` free space item, dont use that).
+        ```
+        1,000 MB
+        EFI
+        ```
+    - Select the **free space** entry
+        ```
+        50,000 MB (could be 3,000, but i made it match my RAM size to account for sleep)
+        swap
+        ```
+    - Select the **free space** entry
+        ```
+        (use remaining space)
+        ext4
+        Mount point = /
+        ```
+1. In the disks table, select the disk where you want the `home` folder.
+    - Click **New Partition Table**
+    - Select the **free space** entry
+        ```
+        (use all space)
+        ext4
+        Mount point = /home
+        ```
+ - I have multiple drives, so find the drive where you'll install the OS and set that in the **Device for boot loader installation** drop-down.
+ - Click **Install Now**
+1. On the **Who are you?** page, I chose to **Encrypt my home folder**.
+
 
 ---
 
@@ -163,27 +191,6 @@ The theory is that after a kernel upgrade the new kernel is not active before th
     hostnamectl set-hostname '<NEW_NAME>'
     ```
 
----
-
-## Make Extra Internal Drives Available
-
-If you have extra internal drives, you'll need to format them, and then set them up to mount on boot.
-- Open `gparted`
-- Select the drive from the top-left drop-down.
-- Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
-- Apply the changes (the bottom should read `0 operations pending`).
-- `sudo vim /etc/fstab`
-- Add something like `/dev/sda1 /mnt/extra1 ext4 defaults 0 0`
-    ```
-    /dev/sda1    being the path of the disk (you can see the names in gparted)
-    /mnt/extra1  will be the location where it'll be mounted to.
-    ext4         the filesystem format
-    defaults     use default options  
-    0 0          dump, check disk priority (zero is off)
-    ```
-- Create the mount folder `sudo /mnt/extra1`.
-- Verify the mount will work `sudo mount -a`.
-- Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra1`.
 
 ---
 
@@ -388,10 +395,13 @@ Only required if you need access to a network share.
 
 First create the folder(s) that the share will mount to:
 ```sh
-# make the folder
+# make the folder(s)
 sudo mkdir -p "/mnt/<FOLDER>"
-# set it's permissions
+# ex: sudo mkdir -p /mnt/monolith_{lib,user}
+
+# set permissions
 sudo chown <USER>:<GROUP> "/mnt/<FOLDER>"
+# ex: sudo chown $UID:$GID /mnt/monolith_{lib,user}
 ```
 
 This is an on-demand approach, like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
@@ -417,27 +427,68 @@ Here are some sources for finding alternatives to software you may have used on 
 
 ```sh
 (
-  sudo add-apt-repository -y ppa:alex-p/aegisub
+  sudo add-apt-repository -y ppa:cairo-dock-team/ppa
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
-  sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt-add-repository -y ppa:lucioc/sayonara
   sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
-  sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
-  sudo apt-add-repository -y multiverse
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor featherpad flameshot git git-gui gparted grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara simplescreenrecorder simplescreenrecorder-lib solaar soundconverter sqlitebrowser steam sticky vlc wireshark xclip xserver-xorg-input-synaptics
+  sudo apt install -y \
+    aegisub \
+    bat \
+    cairo-dock cairo-dock-plug-ins \
+    cheese \
+    dconf-editor \
+    featherpad \
+    flameshot \
+    git git-gui \
+    gparted \
+    grsync \
+    grub-customizer \
+    guvcview \
+    inkscape \
+    libnss3-tools \
+    lolcat \
+    meld \
+    mkvtoolnix-gui \
+    okular \
+    p7zip-full \
+    peek \
+    python-is-python3 python3-notify2 \
+    redshift redshift-gtk \
+    remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc \
+    sayonara \
+    simplescreenrecorder simplescreenrecorder-lib \
+    solaar \
+    soundconverter \
+    sqlitebrowser \
+    vlc \
+    xclip \
+    xserver-xorg-input-synaptics
+  
   # remove some stuff that gets installed that I don't need
-  sudo apt remove hypnotix kwalletmanager
+  sudo apt remove \
+    hypnotix \
+    kwalletmanager
 )
 ```
 These require a User to answer prompts
 ```sh
-sudo apt install sddm sddm-theme-breeze ttf-mscorefonts-installer wireshark
+sudo apt install \
+  sddm sddm-theme-breeze \
+  ttf-mscorefonts-installer \
+  wireshark
 ```
 
 Optional
 ```sh
-sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
+sudo apt install -y \
+  figlet \
+  kid3-qt \
+  obs-studio \
+  pavucontrol \
+  plasma-sdk \
+  steam \
+  sticky
 ```
 
 <details>
@@ -454,9 +505,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | ------- | ----------- |
   | [aegisub](https://aeg-dev.github.io/AegiSite/) | Subtitle editor |
   | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
-  | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [cheese](https://wiki.gnome.org/Apps/Cheese) | Allows you to take photos and videos with your webcam. |
-  | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
   | [featherpad](https://github.com/tsujan/featherpad) | Simple text editor. Nice and snappy on remote hosts. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
@@ -465,11 +514,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [guvcview](https://community.linuxmint.com/software/view/guvcview) | Capture images or video with webcam. (It's the only thing I've found that gives the option to mirror video) |
-  | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
-  | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
-  | [kdenlive](https://kdenlive.org/en/features/) | Video editor |
-  | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [libnss3-tools](https://packages.ubuntu.com/focal/libnss3-tools) | Network Security Service tools (installs `certutil` which I use to install certs for Browsers) |
   | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
@@ -478,6 +523,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
+  | [redshift](https://remmina.org/) | Adjusts the color temperature of your screen. |
   | [remmina](https://remmina.org/) | Remote Desktop client |
   | [sayonara](https://sayonara-player.com/) | Music player |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
@@ -486,8 +532,6 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sqlitebrowser](https://sqlitebrowser.org/) | GUI to browse/edit SQL database files |
-  | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
-  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
@@ -497,10 +541,12 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | Package | Description |
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
+  | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
   | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
-  | [sqlitebrowser](https://sqlitebrowser.org/) | A GUI based SQL toolkit |
+  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
+  | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
 </details>
 
 <details>
@@ -535,22 +581,6 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 </details>
 
 <details>
-  <summary>Expand for kdenlive Settings</summary>
-  
-  ```
-  [ Environment ]
-    
-    [ MLT env ]
-      (make sure paths point to current binaries (Melt was pointing to old path))
-    
-    [ Default Apps ]
-      Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
-      Audio editing: /usr/bin/audacity
-      Animation editing: /usr/bin/glaxnimate
-  ```
-</details>
-
-<details>
   <summary>Expand for Steam settings</summary>
   
   1. Open Steam.
@@ -572,13 +602,24 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ```sh
 flatpak install flathub --system \
   codes.merritt.FeelingFinder \
+  com.discordapp.Discord \
   com.rafaelmardojai.Blanket \
+  fr.handbrake.ghb \
   hu.irl.cameractrls \
+  org.gabmus.hydrapaper \
   org.gimp.GIMP \
   org.gimp.GIMP.Plugin.GMic/x86_64/3 \
   org.gimp.GIMP.Plugin.LiquidRescale/x86_64/2-40 \
   org.gimp.GIMP.Plugin.Resynthesizer/x86_64/3 \
+  org.kde.glaxnimate \
+  org.kde.kdenlive \
   rs.ruffle.Ruffle
+
+(
+  cd ~/Downloads/flatpak
+  flatpak install --user \
+    SubtitleEdit-linux-x64_v5.0.0-rc4.flatpak
+)
 ```
 
 <details>
@@ -599,12 +640,30 @@ flatpak install flathub --system \
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
+  | [com.discordapp.Discord](https://discord.com/) | Blanket | Group text/voice/video communication |
   | [com.rafaelmardojai.Blanket](https://flathub.org/en/apps/com.rafaelmardojai.Blanket) | Blanket | plays a mix of ambient sounds |
+  | [fr.handbrake.ghb ](https://handbrake.fr/) | Handbrake | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [hu.irl.cameractrls](https://flathub.org/apps/details/hu.irl.cameractrls) | Camera Ctrls | Logi Tune alt for adjusting settings in Web apps |
+  | [org.gabmus.hydrapaper](https://hydrapaper.gabmus.org/) | HydraPaper | Allows for different images on multiple monitors |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
+  | [org.kde.glaxnimate](https://glaxnimate.mattbas.org/) | Glaxnimate | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
+  | [org.kde.kdenlive](https://kdenlive.org/features/) | Kdenlive | Video editor |
   | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
+  | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
+</details>
+
+<details>
+  <summary>Expand for Discord Tweaks</summary>
+  
+  To make Discord not prompt for updates all the time
+  ```sh
+  vim ~/.var/app/com.discordapp.Discord/config/discord/settings.json
+  
+  # add:
+  "SKIP_HOST_UPDATE": true
+  ```
 </details>
 
 <details>
@@ -636,6 +695,48 @@ flatpak install flathub --system \
           - Drop Shadow: Found this easier to use than the default filter.
 </details>
 
+<details>
+  <summary>Expand for Handbrake notes</summary>
+  
+  Settings:
+  ```
+  [ General ]
+  
+    Number of previews: 30
+  
+  [ Advanced ]
+  
+    [x] Set a custom directory for Handbrake temporary files: ~/Rips/.hb_tmp
+  ```
+  
+  Presets:
+  - Select a category, right-click, choose `Set Default`.
+  - Select a sub-item in that category, right-click, choose `Set Default`.
+  
+  Notes:
+  - Config files are stored in: `~/.var/app/fr.handbrake.ghb/config/ghb`
+  - If you need the most up-to-date version you may have to install via a custom PPA, this worked for me in the past.
+      ```sh
+      sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
+      sudo apt update
+      sudo apt install -y handbrake
+      ```
+</details>
+
+<details>
+  <summary>Expand for Kdenlive Settings</summary>
+  
+  ```
+  CTRL + SHIFT + ,
+  
+  [ Environment ]
+    
+    [ Default Apps ]
+      Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
+      Audio editing: /usr/bin/audacity
+      Animation editing: /usr/bin/glaxnimate
+  ```
+</details>
 
 
 ### Via deb
@@ -644,17 +745,15 @@ flatpak install flathub --system \
 (
   DEBS_DIR=~/Downloads/debs
   urls=(
-    'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_18.04/amd64/albert_0.17.6-0_amd64.deb'
-    'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
-    'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
-    'https://discord.com/api/download?platform=linux&format=deb'
+    'https://github.com/sharkdp/bat/releases/download/v0.26.1/bat_0.26.1_amd64.deb'
+    'https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_143.0.7499.40-1_amd64.deb'
     'https://github.com/jgraph/drawio-desktop/releases/download/v25.0.2/drawio-amd64-25.0.2.deb'
-    'https://updates.insomnia.rest/downloads/ubuntu/latest?&app=com.insomnia.app&source=website'
-    'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
+    'https://packagecloud.io/github/git-lfs/packages/linuxmint/wilma/git-lfs_3.7.1_amd64.deb/download.deb?distro_version_id=294'
+    'https://github.com/Kong/insomnia/releases/download/core%4012.6.0/Insomnia.Core-12.6.0.deb'
+    'https://github.com/lsd-rs/lsd/releases/download/v1.2.0/lsd_1.2.0_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
-    'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
-    'https://torguard.net/downloads/new/torguard-latest-amd64.deb'
-    'https://gitlab.com/api/v4/projects/19921167/jobs/artifacts/release/raw/build/glaxnimate.deb?job=linux%3Adeb'
+    'https://update.code.visualstudio.com/1.124.0/linux-deb-x64/stable'
+    'https://updates.torguard.biz/Software/Linux/torguard-latest-amd64.deb'
   )
   for url in "${urls[@]}"; do
     wget --content-disposition "${url}" -P "${DEBS_DIR}/"
@@ -670,21 +769,23 @@ flatpak install flathub --system \
   
   | Software | Description |
   | -------- | ----------- |
-  | [Albert](https://albertlauncher.github.io/) | Launcher (alternative to Wox). In the Installing page look for look for the `OBS software repo` link for downloads. |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
-  | [Discord](https://discord.com/) | Group text/voice/video communication |
+  | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [Draw.io](https://app.diagrams.net/) | [Desktop version](https://github.com/jgraph/drawio-desktop/) of the [Web-App](https://app.diagrams.net/) to draw flowcharts and diagrams. |
-  | [Glaxnimate](https://glaxnimate.mattbas.org/) | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
+  | [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
-  | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
+  | [Muon (Snowflake)](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
   | [TorGuard](https://torguard.net/downloads.php) | VPN client |
   | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
 </details>
 
 <details>
   <summary>Expand for Chrome Tweaks</summary>
+  
+  I'm sticking with a locked version for the time being so that I can keep using my extensions. If I want to go back to installing the newest, I'd need to switch to https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb.
+  You can specify a versioned download by following this pattern: `https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_<VERSION>-1_amd64.deb`. Also found this repo which seems to maintain old versions: https://github.com/NDViet/google-chrome-stable/releases.
   
   To stop making it prompt for updates:
   - Update all shortcuts and add
@@ -697,15 +798,13 @@ flatpak install flathub --system \
 </details>
 
 <details>
-  <summary>Expand for Discord Tweaks</summary>
+  <summary>git lfs</summary>
   
-  To make Discord not prompt for updates all the time
-  ```sh
-  vim ~/.config/discord/settings.json
-  
-  # add:
-  "SKIP_HOST_UPDATE": true
-  ```
+  - Go to https://git-lfs.com/
+      - You can install via PackageCloud which is a one-liner.
+      - Or you can click on the "Installation" link, then the "Linux installation instructions" link, then the [small "packages" link](https://packagecloud.io/github/git-lfs). Then find the line that has something like `linuxmint/wilma` (`wilma` is the current major codename for Mint 22), click on that link. There should be a tiny `Download` button at the top right to [get the `.deb` file](https://packagecloud.io/github/git-lfs/packages/linuxmint/wilma/git-lfs_3.7.1_amd64.deb/download.deb?distro_version_id=294).
+  - Run the installer.
+  - Run `git lfs install` to initialize.
 </details>
 
 <details>
@@ -721,11 +820,10 @@ flatpak install flathub --system \
 (
   ARCH_DIR=~/Downloads/archives
   urls=(
-    'https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz'
+    'https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-x86_64-unknown-linux-musl.tar.gz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
     'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
     'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
-    'https://github.com/SubtitleEdit/subtitleedit/releases/download/4.0.12/SubtitleEdit-4.0.12.zip'
     'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
   )
   for url in "${urls[@]}"; do
@@ -754,35 +852,9 @@ flatpak install flathub --system \
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
-  | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
   | [VideoOCR](https://github.com/timminator/VideOCR) | Rips hard-coded subs from video. |
 </details>
 
-<details>
-  <summary>Finish setting up SubtitleEdit</summary>
-  
-  Be sure that the Portable version (the non-Setup zip) was downloaded.
-  
-  ```sh
-  mv ~/.local/bin/SubtitleEdit-v4.0.12 ~/.local/lib/
-  
-  # You can delete these folders/files since they are for Windows only:
-  cd ~/.local/lib/SubtitleEdit-v4.0.12
-  rm -rf Tesseract302 Hunspellx64.dll Hunspellx86.dll
-  
-  # Install dependencies
-  sudo apt install mono-complete libhunspell-dev libmpv-dev tesseract-ocr vlc ffmpeg
-  ```
-  
-  Right-click the `SubtitleEdit.exe` file and select `Create Desktop Shortcut` (requires script setup in Thunar).
-  ```
-  Version: 4.0.12
-  Bin Path: mono %e%
-  Name: %n%
-  Comment: Edit subtitles
-  ```
-  Move the shortcut to `~/.local/share/applications`
-</details>
 <details>
   <summary>Expand for Tweaks</summary>
   
@@ -827,13 +899,58 @@ For packages that require more than a simple `apt install`.
 
 | Software | Description |
 | -------- | ----------- |
+| [Albert](https://albertlauncher.github.io/installation/linux/) | Launcher (alternative to Wox). |
 | [docker](https://www.docker.com/why-docker/) | Containerize environments |
 | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
 | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
-| [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
 | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
 | [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) | Configure containers to leverage NVIDIA GPUs |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
+
+
+<details>
+  <summary>Albert</summary>
+  
+  In the Installing page look for the `OBS software repo` link for downloads. This page also calls out what Ubuntu version corresponds with the Mint version.
+  
+  ```sh
+  echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+  curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+  sudo apt update
+  sudo apt install albert
+  ```
+  
+  Settings:
+  ```
+  [ General ]
+    Additional PATH entries: ~/.local/share/flatpak/exports/share/applications
+    [ ] Telemetry
+  
+  [ Window ]
+    [x] Enable history search
+    [ ] Clear input line on hide
+    [x] Always on top
+    [x] Hide on focus out
+    [x] Show centered
+    Light theme : Nord Dark
+    Dark theme  : Nord Dark
+    [x] Display scrollbar
+    
+  [ Plugins ]
+    [x] Applications
+      [x] Ignore 'OnlyShowIn'/'NotShowIn'
+      [x] Use 'Exec'
+      [x] Use 'Keywords'
+      [x] Use 'GenericName'
+      Terminal: Tilix
+    
+    [x] Web Search
+      [x] DuckDuckGo
+      [x] Google
+      [x] YouTube
+  ```
+</details>
+
 
 <details>
   <summary>Docker</summary>
@@ -858,7 +975,7 @@ For packages that require more than a simple `apt install`.
   ```
   
   Notes:<br/>
-  The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
+  The [instructions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
   ```sh
   cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||"
   ```
@@ -869,6 +986,30 @@ For packages that require more than a simple `apt install`.
   - Trying to sell me something
   
   `docker-compose` has [been replaced](https://docs.docker.com/compose/compose-v2/) with `docker compose`. The new [compose spec](https://github.com/compose-spec/compose-spec/blob/master/spec.md) is more universal but it also deprecates some fields.
+</details>
+
+<details>
+  <summary>FreeFileSync</summary>
+  
+  ```sh
+  (
+    cd "${HOME}/Downloads/archives"
+    ver="14.9"
+    tarFileName="FreeFileSync_${ver}_Linux_x86_64.tar.gz"
+    runFileName="FreeFileSync_${ver}_Install.run"
+    
+    if [ -f "$tarFileName" ]; then rm "$tarFileName"; fi
+    if [ -f "$runFileName" ]; then rm "$runFileName"; fi
+    
+    curl -L -O "https://freefilesync.org/download/${tarFileName}"
+    tar zxvf "$tarFileName"
+    chmod +x "$runFileName"
+    
+    "./$runFileName"
+    
+    rm "$runFileName"
+  )
+  ```
 </details>
 
 <details>
@@ -883,7 +1024,7 @@ For packages that require more than a simple `apt install`.
   # list available versions to download
   n ls-remote
   # install your preferred version
-  n install 18
+  n install 24.8.0
   # Check version
   node -v
   ```
@@ -925,40 +1066,6 @@ For packages that require more than a simple `apt install`.
   You'll have to log out/in for it to work with your current user, but you can test with
   ```sh
   sudo virt-manager
-  ```
-</details>
-
-<details>
-  <summary>FreeFileSync</summary>
-  
-  ```sh
-  (
-    cd "${HOME}/Downloads/archives"
-    ver="13.5"
-    tarFileName="FreeFileSync_${ver}_Linux.tar.gz"
-    runFileName="FreeFileSync_${ver}_Install.run"
-    
-    if [ -f "$tarFileName" ]; then rm "$tarFileName"; fi
-    if [ -f "$runFileName" ]; then rm "$runFileName"; fi
-    
-    curl -L -O "https://freefilesync.org/download/${tarFileName}"
-    tar zxvf "$tarFileName"
-    chmod +x "$runFileName"
-    
-    "./$runFileName"
-    
-    rm "$runFileName"
-  )
-  ```
-</details>
-
-<details>
-  <summary>git lfs</summary>
-  
-  ```sh
-  curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-  sudo apt install git-lfs
-  git lfs install
   ```
 </details>
 
@@ -1040,9 +1147,9 @@ If you have any back-ups of your keyrings, you'll need to install those especial
 <br>
 
 
-Control your monitor's temperature (limit blue light). For now `redshift` and `redshift-gtk` come pre-installed so just do the below.
+Control your monitor's temperature (limit blue light).
 ```sh
-# NOTE: This file could conflict with the 'qredshift' applet so just use 'Redshift'
+# NOTE: This file could conflict with the 'Inhibit' applet so just use 'Redshift'
 cp -i ./files/redshift.conf ~/.config/
 ```
 Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
@@ -1065,6 +1172,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Options]
       - Uncheck "Refresh the list of updates automatically"
   ```
+  
+  Launch **Startup Applications**, find **Update Manager** and uncheck it.
 </details>
 
 <details>
@@ -1095,7 +1204,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         # Clear any generated thumbnails
         rm -rf  ~/.cache/thumbnails/*
         # Create rc file for tumbler
-        mkdir ~/.config/tumbler
+        mkdir -p ~/.config/tumbler
         cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
         # Exclude specific paths from having thumbnails generated
         vi ~/.config/tumbler/tumbler.rc
@@ -1138,18 +1247,17 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   Launch **FSearch**, go to:
   - `Edit > Preferences`
-     ```
-     [Database]
-       (uncheck) Update database on start
-       
-       [Include]
-         (add) /home/<USER>
-     ```
-  - `Search`
-     ```
-     (check) Search in Path
-     (check) Match Case
-     ```
+      ```
+      [ Database ]
+        (uncheck) Update database on start
+        
+        [ Include ]
+          (add) /home/<USER>
+      
+      [ Search ]
+      (check) Search in Path
+      (check) Match Case
+      ```
   
   ---
   
@@ -1337,7 +1445,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           
           [Panel]
             Button label: Window title
-            Show window count numbers: (uncheck)
+            Show window count badges: (uncheck)
             
         
         [Lock keys indicator with notifications]
@@ -1357,15 +1465,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         
         [Weather]
           [Weather]
-            Data service: OpenWeatherMap
+            Data service: Open-Mateo
             Forecast length (days): 7
           
           [Location]
-            (add locations in Saved Locations)
-            (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
-            (for the City I went with '<CITY>, <ABBREVIATED_STATE>')
-            (timezone America/Los_Angeles)
-            (Once items are added you can click on the panel item, and at the top of the forecast there'll be a location with horizontal arrows. Click on an arrow to go to a saved location)
+              [Location settings]
+                Manual Location: (checked)
+              
+              [Saved Locations]
+                (add locations)
+                (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
+                City: <CITY>
+                Country: <ABBREVIATED_STATE>
   
     [Desktop]
       Desktop Layout: No desktop icons
@@ -1388,6 +1499,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       Albert (check)
       Cairo-Dock (check)
       mintwelcome (uncheck)
+      Notes (check)
       Print Queue Applet (uncheck)
       Redshift (check)
       Solaar (check)
@@ -1396,7 +1508,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Windows]
       [Alt-Tab]
         Alt-Tab switcher style: Icons and window preview  (the 3D options seem to cause screen freezing issues)
-        Delay before displaying: 200  (when switching quickly, no need for extra overhead)
+        Delay before displaying: 100
       
   ──────────────────────────────────────────────────────────────────────────────
   
@@ -1436,9 +1548,9 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
     [Login Window] (only effects re-login from Suspend)
       [Appearance]
-        Background: (choose image)
-        GTK theme: Mint-Y-Legacy-Dark-Aqua
-        Icon theme: Mint-Y-Legacy-Dark-Aqua
+        Background: /usr/share/backgrounds/linuxmint-wallpapers/mpiwnicki_sparkling.jpg
+        GTK theme: Mint-Y-Aqua
+        Icon theme: Mint-Y-Aqua
       
       [Users]
         Allow guest sessions: (checked)
@@ -1447,33 +1559,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. There are a couple ways to disable it:
       - Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
       - If nothing in the Sound Settings worked, you can try the CLI tool `alsamixer`. Once it's running in your CLI, hit `F6` to choose your sound device. Then arrow Left/Right to choose an output channel, and arrow Up/Down to change the volume.
-</details>
-
-<details>
-  <summary>Expand for Albert Settings</summary>
-  
-  I use `QML Box Model` so that SVG icons show up clearly.
-  ```
-  ┎─────────┒
-  ┃ General ┃
-  ┖─────────┚
-    Hot key: Ctrl+Space
-    Frontend: QML Box Model
-    Terminal: Tilix
-    Autostart on login: (checked)
-    Style: BoxModel (click the button next to it)
-      item_title_fontsize: 30
-      item_description_fontsize: 20
-      font_name: Ubuntu Mono
-    Apply theme: DarkMagenta
-    Display scrollbar: (check)
-  
-  ┎────────────┒
-  ┃ Extensions ┃
-  ┖────────────┚
-    [X] Applications
-    [X] WebSearch
-  ```
 </details>
 
 <details>
@@ -1550,6 +1635,24 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 </details>
 
 <details>
+  <summary>Expand for Notes Settings</summary>
+  
+  ```
+  [ General ]
+    [x] Tray Icon
+    [ ] Show the main window automatically
+  
+  [ Backups ]
+    [x] Automatic Backups
+    Time between backups: 12
+    Number to keep: 2
+  
+  [ Automatic Start ]
+    [x] Start automatically
+  ```
+</details>
+
+<details>
   <summary>Expand for Qemu Settings</summary>
   
   - After the initial install, a reboot may be required to run `virsh` commands without `sudo`.
@@ -1571,7 +1674,14 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <details>
   <summary>Expand for Remmina Settings</summary>
   
-  - Preferences > Applet > [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
+  ```
+  [ Preferences ]
+    [ General ]
+      Remmina data folder: ~/.local/remmina
+    
+    [ Applet ]
+      [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
+  ```
 </details>
 
 <details>
@@ -1588,12 +1698,11 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       
       [Icons]
         (tick) Also apply this icon theme to the dark style (makes the volume icon look funny, but otherwise the icons in file picker are almost invisible, so it's required)
-        (tick) Mint-Y-Dark
+        (tick) ePapirus-Dark
     
     [Playlist]
       [Behavior]
         Start up:
-          (tick) Load temporary playlists
           (tick) Load last track on startup
           (tick) Remember time of last track
       
@@ -1602,11 +1711,13 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         (untick) Show numbers
         (tick) Show covers
         Custom font color in dark theme: #2ad8ff
-        Playlist item text: %nr% - %title%
       
-      [Covers]
-        (untick) Save found covers to database
-        (untick) Fetch missing covers from internet
+      [Row formatting]
+        Row formatting: %nr% - %title%
+      
+    [Covers]
+      (untick) Save found covers to database
+      (untick) Fetch missing covers from internet
     
   [Plugins]
     (tick) Level (customize colors by mousing over and clicking button)
@@ -1631,7 +1742,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   )
   ```
   
-  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme.
+  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme. To get out of the preview, `ALT + TAB` to your terminal and `CTRL + C` to kill the process.
   
   The backgrounds for a theme are set in `/usr/share/sddm/themes/<THEME>/theme.conf` on the `background=` line.
   Generally themes point to the global wallpapers so an image can be displayed for any user. Those wallpapers are in `/usr/share/wallpapers`.
@@ -1711,15 +1822,17 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   <summary>Expand for VS Code Settings</summary>
   
   Extensions:
-  - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - All Autocomplete https://marketplace.visualstudio.com/items?itemName=Atishay-Jain.All-Autocomplete
      - VSCode has the built-in `Word Based Suggestions` but it's not smart enough to handle variable suggestions during a destructured `import` if the variable is assigned to an Object.
   - Alphabetical Sorter https://marketplace.visualstudio.com/items?itemName=ue.alphabetical-sorter
+  - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
+  - Better Todo Tree: https://marketplace.visualstudio.com/items?itemName=FanaticPythoner.better-todo-tree
   - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
   - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
-  - dotenv https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv
+  - CSS Nesting Syntax Highlighting: https://marketplace.visualstudio.com/items?itemName=jacobcassidy.css-nesting-syntax-highlighting
+  - DotENV https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv
   - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
   - ESLint https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
   - File Icons https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons
@@ -1730,6 +1843,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Indent one space https://marketplace.visualstudio.com/items?itemName=usernamehw.indent-one-space
   - Lint Lens https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens
   - Markdown All in One https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one
+  - NGINX Configuration Language Support: https://marketplace.visualstudio.com/items?itemName=ahmadalli.vscode-nginx-conf
   - One Dark Pro theme https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme
   - Partial Diff https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff
   - select highlight in minimap https://marketplace.visualstudio.com/items?itemName=mde.select-highlight-minimap
@@ -1943,6 +2057,30 @@ Now that things are set up, you should:
    sudo update-grub
    ```
 
+
+---
+
+## Make Extra Internal Drives Available
+
+If you have extra internal drives, you'll need to format them, and then set them up to mount on boot.
+- Open `gparted`
+- Select the drive from the top-left drop-down.
+- Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
+- Apply the changes (the bottom should read `0 operations pending`).
+- `sudo vim /etc/fstab`
+- Add something like `/dev/sda1 /mnt/extra1 ext4 defaults 0 0`
+    ```
+    /dev/sda1    being the path of the disk (you can see the names in gparted)
+    /mnt/extra1  will be the location where it'll be mounted to.
+    ext4         the filesystem format
+    defaults     use default options  
+    0 0          dump, check disk priority (zero is off)
+    ```
+- Create the mount folder `sudo /mnt/extra1`.
+- Verify the mount will work `sudo mount -a`.
+- Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra1`.
+
+
 ---
 
 ## Back Up or Restore Data
@@ -2004,7 +2142,7 @@ This could have unexpected syncing results if applications are running in the ba
 ### Restoring data
 
 1. Load and select a config.
-1. There's a `Swap Sites` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.
+1. There's a `Swap Sides` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.
 1. Click `Compare`, review what will be changed.
 1. If things look good, click `Synchronize`.
 1. **Important**: Be sure not to save the config in the reversed state.
@@ -2287,77 +2425,6 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   # There could be other folders in `.cache` that you may want to investigate.
   # Deleting folders or their contents while certain Apps are running could cause issues.
   rm -rf  ~/.cache/{thumbnails}/*
-  ```
-</details>
-
-### PulseAudio Volume Notification Keeps Popping Up
-<details>
-  <summary>Expand for Solution</summary>
-  
-  Was having an issue where the PulseAudio volume change notification would keep popping up randomly when I wasn't adjusting volume. Usually would happen while using a Browser and a video would start playing.
-  
-  First you can debug Pulse's logs:
-  ```sh
-  systemctl --user stop pulseaudio.{socket,service}
-  # Terminal #1
-  LANG=C pulseaudio -vvvv --log-time=1 > ~/Desktop/pulseverbose.log 2>&1
-  # Terminal #2 (or just stop the above process when you see the notification pop up)
-  tail -f ~/Desktop/pulseverbose.log
-  ```
-  Most forums date this back to a long-standing issue with it detecting that the headphone jack is plugged in then unplugged. Sure enough I was seeing these random messages:
-  ```
-  [pulseaudio] module-alsa-card.c: Jack 'Headphone Jack' is now plugged in
-  ```
-  
-  ```sh
-  # stop the currently running service (if it's running)
-  systemctl --user stop pulseaudio.{socket,service}
-  # edit pulse's config
-  sudo vim /etc/pulse/default.pa
-  ```
-  ```
-  # Disable the below line
-  load-module module-switch-on-port-available
-  ```
-  ```sh
-  # start the service
-  systemctl --user start pulseaudio.{socket,service}
-  ```
-  What the modules do:
-  - `on-port-available` is the event that a port becomes usable, for example when you insert a mini jack.
-  - `on-connect` is the event that a new device is connected which has an audio port, such as a usb dock.
-  
-  ---
-  
-  **NOTE: Turns out the below didn't work**. Pipewire didn't help at all, in fact it kept crashing after extended use. Keeping this for future reference.
-  
-  Change from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
-  ```sh
-  # First check and see if it's already installed and running
-  systemctl --user status pipewire pipewire-session-manager
-  
-  # If it's not installed
-  sudo apt install pipewire
-  # Install audio client and some libs
-  sudo apt install gstreamer1.0-pipewire libpipewire-0.3-{0,dev,modules} libspa-0.2-{bluetooth,dev,jack,modules} pipewire{,-{audio-client-libraries,pulse,bin,tests}}
-  # Install WirePlumber
-  sudo apt install wireplumber gir1.2-wp-0.4 libwireplumber-0.4-{0,dev}
-  
-  # Kill PulseAudio
-  systemctl --user --now disable pulseaudio.{socket,service}
-  systemctl --user mask pulseaudio
-  
-  # Copy over Pipewire configs
-  sudo cp -vRa /usr/share/pipewire /etc/
-  
-  # Start up Pipewire
-  systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-  
-  # Your system may require a log-off/in, or a reboot
-  ```
-  If you need/want Pipewire's equivelant to PulseEffects
-  ```sh
-  flatpak install flathub com.github.wwmm.easyeffects
   ```
 </details>
 
