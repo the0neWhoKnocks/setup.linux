@@ -8,7 +8,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Set Up Display](#set-up-display)
 - [Installing / Updating the Kernel](#installing--updating-the-kernel)
 - [System Tweaks](#system-tweaks)
-- [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -16,16 +15,23 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Set Up Shell](#set-up-shell)
 - [Set Up Repos](#set-up-repos)
 - [Set Up Shares](#set-up-shares)
+  - [Mount Share On Boot](#mount-share-on-boot)
+    - [Using fstab to Mount Share On Demand](#using-fstab-to-mount-share-on-demand)
+  - [Mount Share On-Demand](#mount-share-on-demand)
 - [Install Software](#install-software)
   - [Via Software Manager or CLI](#via-software-manager-or-cli)
   - [Via Flatpak](#via-flatpak)
   - [Via deb](#via-deb)
   - [Via Archives](#via-archives)
-  - [Via CLI](#via-cli)
+  - [Via CLI (slightly complex)](#via-cli-slightly-complex)
 - [Configure Software](#configure-software)
+- [Install Hardware](#install-hardware)
+  - [Label Printer](#label-printer)
+- [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Back Up or Restore Data](#back-up-or-restore-data)
   - [Backing up data](#backing-up-data)
   - [Restoring data](#restoring-data)
+    - [Reset repos after restore](#reset-repos-after-restore)
   - [Create an encrypted USB drive to back up sensitive data](#create-an-encrypted-usb-drive-to-back-up-sensitive-data)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
@@ -33,6 +39,10 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Theming](#theming)
   - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
+    - [Installing Raster Icons](#installing-raster-icons)
+    - [Installing Vector Icons](#installing-vector-icons)
+    - [Refreshing Icon Cache](#refreshing-icon-cache)
+    - [Creating \& Adding Raster Icons](#creating--adding-raster-icons)
 - [Troubleshooting](#troubleshooting)
   - [System boots to blank screen after failed update](#system-boots-to-blank-screen-after-failed-update)
   - [System going to sleep after a few seconds on the Login screen](#system-going-to-sleep-after-a-few-seconds-on-the-login-screen)
@@ -40,7 +50,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
   - [Chrome Saved Passwords Not Showing Up in Settings](#chrome-saved-passwords-not-showing-up-in-settings)
   - [How to Free Up Space?](#how-to-free-up-space)
-  - [PulseAudio Volume Notification Keeps Popping Up](#pulseaudio-volume-notification-keeps-popping-up)
   - [File Managers randomly freeze when transfering CIFS files](#file-managers-randomly-freeze-when-transfering-cifs-files)
   - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
   - [Can't Boot Past Grub Menu](#cant-boot-past-grub-menu)
@@ -65,8 +74,37 @@ I use [Ventoy](https://www.ventoy.net/en/index.html) to install my distros, so j
 ## Install
 
 1. Once the distro boots into it's live environment, double-click the **Install** item that should be on the Desktop.
-1. Choose the option to **Erase disk**, which should then ask you to choose the file system. I chose **ZFS**.
-1. The next screen prompts to choose the disk to install to. I want to dual-boot Windows and Linux and am installing Linux to a freshly installed unformatted drive.
+1. When setting up the OS, choose **Something Else** to manually set up partitions.
+1. In the disks table, select the same disk (it's root item, not any partitions if they exist).
+    - Click **New Partition Table**
+    - Select the **free space** entry (sometimes there's a `1 MB` free space item, dont use that).
+        ```
+        1,000 MB
+        EFI
+        ```
+    - Select the **free space** entry
+        ```
+        50,000 MB (could be 3,000, but i made it match my RAM size to account for sleep)
+        swap
+        ```
+    - Select the **free space** entry
+        ```
+        (use remaining space)
+        ext4
+        Mount point = /
+        ```
+1. In the disks table, select the disk where you want the `home` folder.
+    - Click **New Partition Table**
+    - Select the **free space** entry
+        ```
+        (use all space)
+        ext4
+        Mount point = /home
+        ```
+ - I have multiple drives, so find the drive where you'll install the OS and set that in the **Device for boot loader installation** drop-down.
+ - Click **Install Now**
+1. On the **Who are you?** page, I chose to **Encrypt my home folder**.
+
 
 ---
 
@@ -162,28 +200,28 @@ The theory is that after a kernel upgrade the new kernel is not active before th
     ```sh
     hostnamectl set-hostname '<NEW_NAME>'
     ```
-
----
-
-## Make Extra Internal Drives Available
-
-If you have extra internal drives, you'll need to format them, and then set them up to mount on boot.
-- Open `gparted`
-- Select the drive from the top-left drop-down.
-- Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
-- Apply the changes (the bottom should read `0 operations pending`).
-- `sudo vim /etc/fstab`
-- Add something like `/dev/sda1 /mnt/extra1 ext4 defaults 0 0`
+- Since Mint 22, they've swapped out the audio driver from `pulseaudio` to `pipewire`. Unfortunately, using `pipewire` causes my audio to quickly flip from speaker to headphones, even when no headphones are plugged in. When I was playing audio it behaved as expected, the rest of the time the speaker icon was constantly blinking. This is how you roll back to `pulseaudio`.
+    ```sh
+    apt purge pipewire pipewire-bin
+    # pulseaudio gets installed automatically during the removal.
+    systemctl enable --user pulseaudio
+    sudo reboot
+    ````
+- If you want to stick with the default Display Manager (`lightDM`) and you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
+    ```sh
+    sudo mkdir -p /etc/systemd/logind.conf.d
+    sudo nano /etc/systemd/logind.conf.d/90-ignore-lid-closed.conf
     ```
-    /dev/sda1    being the path of the disk (you can see the names in gparted)
-    /mnt/extra1  will be the location where it'll be mounted to.
-    ext4         the filesystem format
-    defaults     use default options  
-    0 0          dump, check disk priority (zero is off)
     ```
-- Create the mount folder `sudo /mnt/extra1`.
-- Verify the mount will work `sudo mount -a`.
-- Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra1`.
+    [Login]
+    HandleLidSwitchExternalPower=ignore
+    # Dictates how your Linux laptop behaves when the lid is closed while connected
+    # to a docking station or external monitor.
+    HandleLidSwitchDocked=ignore
+    ```
+    ```sh
+    sudo systemctl restart systemd-logind
+    ```
 
 ---
 
@@ -338,6 +376,11 @@ This is only required if you want to use the helper scripts.
 
 ```sh
 cd ~/Projects/Code/Scripts && git clone git@github.com:the0neWhoKnocks/setup.linux.git && cd setup.linux/distro/mint-cinnamon
+
+(
+  cd ./bin
+  ./user-script.sh --install "${PWD}/user-script.sh"
+)
 ```
 
 ---
@@ -365,7 +408,7 @@ Install oh-my-zsh, plugins, and my custom theme (requires [this step](#clone-thi
     ┎─────────┒
     ┃ General ┃
     ┖─────────┚
-      (check) Custom font: FantasqueSansMono NF Regular 16
+      (check) Custom font: FantasqueSansM Nerd Font Mono Regular 16
 
     ┎───────┒
     ┃ Color ┃
@@ -386,19 +429,122 @@ I have a private gist that contains a shell script with all the `git clone` comm
 
 Only required if you need access to a network share.
 
+Instead of allowing a file manager to wrap the connection in a FUSE buffer, we bind the remote share directly to the Linux filesystem. This reduces technical overhead and improves data integrity for high-bitrate media or database migrations.
+
+| Mount Method | Protocol | Persistence	| Latency Profile |
+| ------------ | -------- | ----------- | --------------- |
+| File Manager (GUI) | gvfs / FUSE | Ephemeral (Session-based) | Medium (High Overhead) |
+| Manual Terminal | Kernel CIFS | Temporary (Boot-volatile) | Ultra-Low (Direct) |
+| fstab Entry | Kernel CIFS | High (System-wide) | Ultra-Low (Direct) |
+| systemd-automount | Kernel CIFS | High (On-Demand) | N/A (Lazy loading) |
+
 First create the folder(s) that the share will mount to:
 ```sh
-# make the folder
+# Make the folder(s)
 sudo mkdir -p "/mnt/<FOLDER>"
-# set it's permissions
+# ex: sudo mkdir -p /mnt/monolith_{lib,user}
+
+# Set permissions
 sudo chown <USER>:<GROUP> "/mnt/<FOLDER>"
+# ex: sudo chown $UID:$GID /mnt/monolith_{lib,user}
 ```
 
-This is an on-demand approach, like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
+Ensure `cifs-utils` is installed:
+```sh
+dpkg -l | grep cifs-utils
+# Install it, if it's not
+sudo apt install cifs-utils
+```
+
+### Mount Share On Boot
+
+Set up your secured credentials:
+```sh
+mkdir -p ~/.creds
+touch ~/.creds/smb-<NAME>
+chmod 600 ~/.creds/smb-<NAME>
+nano ~/.creds/smb-<NAME>
+```
+```
+username=<USER>
+password=<PASS>
+domain=<GROUP>
+```
+
+#### Using fstab to Mount Share On Demand
+
+1. First, get your UID and GID by running: `id`.
+1. Then, edit the 'fstab' file: `sudo nano /etc/fstab`.
+    ```conf
+    #
+    # NAS Shares
+    //<SERVER_IP>/<SHARE_NAME>  /mnt/<PATH>  cifs  credentials=/home/<USER>/.creds/smb-<NAME>,uid=<UID>,gid=<GID>,dir_mode=<DMODE>,file_mode=<FMODE>,iocharset=utf8,vers=3.11,x-systemd.automount,x-systemd.idle-timeout=2  0  0
+    ```
+    I used `idle-timeout=2` to account for a couple of things. One, when you Suspend the system it won't `umount` any current connections so the SMB session remains on the server. Two, there's no way to create a pre-suspend hook for systemctl to run `umount`, it just hangs the when you try to suspend. Using a timeout of `2` unmounts the share pretty much as soon as you close the last folder that's accessing a share. 
+1. Verify the mount config works:
+    ```sh
+    # After you make changes to 'fstab', you need to reload 'systemctl':
+    sudo systemctl daemon-reload
+    
+    # Mount all 'fstab' entries:
+    sudo mount -a
+    
+    # If you want to alter a mount, unmount it:
+    sudo umount -t cifs -l "/mnt/<PATH>"
+    ```
+
+Sources:
+- https://www.fosslinux.com/92914/how-to-mount-smb-shares-on-linux-mint.htm
+
+<details>
+  <summary>Expand for fstab Syntax</summary>
+  
+  ```
+  <DEVICE>  /mnt/<MOUNT_PATH>  <FS_TYPE>  <OPTS>  <DUMP>  <FSCK>
+  ```
+  
+  | Column | Description |
+  | ------ | ----------- |
+  | <DEVICE> | The block device or remote file system to be mounted. |
+  | <MOUNT_PATH> | The directory where the file system will be mounted to, a.k.a. the mountpoint. The directory must be created beforehand. |
+  | <FS_TYPE> | The file system type. |
+  | <OPTS> | The file system mount options. |
+  | <DUMP> | Checked by the `dump` utility. This field is usually set to `0`, which disables the check. |
+  | <FSCK> | Sets the order for file system checks at boot time. For the root device it should be `1`. For other partitions it should be `2`, or `0` to disable checking. |
+</details>
+
+<details>
+  <summary>Expand for fstab Option Descriptions</summary>
+  
+  - https://man.archlinux.org/man/mount.8#FILESYSTEM-INDEPENDENT_MOUNT_OPTIONS
+  - https://man.archlinux.org/man/mount.8#FILESYSTEM-SPECIFIC_MOUNT_OPTIONS
+  - https://man.archlinux.org/man/mount.cifs.8.en
+  
+  
+  Adjusting the `rsize` and `wsize` parameters to 1,048,576 bytes (1MB buffers). This allows the network stack to transmit much larger bursts of data per packet, drastically reducing the CPU overhead of the kernel during multi-terabyte dataset migrations.
+  The default `rsize` and `wsize` values in the Linux CIFS module are typically 1MB for SMB 3.x connections, but older kernels or server configurations may negotiate lower values. Explicitly setting them to 1,048,576 ensures you always get maximum buffer sizes regardless of what the server advertises. On a gigabit link, I consistently see 110-115 MB/s with these settings versus 80-90 MB/s with default negotiation.
+  
+  
+  | Option | Description |
+  | ------ | ----------- |
+  | `credentials` | This option specifies the location of the credential file we created earlier. because it is inside your encrypted home folder, nobody else can mount this. their attempt will fail with an error of not having permission to open the credentials file. |
+  | `dir_mode` | If the server does not support the CIFS Unix extensions this overrides the default mode for directories. |
+  | `file_mode` | If the server does not support the CIFS Unix extensions this overrides the default file mode. |
+  | `gid` | Sets the gid that will own all files or directories on the mounted filesystem when the server does not provide ownership information. |
+  | `iocharset` | Charset used to convert local path names to and from Unicode. |
+  | `uid` | Sets the uid that will own all files or directories on the mounted filesystem when the server does not provide ownership information. |
+  | `vers` | The `vers=3.11` flag is an essential security requirement in 2026. It ensures you are utilizing the most secure SMB dialect available, preventing downgrade attacks to legacy, unencrypted protocols that could expose your data on the local network. |
+  | `x-systemd.automount` | Mount the partition only when it is first accessed, and the kernel will buffer all file access to it until it is ready. |
+  | `x-systemd.idle-timeout` | Make systemd unmount the mount after it has been idle for X second(s). |
+</details>
+
+### Mount Share On-Demand
+
+Like for a laptop that may not always be on your network. (requires [this step](#clone-this-repo))
 ```sh
 (
   cd ./bin
-  ./user-script.sh --install "${PWD}/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
+  user-script --install "${PWD}/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
 )
 ```
 - Run the new Launcher that was added to the Desktop
@@ -417,27 +563,61 @@ Here are some sources for finding alternatives to software you may have used on 
 
 ```sh
 (
-  sudo add-apt-repository -y ppa:alex-p/aegisub
   sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
-  sudo add-apt-repository -y ppa:kdenlive/kdenlive-stable
   sudo apt-add-repository -y ppa:lucioc/sayonara
   sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
-  sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
-  sudo apt-add-repository -y multiverse
   sudo apt update
-  sudo apt install -y aegisub cairo-dock cairo-dock-gnome-integration-plug-in cheese chromium dconf-editor featherpad flameshot git git-gui gparted grsync grub-customizer guvcview handbrake hydrapaper inkscape kdenlive kid3-qt libnss3-tools lolcat meld mkvtoolnix-gui okular p7zip-full peek python-is-python3 python3-notify2 remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc sayonara simplescreenrecorder simplescreenrecorder-lib solaar soundconverter sqlitebrowser steam sticky vlc wireshark xclip xserver-xorg-input-synaptics
-  # remove some stuff that gets installed that I don't need
-  sudo apt remove hypnotix kwalletmanager
+  sudo apt install -y \
+    aegisub \
+    bat \
+    cheese \
+    dconf-editor \
+    featherpad \
+    flameshot \
+    git git-gui \
+    gparted \
+    grsync \
+    grub-customizer \
+    guvcview \
+    inkscape \
+    libnss3-tools \
+    lolcat \
+    meld \
+    mkvtoolnix-gui \
+    okular \
+    p7zip-full \
+    pavucontrol \
+    peek \
+    python-is-python3 python3-notify2 \
+    redshift redshift-gtk \
+    remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc \
+    sayonara \
+    simplescreenrecorder simplescreenrecorder-lib \
+    solaar \
+    soundconverter \
+    sqlitebrowser \
+    vlc \
+    xclip \
+    xserver-xorg-input-synaptics
 )
 ```
 These require a User to answer prompts
 ```sh
-sudo apt install sddm sddm-theme-breeze ttf-mscorefonts-installer wireshark
+sudo apt install \
+  ttf-mscorefonts-installer \
+  wireshark
 ```
 
 Optional
 ```sh
-sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
+sudo apt install -y \
+  figlet \
+  kid3-qt \
+  obs-studio \
+  plasma-sdk \
+  sddm sddm-theme-breeze \
+  steam \
+  sticky
 ```
 
 <details>
@@ -453,10 +633,7 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | Package | Description |
   | ------- | ----------- |
   | [aegisub](https://aeg-dev.github.io/AegiSite/) | Subtitle editor |
-  | [cairo-dock](http://glx-dock.org/) | Customizable icon dock |
-  | [cairo-dock-gnome-integration-plug-in](https://packages.ubuntu.com/bionic/x11/cairo-dock-gnome-integration-plug-in) | GNOME integration plug-in for Cairo-dock. Needed for things like emptying trash |
   | [cheese](https://wiki.gnome.org/Apps/Cheese) | Allows you to take photos and videos with your webcam. |
-  | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [dconf-editor](https://apps.gnome.org/app/ca.desrt.dconf-editor/) | Tool to allow direct editing of the dconf configuration database. Sometimes allows for changing low-level settings not exposed in most GUIs. |
   | [featherpad](https://github.com/tsujan/featherpad) | Simple text editor. Nice and snappy on remote hosts. |
   | [flameshot](https://flameshot.org/) | Swiss army knife of screenshot tools |
@@ -465,29 +642,23 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
   | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [guvcview](https://community.linuxmint.com/software/view/guvcview) | Capture images or video with webcam. (It's the only thing I've found that gives the option to mirror video) |
-  | [handbrake](https://handbrake.fr/) | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
-  | [hydrapaper](https://hydrapaper.gabmus.org/) | Allows for different images on multiple monitors |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
-  | [kdenlive](https://kdenlive.org/en/features/) | Video editor |
-  | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [libnss3-tools](https://packages.ubuntu.com/focal/libnss3-tools) | Network Security Service tools (installs `certutil` which I use to install certs for Browsers) |
   | [lolcat](https://github.com/busyloop/lolcat) | Add rainbow colors to text in CLI |
   | [meld](https://meldmerge.org/) | Visual fill diff tool |
   | [mkvtoolnix-gui](https://www.matroska.org/downloads/mkvtoolnix.html) | A set of tools to create, alter and inspect Matroska (mkv) & WebM files |
   | [okular](https://okular.kde.org/) | Universal document viewer (PDFs, etc.) |
   | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
+  | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
+  | [redshift](https://remmina.org/) | Adjusts the color temperature of your screen. |
   | [remmina](https://remmina.org/) | Remote Desktop client |
   | [sayonara](https://sayonara-player.com/) | Music player |
-  | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
-  | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [simplescreenrecorder](https://www.maartenbaert.be/simplescreenrecorder/ ) | A simple screen recorder. Peek is depricated, so using this. |
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sqlitebrowser](https://sqlitebrowser.org/) | GUI to browse/edit SQL database files |
-  | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
-  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
@@ -497,10 +668,13 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
   | Package | Description |
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
+  | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
-  | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
-  | [sqlitebrowser](https://sqlitebrowser.org/) | A GUI based SQL toolkit |
+  | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
+  | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
+  | [Steam](https://store.steampowered.com/) | PC Gaming platform |
+  | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
 </details>
 
 <details>
@@ -535,22 +709,6 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 </details>
 
 <details>
-  <summary>Expand for kdenlive Settings</summary>
-  
-  ```
-  [ Environment ]
-    
-    [ MLT env ]
-      (make sure paths point to current binaries (Melt was pointing to old path))
-    
-    [ Default Apps ]
-      Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
-      Audio editing: /usr/bin/audacity
-      Animation editing: /usr/bin/glaxnimate
-  ```
-</details>
-
-<details>
   <summary>Expand for Steam settings</summary>
   
   1. Open Steam.
@@ -570,15 +728,28 @@ sudo apt install -y figlet obs-studio pavucontrol plasma-sdk
 ### Via Flatpak
 
 ```sh
-flatpak install flathub --system \
+flatpak install flathub --system --noninteractive -y \
   codes.merritt.FeelingFinder \
+  com.discordapp.Discord \
   com.rafaelmardojai.Blanket \
+  fr.handbrake.ghb \
   hu.irl.cameractrls \
+  org.gabmus.hydrapaper \
   org.gimp.GIMP \
   org.gimp.GIMP.Plugin.GMic/x86_64/3 \
   org.gimp.GIMP.Plugin.LiquidRescale/x86_64/2-40 \
   org.gimp.GIMP.Plugin.Resynthesizer/x86_64/3 \
+  org.kde.glaxnimate \
+  org.kde.iconexplorer \
+  org.kde.kdenlive \
+  org.localsend.localsend_app \
   rs.ruffle.Ruffle
+
+(
+  cd ~/Downloads/flatpak
+  flatpak install --user \
+    SubtitleEdit-linux-x64_v5.0.0-rc4.flatpak
+)
 ```
 
 <details>
@@ -599,12 +770,32 @@ flatpak install flathub --system \
   | Package | Software | Description |
   | ------- | -------- | ----------- |
   | [codes.merritt.FeelingFinder](https://flathub.org/apps/details/it.mijorus.smile) | Feeling Finder | Emoji picker |
+  | [com.discordapp.Discord](https://discord.com/) | Blanket | Group text/voice/video communication |
   | [com.rafaelmardojai.Blanket](https://flathub.org/en/apps/com.rafaelmardojai.Blanket) | Blanket | plays a mix of ambient sounds |
+  | [fr.handbrake.ghb ](https://handbrake.fr/) | Handbrake | Tool for converting video from nearly any format to a selection of modern, widely supported codecs |
   | [hu.irl.cameractrls](https://flathub.org/apps/details/hu.irl.cameractrls) | Camera Ctrls | Logi Tune alt for adjusting settings in Web apps |
+  | [org.gabmus.hydrapaper](https://hydrapaper.gabmus.org/) | HydraPaper | Allows for different images on multiple monitors |
   | [org.gimp.GIMP](https://flathub.org/apps/details/org.gimp.GIMP) | GIMP | Image editor (alternative to Adobe Photoshop) |
   | [org.gimp.GIMP.Plugin.GMic](https://gmic.eu/download.html) | G'MIC | A large set of filters |
   | [org.gimp.GIMP.Plugin.Resynthesizer](https://github.com/bootchk/resynthesizer) | Resynthesizer | Content-aware removal of selected items |
+  | [org.kde.glaxnimate](https://glaxnimate.mattbas.org/) | Glaxnimate | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
+  | [org.kde.iconexplorer](https://develop.kde.org/docs/features/additional-features/icons/) | Icon Explorer (Cuttlefish) | Simple GUI to look up icon names. |
+  | [org.kde.kdenlive](https://kdenlive.org/features/) | Kdenlive | Video editor |
+  | [org.localsend.localsend_app](https://localsend.org/) | LocalSend | Cross-platform file sharing |
   | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
+  | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
+</details>
+
+<details>
+  <summary>Expand for Discord Tweaks</summary>
+  
+  To make Discord not prompt for updates all the time
+  ```sh
+  vim ~/.var/app/com.discordapp.Discord/config/discord/settings.json
+  
+  # add:
+  "SKIP_HOST_UPDATE": true
+  ```
 </details>
 
 <details>
@@ -636,6 +827,48 @@ flatpak install flathub --system \
           - Drop Shadow: Found this easier to use than the default filter.
 </details>
 
+<details>
+  <summary>Expand for Handbrake notes</summary>
+  
+  Settings:
+  ```
+  [ General ]
+  
+    Number of previews: 30
+  
+  [ Advanced ]
+  
+    [x] Set a custom directory for Handbrake temporary files: ~/Rips/.hb_tmp
+  ```
+  
+  Presets:
+  - Select a category, right-click, choose `Set Default`.
+  - Select a sub-item in that category, right-click, choose `Set Default`.
+  
+  Notes:
+  - Config files are stored in: `~/.var/app/fr.handbrake.ghb/config/ghb`
+  - If you need the most up-to-date version you may have to install via a custom PPA, this worked for me in the past.
+      ```sh
+      sudo add-apt-repository -y ppa:ubuntuhandbook1/handbrake
+      sudo apt update
+      sudo apt install -y handbrake
+      ```
+</details>
+
+<details>
+  <summary>Expand for Kdenlive Settings</summary>
+  
+  ```
+  CTRL + SHIFT + ,
+  
+  [ Environment ]
+    
+    [ Default Apps ]
+      Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
+      Audio editing: /usr/bin/audacity
+      Animation editing: /usr/bin/glaxnimate
+  ```
+</details>
 
 
 ### Via deb
@@ -644,17 +877,15 @@ flatpak install flathub --system \
 (
   DEBS_DIR=~/Downloads/debs
   urls=(
-    'https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_18.04/amd64/albert_0.17.6-0_amd64.deb'
-    'https://github.com/sharkdp/bat/releases/download/v0.22.1/bat_0.22.1_amd64.deb'
-    'https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb'
-    'https://discord.com/api/download?platform=linux&format=deb'
+    'https://github.com/sharkdp/bat/releases/download/v0.26.1/bat_0.26.1_amd64.deb'
+    'https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_143.0.7499.40-1_amd64.deb'
     'https://github.com/jgraph/drawio-desktop/releases/download/v25.0.2/drawio-amd64-25.0.2.deb'
-    'https://updates.insomnia.rest/downloads/ubuntu/latest?&app=com.insomnia.app&source=website'
-    'https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd_0.23.1_amd64.deb'
+    'https://packagecloud.io/github/git-lfs/packages/linuxmint/wilma/git-lfs_3.7.1_amd64.deb/download.deb?distro_version_id=294'
+    'https://github.com/Kong/insomnia/releases/download/core%4012.6.0/Insomnia.Core-12.6.0.deb'
+    'https://github.com/lsd-rs/lsd/releases/download/v1.2.0/lsd_1.2.0_amd64.deb'
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
-    'https://update.code.visualstudio.com/1.73.1/linux-deb-x64/stable'
-    'https://torguard.net/downloads/new/torguard-latest-amd64.deb'
-    'https://gitlab.com/api/v4/projects/19921167/jobs/artifacts/release/raw/build/glaxnimate.deb?job=linux%3Adeb'
+    'https://update.code.visualstudio.com/1.124.0/linux-deb-x64/stable'
+    'https://updates.torguard.biz/Software/Linux/torguard-latest-amd64.deb'
   )
   for url in "${urls[@]}"; do
     wget --content-disposition "${url}" -P "${DEBS_DIR}/"
@@ -670,15 +901,14 @@ flatpak install flathub --system \
   
   | Software | Description |
   | -------- | ----------- |
-  | [Albert](https://albertlauncher.github.io/) | Launcher (alternative to Wox). In the Installing page look for look for the `OBS software repo` link for downloads. |
   | [bat](https://github.com/sharkdp/bat) | Like `cat`, but displays a limited amount of a file and with syntax highlighting |
   | [Chrome](https://www.google.com/chrome/) | Browser |
-  | [Discord](https://discord.com/) | Group text/voice/video communication |
+  | [chromium](https://www.chromium.org/getting-involved/download-chromium/) | Browser without all the Chrome overhead |
   | [Draw.io](https://app.diagrams.net/) | [Desktop version](https://github.com/jgraph/drawio-desktop/) of the [Web-App](https://app.diagrams.net/) to draw flowcharts and diagrams. |
-  | [Glaxnimate](https://glaxnimate.mattbas.org/) | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
+  | [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
-  | [Snowflake](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
+  | [Muon (Snowflake)](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
   | [TorGuard](https://torguard.net/downloads.php) | VPN client |
   | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
 </details>
@@ -686,10 +916,13 @@ flatpak install flathub --system \
 <details>
   <summary>Expand for Chrome Tweaks</summary>
   
+  I'm sticking with a locked version for the time being so that I can keep using my extensions. If I want to go back to installing the newest, I'd need to switch to https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb.
+  You can specify a versioned download by following this pattern: `https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_<VERSION>-1_amd64.deb`. Also found this repo which seems to maintain old versions: https://github.com/NDViet/google-chrome-stable/releases.
+  
   To stop making it prompt for updates:
   - Update all shortcuts and add
     ```sh
-    --simulate-outdated-no-au='Tue, 31 Dec 2099 23:59:59 GMT'
+    --simulate-outdated-no-au="Tue, 31 Dec 2099 23:59:59 GMT"
     ```
     There may be a shortcut on your desktop and in `/usr/share/applications/google-chrome.desktop`.
     
@@ -697,15 +930,13 @@ flatpak install flathub --system \
 </details>
 
 <details>
-  <summary>Expand for Discord Tweaks</summary>
+  <summary>git lfs</summary>
   
-  To make Discord not prompt for updates all the time
-  ```sh
-  vim ~/.config/discord/settings.json
-  
-  # add:
-  "SKIP_HOST_UPDATE": true
-  ```
+  - Go to https://git-lfs.com/
+      - You can install via PackageCloud which is a one-liner.
+      - Or you can click on the "Installation" link, then the "Linux installation instructions" link, then the [small "packages" link](https://packagecloud.io/github/git-lfs). Then find the line that has something like `linuxmint/wilma` (`wilma` is the current major codename for Mint 22), click on that link. There should be a tiny `Download` button at the top right to [get the `.deb` file](https://packagecloud.io/github/git-lfs/packages/linuxmint/wilma/git-lfs_3.7.1_amd64.deb/download.deb?distro_version_id=294).
+  - Run the installer.
+  - Run `git lfs install` to initialize.
 </details>
 
 <details>
@@ -721,11 +952,10 @@ flatpak install flathub --system \
 (
   ARCH_DIR=~/Downloads/archives
   urls=(
-    'https://github.com/aristocratos/btop/releases/download/v1.2.13/btop-x86_64-linux-musl.tbz'
+    'https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-x86_64-unknown-linux-musl.tar.gz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
     'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
     'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
-    'https://github.com/SubtitleEdit/subtitleedit/releases/download/4.0.12/SubtitleEdit-4.0.12.zip'
     'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
   )
   for url in "${urls[@]}"; do
@@ -754,42 +984,16 @@ flatpak install flathub --system \
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
   | [godot](https://godotengine.org/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
-  | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
   | [VideoOCR](https://github.com/timminator/VideOCR) | Rips hard-coded subs from video. |
 </details>
 
-<details>
-  <summary>Finish setting up SubtitleEdit</summary>
-  
-  Be sure that the Portable version (the non-Setup zip) was downloaded.
-  
-  ```sh
-  mv ~/.local/bin/SubtitleEdit-v4.0.12 ~/.local/lib/
-  
-  # You can delete these folders/files since they are for Windows only:
-  cd ~/.local/lib/SubtitleEdit-v4.0.12
-  rm -rf Tesseract302 Hunspellx64.dll Hunspellx86.dll
-  
-  # Install dependencies
-  sudo apt install mono-complete libhunspell-dev libmpv-dev tesseract-ocr vlc ffmpeg
-  ```
-  
-  Right-click the `SubtitleEdit.exe` file and select `Create Desktop Shortcut` (requires script setup in Thunar).
-  ```
-  Version: 4.0.12
-  Bin Path: mono %e%
-  Name: %n%
-  Comment: Edit subtitles
-  ```
-  Move the shortcut to `~/.local/share/applications`
-</details>
 <details>
   <summary>Expand for Tweaks</summary>
   
   Have to run the install script for btop from within the directory
   ```sh
   (
-    cd ~/.local/bin/btop/v1.2.13/btop/
+    cd ~/.local/bin/btop/v1.4.7/
     ./install.sh
   )
   ```
@@ -797,6 +1001,9 @@ flatpak install flathub --system \
   Has to be executable to run
   ```sh
   chmod +x ~/.local/bin/jmkvpropedit/v1.5.2/JMkvpropedit.jar
+  
+  # create a launcher
+  user-script --install "${HOME}/.local/bin/jmkvpropedit/v1.5.2/JMkvpropedit.jar" "JMKVPropEdit" "Batch edit metadata for MKV files" "mkv-gui" "" "java -jar "
   ```
   
   ```sh
@@ -821,19 +1028,64 @@ flatpak install flathub --system \
 </details>
 
 
-### Via CLI
+### Via CLI (slightly complex)
 
 For packages that require more than a simple `apt install`.
 
 | Software | Description |
 | -------- | ----------- |
+| [Albert](https://albertlauncher.github.io/installation/linux/) | Launcher (alternative to Wox). |
 | [docker](https://www.docker.com/why-docker/) | Containerize environments |
 | [docker-compose](https://docs.docker.com/compose/) | Create config files for Docker containers |
 | [FreeFileSync](https://freefilesync.org/) | A tool to wire up backups. Those backup configs can then be reversed to restore data. |
-| [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
 | [n](https://github.com/tj/n#third-party-installers) | NodeJS version management |
 | [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) | Configure containers to leverage NVIDIA GPUs |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
+
+
+<details>
+  <summary>Albert</summary>
+  
+  In the Installing page look for the `OBS software repo` link for downloads. This page also calls out what Ubuntu version corresponds with the Mint version.
+  
+  ```sh
+  echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
+  curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+  sudo apt update
+  sudo apt install albert
+  ```
+  
+  Settings:
+  ```
+  [ General ]
+    Additional PATH entries: ~/.local/share/flatpak/exports/share/applications
+    [ ] Telemetry
+  
+  [ Window ]
+    [x] Enable history search
+    [ ] Clear input line on hide
+    [x] Always on top
+    [x] Hide on focus out
+    [x] Show centered
+    Light theme : Nord Dark
+    Dark theme  : Nord Dark
+    [x] Display scrollbar
+    
+  [ Plugins ]
+    [x] Applications
+      [x] Ignore 'OnlyShowIn'/'NotShowIn'
+      [x] Use 'Exec'
+      [x] Use 'Keywords'
+      [x] Use 'GenericName'
+      Terminal: Tilix
+    
+    [x] Web Search
+      [x] DuckDuckGo
+      [x] Google
+      [x] YouTube
+  ```
+</details>
+
 
 <details>
   <summary>Docker</summary>
@@ -858,7 +1110,7 @@ For packages that require more than a simple `apt install`.
   ```
   
   Notes:<br/>
-  The [instuctions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
+  The [instructions for setting up the repo](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository) are Ubuntu specific and call out `lsb_release -cs` which doesn't work on Mint. I created an alternative
   ```sh
   cat /etc/os-release | grep "UBUNTU_CODENAME" | sed "s|UBUNTU_CODENAME=||"
   ```
@@ -869,6 +1121,93 @@ For packages that require more than a simple `apt install`.
   - Trying to sell me something
   
   `docker-compose` has [been replaced](https://docs.docker.com/compose/compose-v2/) with `docker compose`. The new [compose spec](https://github.com/compose-spec/compose-spec/blob/master/spec.md) is more universal but it also deprecates some fields.
+</details>
+
+<details>
+  <summary>FreeFileSync</summary>
+  
+  ```sh
+  (
+    cd "${HOME}/Downloads/archives"
+    ver="14.9"
+    tarFileName="FreeFileSync_${ver}_Linux_x86_64.tar.gz"
+    runFileName="FreeFileSync_${ver}_Install.run"
+    
+    if [ -f "$tarFileName" ]; then rm "$tarFileName"; fi
+    if [ -f "$runFileName" ]; then rm "$runFileName"; fi
+    
+    curl -L -O "https://freefilesync.org/download/${tarFileName}"
+    tar zxvf "$tarFileName"
+    chmod +x "$runFileName"
+    
+    "./$runFileName"
+    
+    rm "$runFileName"
+  )
+  ```
+  
+  Edit the `FreeFileSync.desktop` file that was created on the Desktop.
+  ```diff
+  - Exec="/opt/FreeFileSync/FreeFileSync" %F
+  + Exec=sudo bash -c "export FFS_USER=<USER>; export FFS_HOME=/home/$FFS_USER; dconf dump / > ~/settings.dconf; /opt/FreeFileSync/FreeFileSync %F"
+  ```
+</details>
+
+<details>
+  <summary>Kodi</summary>
+  
+  Since I'm running Kodi on different devices and they're all pointing to a central database, I have to be careful when updating to ensure the DB doesn't get updated to something the other devices can't support. This process allows me to install a specific version of a back up.
+  
+  1. This is the initial install. If the version matches what you're running, you won't have to install from the backup.
+      ```sh
+      # When installing for a User, the remote may not be available yet, so add it.
+      flatpak --user remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+      
+      # Get the App id
+      flatpak search kodi
+      
+      # Get the current commit in case a rollback is required
+      flatpak remote-info --log flathub tv.kodi.Kodi
+      # May be prompted to choose 'user'
+      # Current commit for 21.3-Omega: 666823fee558df5f489af34509c379f9c5b1dfe00486a3e70e1aaed1fd90b453
+      # Previous commit for 21.2-Omega: ca13415f2ed0762488b7a22ebce80c88bff6e24166a7511d19c60fa6796c5027
+      
+      # Install (For current User. Remove '--user' for system install).
+      flatpak install --user flathub tv.kodi.Kodi
+      # Lock the app so it requires manual updates.
+      flatpak mask --user tv.kodi.Kodi && flatpak mask --user
+      
+      # User config data
+      ~/.var/app/tv.kodi.Kodi/data/userdata/
+      # IMPORTANT: If this folder already exists, rename it to `userdata.bak` before you start the App for the first time. Once you've verified the App version, then you can copy your settings over (or delete the current `userdata` and replace it with your backup).
+      
+      # Start the App
+      flatpak run tv.kodi.Kodi
+      ```
+      Toggle Fullscreen/Windowed mode with `\`.
+  1. In Kodi, go into `System Settings` (the cog icon), then `System Information > Summary`. At the bottom under `Version Info`, check the `Build`.
+  1. Create a backup
+      ```sh
+      # Only needs to happen once:
+      # The User remote has to have an id assigned.
+      flatpak remote-modify --collection-id=org.flathub.Stable flathub
+      
+      # Get list of current runtimes (some Apps may use different ones), you will need the number listed for Branch
+      flatpak list --runtime | grep "Freedesktop Platform"
+      # Current branch is: 24.08
+      
+      # Determine runtime for App
+      flatpak list --app --app-runtime org.freedesktop.Platform//<BRANCH>
+      
+      # Platform required for the backup util
+      flatpak install --user flathub org.freedesktop.Platform/x86_64/<BRANCH>
+      
+      # Create a repo backup
+      flatpak create-usb --user ~/Downloads/flatpak/ tv.kodi.Kodi
+      
+      # Build a flatpak - <REPO> <OUTPUT> <ID> <BRANCH>
+      flatpak build-bundle ~/Downloads/flatpak/.ostree/repo ~/Downloads/flatpak/kodi_v21.3.flatpak tv.kodi.Kodi stable
+      ```
 </details>
 
 <details>
@@ -883,7 +1222,7 @@ For packages that require more than a simple `apt install`.
   # list available versions to download
   n ls-remote
   # install your preferred version
-  n install 18
+  n install 24.8.0
   # Check version
   node -v
   ```
@@ -914,7 +1253,7 @@ For packages that require more than a simple `apt install`.
 </details>
 
 <details>
-  <summary>Qemu (Virtual Machine Manager)</summary>
+  <summary>Qemu / Virt Manager (Virtual Machine Manager)</summary>
   
   ```sh
   (
@@ -926,40 +1265,94 @@ For packages that require more than a simple `apt install`.
   ```sh
   sudo virt-manager
   ```
-</details>
-
-<details>
-  <summary>FreeFileSync</summary>
   
-  ```sh
-  (
-    cd "${HOME}/Downloads/archives"
-    ver="13.5"
-    tarFileName="FreeFileSync_${ver}_Linux.tar.gz"
-    runFileName="FreeFileSync_${ver}_Install.run"
-    
-    if [ -f "$tarFileName" ]; then rm "$tarFileName"; fi
-    if [ -f "$runFileName" ]; then rm "$runFileName"; fi
-    
-    curl -L -O "https://freefilesync.org/download/${tarFileName}"
-    tar zxvf "$tarFileName"
-    chmod +x "$runFileName"
-    
-    "./$runFileName"
-    
-    rm "$runFileName"
-  )
-  ```
-</details>
-
-<details>
-  <summary>git lfs</summary>
-  
-  ```sh
-  curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-  sudo apt install git-lfs
-  git lfs install
-  ```
+  Creating a Windows VM:
+  - Create folders for VMs: `mkdir -p ~/VMs/pool`.
+  - Download the drivers `.iso` so virtio can communicate with Windows. [This page](https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers) had a good overview of the drivers. That page led me to [a github page](https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md) with links to possible downloads. From there I found an [archive page with all the downloads](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/). There's also a section with a link to the [latest stable version](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/) (`stable-virtio`), which changes with each release.
+  - Download the Windows `.iso` [from here](https://www.microsoft.com/en-us/software-download/windows11).
+  - Open Virt Manager
+  - Click `Create a new virtual machine`
+      ```
+      [ Step 1 ]
+        [x] Local install media (ISO image or CDROM)
+      
+      [ Step 2 ]
+        Choose ISO:
+          - Click Browse
+          - Click 'Browse Local' and pick the Windows .iso file
+      
+      [ Step 3 ]
+        Memory: 16384
+        CPU: 4
+      
+      [ Step 4 ]
+        [x] Select or create custom storage, click 'Manage'
+          - Click the 'VMs' pool in the left column (should be auto-created after selecting the .iso in Step 1)
+          - Select the 'default' pool and click 'Stop Pool' (just doing this to prevent myself from creating stuff in there).
+          - Click 'Create new volume'
+            Name: Win11_<VERSION>  (current version is 25H2)
+            Format: qcow2
+            Capacity: 80.0 GiB  (Minimum disk space required to install Windows 11 is 64GiB, so assign 80GiB)
+          - Select the new volume in the list, click 'Choose Volume'.
+      
+      [ Step 5 ]
+        Name: Win11_<VERSION>
+        [x] Customize configuration before install
+      ```
+  - If prompted with `Virtual Network is not active`, select `Yes` to activate.
+  - Configuration
+      ```
+      [ Overview ]
+        Chipset: Q35    (The Q35 chipset natively supports PCIe and provides improved PCI-E pass-through support)
+        Firmware: UEFI  (Enables Secure Boot, which is required for Windows 11. When using the UEFI firmware, you can take internal snapshots while the guest is shut down but not while it is running.)
+      
+      [ CPUs ]
+        [x] Copy host CPU configuration (host-passthrough)
+      
+      [ SATA Disk 1 ]
+        Disk bus: VirtIO  (VirtIO is preferred as it is specifically designed for virtualization.)
+        [ Advanced Options ]
+          Cache mode: none     (Equivalent to direct disk access on your host. If you have an encrypted filesystem, you may get an error like "filesystem does not support O_DIRECT" when installing. In that case, change from "none" to "writeback".)
+          Discard mode: unmap  (The qcow2 disk image will automatically shrink to reflect any newly freed space, such as from deleted files.)
+      
+      (Click 'Add Hardware' at bottom)
+        - Storage
+          [x] Select or create custom storage
+          Manage:
+            - Click the 'VMs' pool in the left column
+            - Select the 'virtio-win-<VERSION>.iso'
+          Device type: CDROM device
+      
+      [ NIC ]
+        Network source: Virtual network 'default' : NAT
+        Device model: virtio  (No processing overhead, and the performance of the guest virtual machine will naturally improve.)
+      
+      [ TPM vNone ]
+        Type: Emulated
+        Model: CRB
+        Version: 2.0  (TPM is designed to provide hardware-based security-related functions, and Windows 11 requires TPM version 2.0.)
+      ```
+  - Click 'Begin Installation' (at the top left of the Configuration window). When it says "Push any key to boot from cd-rom" do that, otherwise you'll get stuck in a Bios and have to force quit.
+      ```
+      - Click "I don't have a product key"
+      - Windows Pro N
+      - Select location to install Windows 11
+        - Load Driver > Browse > pick the virtio CD > viostor/w11/amd64
+        - Select the driver that showed in the list.
+        - Install
+        - Load Driver > Browse > pick the virtio CD > NetKVM/w11/amd64
+        - Select the driver that showed in the list.
+        - Install
+        - Select the disk that should now be in the list.
+      - When you hit the country selection screen.
+        - Press Shift + F10 to open a command prompt
+          ---
+          reg add HKLM\Software\Microsoft\Windows\CurrentVersion\OOBE /v HideOnlineAccountScreens /t REG_DWORD /d 1 /f
+          ---
+          Gets around having to use a Microsoft Account later in the setup.
+      - Enter your Username and Password
+      - For your security questions choose anything, and set 'na' for the answer.
+      ```
 </details>
 
 <br/>
@@ -1025,10 +1418,15 @@ dconf load / < ~/settings.dconf
 If you have any self-signed certificates that your browsers utilize, you'll need to install them now.
 ```sh
 sudo apt-get install -y ca-certificates
-sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates
+sudo cp <CERT_NAME>.pem /usr/local/share/ca-certificates
 sudo update-ca-certificates
+
+# Bring in certs for browsers, can be a '.crt' or '.pem' file
+certutil -d "sql:$HOME/.pki/nssdb" -A -t "CT,c,c" -n "<LABEL>" -i ~/Downloads/<CERT_NAME>.crt
+# List imported certs
+certutil -d "sql:$HOME/.pki/nssdb" -L
 ```
-- In some cases, changes don't take effect right away and a restart may be required.
+- In some cases, changes don't take effect right away. First try to exit and restart your Browsers. If that doesn't work, a restart may be required.
 - In some cases a restart doesn't work, for example Browsers sometimes have their own certificate area where you have to manually add a cert. For example, in Chrome you can go to Settings > search for `cert` > click Security > click Manage Certificates > go to Authorities and add your cert.
 <br>
 
@@ -1040,9 +1438,9 @@ If you have any back-ups of your keyrings, you'll need to install those especial
 <br>
 
 
-Control your monitor's temperature (limit blue light). For now `redshift` and `redshift-gtk` come pre-installed so just do the below.
+Control your monitor's temperature (limit blue light).
 ```sh
-# NOTE: This file could conflict with the 'qredshift' applet so just use 'Redshift'
+# NOTE: This file could conflict with the 'Inhibit' applet so just use 'Redshift'
 cp -i ./files/redshift.conf ~/.config/
 ```
 Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
@@ -1065,6 +1463,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Options]
       - Uncheck "Refresh the list of updates automatically"
   ```
+  
+  Launch **Startup Applications**, find **Update Manager** and uncheck it.
 </details>
 
 <details>
@@ -1095,7 +1495,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         # Clear any generated thumbnails
         rm -rf  ~/.cache/thumbnails/*
         # Create rc file for tumbler
-        mkdir ~/.config/tumbler
+        mkdir -p ~/.config/tumbler
         cp /etc/xdg/tumbler/tumbler.rc ~/.config/tumbler
         # Exclude specific paths from having thumbnails generated
         vi ~/.config/tumbler/tumbler.rc
@@ -1138,18 +1538,17 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   Launch **FSearch**, go to:
   - `Edit > Preferences`
-     ```
-     [Database]
-       (uncheck) Update database on start
-       
-       [Include]
-         (add) /home/<USER>
-     ```
-  - `Search`
-     ```
-     (check) Search in Path
-     (check) Match Case
-     ```
+      ```
+      [ Database ]
+        (uncheck) Update database on start
+        
+        [ Include ]
+          (add) /home/<USER>
+      
+      [ Search ]
+      (check) Search in Path
+      (check) Match Case
+      ```
   
   ---
   
@@ -1216,8 +1615,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      - (click) Add a new custom action
        ```
        [Basic]
-         Name: Create Desktop Shortcut
-         Description: Creates a Desktop Shortcut so you can easily launch applications or scripts.
+         Name: Create Launcher
+         Description: Creates a Launcher (.desktop file) so you can easily launch applications or scripts.
          Command: ~/.config/Thunar/actions/create-desktop-shortcut.py %f
          Icon: application-x-desktop
        
@@ -1274,7 +1673,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     
     [Backgrounds]
       [Images]
-        Vera > Sparkling
+        (ignore this and set it via HydraPaper)
     
     [Font Selection]
       Default font: Ubuntu Regular 12
@@ -1330,6 +1729,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           
           [Sidebar]
             Separator below user account info box: (checked)
+          
+          [Quicklauncher]
+            [Quicklauncher Applications]
+              (Create a Tilix item, move it below the default Terminal, disable the default Terminal)
         
         [Grouped window list]
           [General]
@@ -1337,7 +1740,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           
           [Panel]
             Button label: Window title
-            Show window count numbers: (uncheck)
+            Show window count badges: (uncheck)
             
         
         [Lock keys indicator with notifications]
@@ -1357,15 +1760,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         
         [Weather]
           [Weather]
-            Data service: OpenWeatherMap
+            Data service: Open-Mateo
             Forecast length (days): 7
           
           [Location]
-            (add locations in Saved Locations)
-            (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
-            (for the City I went with '<CITY>, <ABBREVIATED_STATE>')
-            (timezone America/Los_Angeles)
-            (Once items are added you can click on the panel item, and at the top of the forecast there'll be a location with horizontal arrows. Click on an arrow to go to a saved location)
+              [Location settings]
+                Manual Location: (checked)
+              
+              [Saved Locations]
+                (add locations)
+                (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
+                City: <CITY>
+                Country: <ABBREVIATED_STATE>
   
     [Desktop]
       Desktop Layout: No desktop icons
@@ -1388,15 +1794,19 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       Albert (check)
       Cairo-Dock (check)
       mintwelcome (uncheck)
+      Notes (check)
       Print Queue Applet (uncheck)
       Redshift (check)
       Solaar (check)
       Support for NVIDIA Prime (uncheck)
     
     [Windows]
+      [Behavior]
+        Location of newly opened windows: Center
+        
       [Alt-Tab]
         Alt-Tab switcher style: Icons and window preview  (the 3D options seem to cause screen freezing issues)
-        Delay before displaying: 200  (when switching quickly, no need for extra overhead)
+        Delay before displaying: 100
       
   ──────────────────────────────────────────────────────────────────────────────
   
@@ -1436,44 +1846,120 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
     [Login Window] (only effects re-login from Suspend)
       [Appearance]
-        Background: (choose image)
-        GTK theme: Mint-Y-Legacy-Dark-Aqua
-        Icon theme: Mint-Y-Legacy-Dark-Aqua
+        Background: /usr/share/backgrounds/linuxmint-wallpapers/mpiwnicki_sparkling.jpg
+        GTK theme: Mint-Y-Aqua
+        Icon theme: Mint-Y-Aqua
       
       [Users]
         Allow guest sessions: (checked)
   ```
   
+  Instead of installing a dock, you can create something similar via a Panel:
+  - Right-click an empty area of the main bar, and choose `Add a new Panel`.
+  - I clicked on the top Panel slot (highlighted in red).
+  - Right-click the new Panel, choose `Panel Settings`.
+      ```
+      [ Panel Visibility ]
+        Auto-hide panel: Intelligently hide panel
+      
+      [ Customize ]
+        Panel height: 50
+      ```
+  - Right-click the Panel and toggle `Panel Edit Mode`, and then click `Applets`.
+  - Go to the `Download` tab and search/add `Direct`. Then go back to the `Manage` tab.
+  - I added these Applets, and dragged them to the specified Panel areas:
+      ```
+      (center)
+        Panel Launchers
+        Seperator
+        Panel Launchers
+        Direct
+        Direct
+        Direct
+        Direct
+        Direct
+        Direct
+        Seperator
+        Panel Launchers
+        Seperator
+        Panel Launchers
+      
+      (right)
+        User Applet
+        Workspace Switcher
+      ```
+  - Configuration for the Panel Launcher is a bit glitchy. I tried to add custom items via the GUI but nothing appeared (*). Turns out you can import a JSON file with the items you want.
+      - Create some `launchers-<NUMBER>.json` files on your Desktop (can be named anything and placed anywhere) (also, maybe create one with the proper formatting, then just copy and alter).
+      - To get the names of the launchers, I mostly looked up items in the main system menu, right-clicked and chose `Add to desktop`. Then I'd run `ls -la ~/Desktop` to see the actual file names.
+          - For location launchers (Home, Trash, etc), I had to create custom launchers.
+              ```sh
+              cd ~/.local/share/applications
+              ```
+              I'm using my custom Thunar action to create a launcher. Right-click any file, choose `Create Launcher`. You can also right-click on the Desktop and choose `Create a new launcher here` and then move it to `~/.local/share/applications`.
+              ```
+              Version: 1.0
+              Exec: xdg-open trash:///
+              Name: open_trash
+              Comment: Opens a User's Trash folder
+              Icon: user-trash-full
+              ```
+              ```
+              Version: 1.0
+              Exec: bash -c "xdg-open $HOME"
+              Name: open_home
+              Comment: Opens a User's Home folder
+              Icon: user-home
+              ```
+              ```
+              Version: 1.0
+              Exec: bash -c "xdg-open $HOME/Music"
+              Name: open_music
+              Comment: Opens a User's Music folder
+              Icon: folder-music
+              ```
+              ```
+              Version: 1.0
+              Exec: bash -c "xdg-open $HOME/Projects"
+              Name: open_projects
+              Comment: Opens a User's Projects folder
+              Icon: mine__folders
+              ```
+              ```
+              Version: 1.0
+              Exec: systemctl suspend
+              Name: sys_suspend
+              Comment: Puts the system to sleep
+              Icon: system-shutdown
+              ```
+      - After some trial and error, this format worked for me:
+          ```json
+          {
+              "launcherList": {
+                  "value": [
+                      "<NAME1>.desktop",
+                      "<NAME2>.desktop",
+                      "<NAME3>.desktop:flatpak"
+                  ]
+              }
+          }
+          ```
+          - Note: The import will fail silently if you have any malformed JSON. You can [validate on this site](https://jsonlint.com/).
+          - Note: If you're adding a launcher for a Flatpak, you need to suffix it with `:flatpak`.
+      - Right-click on an empty area of the Applet, you should see `Applet Preferences`. Click on that and then click `Configure`. Click the `More options` menu button (3 lines), then click `Import from a file`.
+      - You should see your items replace the old items. The config files are stored in `~/.config/cinnamon/spices/panel-launchers@cinnamon.org/`.
+      - (*) While troubleshooting something else, I found `~/.local/share/cinnamon/panel-launchers/` which had some orphaned custom launchers that were created. If I try to edit a launcher it generates the altered version there, but doesn't update the GUI. If I drag items around within the applet it seems to refresh then.
+  - Configuration for the User Applet:
+      ```
+      Display the user Image on the Panel: On
+      ```
+  - Configuration for the Workspace Applet:
+      ```
+      Type of display: Simple buttons
+      ```
+  
   If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. There are a couple ways to disable it:
       - Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
       - If nothing in the Sound Settings worked, you can try the CLI tool `alsamixer`. Once it's running in your CLI, hit `F6` to choose your sound device. Then arrow Left/Right to choose an output channel, and arrow Up/Down to change the volume.
-</details>
-
-<details>
-  <summary>Expand for Albert Settings</summary>
-  
-  I use `QML Box Model` so that SVG icons show up clearly.
-  ```
-  ┎─────────┒
-  ┃ General ┃
-  ┖─────────┚
-    Hot key: Ctrl+Space
-    Frontend: QML Box Model
-    Terminal: Tilix
-    Autostart on login: (checked)
-    Style: BoxModel (click the button next to it)
-      item_title_fontsize: 30
-      item_description_fontsize: 20
-      font_name: Ubuntu Mono
-    Apply theme: DarkMagenta
-    Display scrollbar: (check)
-  
-  ┎────────────┒
-  ┃ Extensions ┃
-  ┖────────────┚
-    [X] Applications
-    [X] WebSearch
-  ```
 </details>
 
 <details>
@@ -1571,7 +2057,14 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <details>
   <summary>Expand for Remmina Settings</summary>
   
-  - Preferences > Applet > [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
+  ```
+  [ Preferences ]
+    [ General ]
+      Remmina data folder: ~/.local/remmina
+    
+    [ Applet ]
+      [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
+  ```
 </details>
 
 <details>
@@ -1588,12 +2081,11 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       
       [Icons]
         (tick) Also apply this icon theme to the dark style (makes the volume icon look funny, but otherwise the icons in file picker are almost invisible, so it's required)
-        (tick) Mint-Y-Dark
+        (tick) ePapirus-Dark
     
     [Playlist]
       [Behavior]
         Start up:
-          (tick) Load temporary playlists
           (tick) Load last track on startup
           (tick) Remember time of last track
       
@@ -1602,11 +2094,13 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         (untick) Show numbers
         (tick) Show covers
         Custom font color in dark theme: #2ad8ff
-        Playlist item text: %nr% - %title%
       
-      [Covers]
-        (untick) Save found covers to database
-        (untick) Fetch missing covers from internet
+      [Row formatting]
+        Row formatting: %nr% - %title%
+      
+    [Covers]
+      (untick) Save found covers to database
+      (untick) Fetch missing covers from internet
     
   [Plugins]
     (tick) Level (customize colors by mousing over and clicking button)
@@ -1631,7 +2125,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   )
   ```
   
-  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme.
+  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme. To get out of the preview, `ALT + TAB` to your terminal and `CTRL + C` to kill the process.
   
   The backgrounds for a theme are set in `/usr/share/sddm/themes/<THEME>/theme.conf` on the `background=` line.
   Generally themes point to the global wallpapers so an image can be displayed for any user. Those wallpapers are in `/usr/share/wallpapers`.
@@ -1670,15 +2164,18 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <details>
   <summary>Expand for Sticky Settings</summary>
   
-  Preferences
   ```
-  [General]
-    Tray icon: (checked)
-    Show the main window automatically: (unchecked)
+  [ General ]
+    [x] Tray Icon
+    [ ] Show the main window automatically
   
-  [Automatic start]
-    Start automatically: (checked)
-    Show notes on the screen: (checked)
+  [ Backups ]
+    [x] Automatic Backups
+    Time between backups: 12
+    Number to keep: 2
+  
+  [ Automatic Start ]
+    [x] Start automatically
   ```
 </details>
 
@@ -1711,15 +2208,17 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   <summary>Expand for VS Code Settings</summary>
   
   Extensions:
-  - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - All Autocomplete https://marketplace.visualstudio.com/items?itemName=Atishay-Jain.All-Autocomplete
      - VSCode has the built-in `Word Based Suggestions` but it's not smart enough to handle variable suggestions during a destructured `import` if the variable is assigned to an Object.
   - Alphabetical Sorter https://marketplace.visualstudio.com/items?itemName=ue.alphabetical-sorter
+  - Ascii Tree Generator https://marketplace.visualstudio.com/items?itemName=aprilandjan.ascii-tree-generator
   - Auto-Rename Tag https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag
   - Base IDE https://marketplace.visualstudio.com/items?itemName=mads-hartmann.bash-ide-vscode
+  - Better Todo Tree: https://marketplace.visualstudio.com/items?itemName=FanaticPythoner.better-todo-tree
   - Blueprint https://marketplace.visualstudio.com/items?itemName=teamchilla.blueprint
   - Change-case https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case
-  - dotenv https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv
+  - CSS Nesting Syntax Highlighting: https://marketplace.visualstudio.com/items?itemName=jacobcassidy.css-nesting-syntax-highlighting
+  - DotENV https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv
   - Easy Snippet https://marketplace.visualstudio.com/items?itemName=inu1255.easy-snippet
   - ESLint https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
   - File Icons https://marketplace.visualstudio.com/items?itemName=file-icons.file-icons
@@ -1730,6 +2229,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - Indent one space https://marketplace.visualstudio.com/items?itemName=usernamehw.indent-one-space
   - Lint Lens https://marketplace.visualstudio.com/items?itemName=ghmcadams.lintlens
   - Markdown All in One https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one
+  - NGINX Configuration Language Support: https://marketplace.visualstudio.com/items?itemName=ahmadalli.vscode-nginx-conf
   - One Dark Pro theme https://marketplace.visualstudio.com/items?itemName=zhuangtongfa.Material-theme
   - Partial Diff https://marketplace.visualstudio.com/items?itemName=ryu1kn.partial-diff
   - select highlight in minimap https://marketplace.visualstudio.com/items?itemName=mde.select-highlight-minimap
@@ -1787,7 +2287,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      SCM: Default View Mode: tree
      Search: Use Global Ignore Files: (check)
      Telemetry: Telemetry Level: off
-     Terminal > Integrated: Font Family: FantasqueSansMono NF
+     Terminal > Integrated: Font Family: FantasqueSansM Nerd Font Mono
      Terminal > Integrated > Sticky Scroll: Enabled (uncheck)
      Todo-tree > General: Tags
        (add) NOTE
@@ -1945,6 +2445,47 @@ Now that things are set up, you should:
 
 ---
 
+## Install Hardware
+
+### Label Printer
+
+For the most part, the install was smooth, but there was a small hiccup.
+
+1. Download and install driver (mine supplied a `.deb`).
+    - If I need to uninstall the driver later I can run `apt search labelrange` (`labelrange` is the make), and then something like `apt remove labelrange-printer-driver`.
+1. Power on the printer, and plug in it's supplied Bluetooth USB dongle. It should start to install the printer.
+1. The hiccup during the install is that it defaults to an incorrect driver. To fix that:
+    - Open up Printers.
+    - In the Printers window, right-click the printer Select `Properties`.
+    - In `Settings`, for the `Make and Model`, click `Change`.
+    - It'll scan for drivers for a bit, it seems to default to an HP printer. Scroll the list until you find `LabelRange`.
+
+---
+
+## Make Extra Internal Drives Available
+
+If you have extra internal drives, you'll need to format them, and then set them up to mount on boot.
+- Open `gparted`
+- Select the drive from the top-left drop-down.
+- Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
+- Apply the changes (the bottom should read `0 operations pending`).
+- Get the `UUID` of a disk by running `blkid`.
+- `sudo vim /etc/fstab`
+- Add something like `UUID=<UUID>  /mnt/extra_data  ext4  defaults  0  0`
+    ```
+    <UUID>           The unique id of the disk (you can see the names in gparted)
+    /mnt/extra_data  The location where it'll be mounted to.
+    ext4             The filesystem format
+    defaults         Use default options  
+    0 0              Dump, check disk priority (zero is off)
+    ```
+- Create the mount folder `sudo mkdir -p /mnt/extra_data`.
+- Verify the mount will work `sudo mount -a`.
+- Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra_data`.
+
+
+---
+
 ## Back Up or Restore Data
 
 ### Backing up data
@@ -2004,10 +2545,19 @@ This could have unexpected syncing results if applications are running in the ba
 ### Restoring data
 
 1. Load and select a config.
-1. There's a `Swap Sites` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.
+1. There's a `Swap Sides` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.
 1. Click `Compare`, review what will be changed.
 1. If things look good, click `Synchronize`.
 1. **Important**: Be sure not to save the config in the reversed state.
+
+#### Reset repos after restore
+
+Not sure if I had a bad backup, or the global permissions for my User folder changed, but after I restored my backup, my code repos had all their file permissions changed. Instead of going into each one and checking diffs to ensure I didn't have any untracked or modified files, I wrote a script to reset everything.
+```sh
+# Reset all the repos in the specified parent folder, that only have file permission changes.
+./bin/fix-repo-perms.sh "${HOME}/Projects/Code/Apps"
+```
+
 
 ### Create an encrypted USB drive to back up sensitive data
 
@@ -2121,6 +2671,9 @@ Followed [steps from this guide](https://linuxconfig.org/usb-stick-encryption-us
 # Logs
 /var/log
 
+# Network Interface configs
+/etc/netplan
+
 # System audio
 /usr/share/sounds
 ```
@@ -2148,11 +2701,11 @@ Recommended tools:
 
 File locations:
 - CSS
-   ```
-   ~/.config/gtk-3.0/colors.css # color definitions
-   ~/.config/gtk-3.0/gtk.css # just imports `colors.css`
-   /usr/share/themes/<THEME>/gtk-3.0/gtk.css # theme specific styling/overrides
-   ```
+    ```
+    ~/.config/gtk-3.0/colors.css # color definitions
+    ~/.config/gtk-3.0/gtk.css # just imports `colors.css`
+    /usr/share/themes/<THEME>/gtk-3.0/gtk.css # theme specific styling/overrides
+    ```
 
 Sources:
 - https://gtkthemingguide.vercel.app/#/getting_started
@@ -2178,9 +2731,74 @@ Updating Styles:
 
 ### Icons
 
-- [Icon Theme Spec](https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html)
-- [Icon Naming Spec](https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html)
-- Global icons (usually used by themes) are in `/usr/share/icons/<THEME>/<TYPE>/<SIZE>/`. So if there's an icon you like, but you want to modify it, that's where it may be.
+- [Icon Theme Spec](https://specifications.freedesktop.org/icon-theme/latest/)
+- [Icon Naming Spec](https://specifications.freedesktop.org/icon-naming/latest/)
+
+```
+/usr/share/icons      # Global icons  (Apps installed for every User)
+~/.local/share/icons  # User icons    (Apps installed for a specific User, or custom icons used for whatever)
+```
+There should be a theme folder in the `icons` folder which contains folders for the supported sizes.
+```
+<PARENT>/icons/hicolor  (hicolor is a default, and usually safe to drop your stuff in)
+  ┣━ /16x16     (Status bar and context menus)
+  ┣━ /24x24     (Toolbar and small menus)
+  ┣━ /32x32     (Panel icons and menus)
+  ┣━ /48x48     (Standard application icon)
+  ┣━ /64x64     (File manager and panels)
+  ┣━ /128x128   (Application menu and dock)
+  ┣━ /256x256   (High-DPI displays)
+  ┣━ /512x512   (Large preview and app store)
+  ┗━ /scalable  (SVGs for perfect rendering at any size)
+```
+Within the size folders, there are categories.
+```
+/512x512
+  ┣━ /actions     (Icons which are generally used in menus and dialogs for interacting with the user.)
+  ┣━ /animations  (Animated images used to represent loading web sites, or other background processing which may be less suited to more verbose progress reporting in the user interface. Animations should be a PNG with frames which are the size of the directory the animation is in, tiled in a WxH grid. Implementations should determine the number of frames by dividing the image into it's frames, and iterating from left to right, wrapping to the first frame, after rendering the last.)
+  ┣━ /apps        (Icons that describe what an application is, for use in the Programs menu, window decorations, and the task list. These may or may not be generic depending on the application and its purpose. Applications which are to be considered part of the base desktop, such as the calculator or terminal, should use the generic icons specified in this specification, while more advanced applications such as web browsers and office applications should use branded icons which still give the user an idea of what function the application provides.)
+  ┣━ /categories  (Icons that are used for categories in the Programs menu, or the Control Center, for separating applications, preferences, and settings for display to the user.)
+  ┣━ /devices     (Icons for hardware that is contained within or connected to the computing device. Naming for extended devices in this group, is of the form <primary function>-<manufacturer>-<model>. This allows ease of fallback to the primary function device name, or ones more targeted for a specific series of models from a manufacturer. For example, a theme author may want to provide icons for different phones. The specific model icons could be named “phone-samsung-t809”, “phone-motorola-rokr”, and “phone-motorola-pebl”. However, the theme must provide a phone icon in the theme's style, so that devices not matching these models, will still have an appropriate icon. An exception to this rule is that the “media” icons do not need to include manufacturer names, as they are generic items, and may be available from many manufacturers. As a result, for media, the specific icons are to differentiate between different specific types of media. For exmaple, an artist may wish to provide icons for BluRay, DVD, HD-DVD, CD-ROM, and variations thereof. The specific media type icons should be named in the form, <primary function>-<specific format>. Some examples are “media-optical”, “media-optical-bd” and “media-optical-dvd”.)
+  ┣━ /emblems     (Icons for tags and properties of files, that are displayed in the file manager. This context contains emblems for such things as “read-only” or “photos”.)
+  ┣━ /emotes      (Icons for emotions that are expressed through text chat applications such as :-) or :-P in IRC or instant messengers.)
+  ┣━ /intl        (Icons for international denominations such as flags.)
+  ┣━ /mimetypes   (Icons for different types of data, such as audio or image files.)
+  ┣━ /places      (Icons used to represent locations, either on the local filesystem, or through remote connections. Folders, trash, and workgroups are some examples.)
+  ┗━ /status      (Icons for presenting status to the user. This context contains icons for warning and error dialogs, as well as for the current weather, appointment alarms, and battery status.)
+```
+The format for naming icons is `<NOUN>-<ADJ/VERB>`, so the item descriptor and either it's state or action.
+```
+app-active
+app-exiting
+```
+
+#### Installing Raster Icons
+
+To install raster (.png) icons, you'd run:
+```sh
+# The default 'mode' depends on who's running the command. So in most cases 'mode' can be omitted, and if you run the command with 'sudo' then 'mode' will be 'system', otherwise it'll be 'user'.
+# The default 'theme' is 'hicolor', but is present here for the example.
+# The 'size' is the folder where it'll be installed.
+# The default 'context' is 'apps', but is present here for the example.
+# The source path of the icon.
+# The optional new name of the icon.
+
+xdg-icon-resource install --mode user --theme hicolor --size 16 --context apps "./myicons/fu-16.png" "app-fu" 
+```
+
+#### Installing Vector Icons
+
+To install vector (.svg) icons, it's a manual process. So far I've found that I can just dump them into `~/.local/share/icons/hicolor/scalable/<CATEGORY>/` (generally I add to the `app` category folder).
+Cool thing about vector icons, you can add `-symbolic` to the end (`app-symbolic.svg`) and the system will automatically change the color of the icon to match the theme.
+
+#### Refreshing Icon Cache
+
+There have been times where some Apps don't recognize my newly added icons, and I have to tell the system to refresh. Oddly, this command runs as root on the system-wide folder, but somehow refreshes icons in `.local` as well (I tried calling it on specific nested folders system/local and nothing changes, it always has to be within `/usr/share/icons/`).
+```sh
+sudo update-icon-caches /usr/share/icons/*
+```
+
+#### Creating & Adding Raster Icons
 
 Before creating or finding my own icons I open up `cuttlefish` to see if there's something that'll work for me. If not, you can add a single icon in `~/.local/share/icons/`.
 For better compatibility (like having it show up in `cuttlefish`) I created a GIMP plugin to generate folders and the different sized icons.
@@ -2287,77 +2905,6 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   # There could be other folders in `.cache` that you may want to investigate.
   # Deleting folders or their contents while certain Apps are running could cause issues.
   rm -rf  ~/.cache/{thumbnails}/*
-  ```
-</details>
-
-### PulseAudio Volume Notification Keeps Popping Up
-<details>
-  <summary>Expand for Solution</summary>
-  
-  Was having an issue where the PulseAudio volume change notification would keep popping up randomly when I wasn't adjusting volume. Usually would happen while using a Browser and a video would start playing.
-  
-  First you can debug Pulse's logs:
-  ```sh
-  systemctl --user stop pulseaudio.{socket,service}
-  # Terminal #1
-  LANG=C pulseaudio -vvvv --log-time=1 > ~/Desktop/pulseverbose.log 2>&1
-  # Terminal #2 (or just stop the above process when you see the notification pop up)
-  tail -f ~/Desktop/pulseverbose.log
-  ```
-  Most forums date this back to a long-standing issue with it detecting that the headphone jack is plugged in then unplugged. Sure enough I was seeing these random messages:
-  ```
-  [pulseaudio] module-alsa-card.c: Jack 'Headphone Jack' is now plugged in
-  ```
-  
-  ```sh
-  # stop the currently running service (if it's running)
-  systemctl --user stop pulseaudio.{socket,service}
-  # edit pulse's config
-  sudo vim /etc/pulse/default.pa
-  ```
-  ```
-  # Disable the below line
-  load-module module-switch-on-port-available
-  ```
-  ```sh
-  # start the service
-  systemctl --user start pulseaudio.{socket,service}
-  ```
-  What the modules do:
-  - `on-port-available` is the event that a port becomes usable, for example when you insert a mini jack.
-  - `on-connect` is the event that a new device is connected which has an audio port, such as a usb dock.
-  
-  ---
-  
-  **NOTE: Turns out the below didn't work**. Pipewire didn't help at all, in fact it kept crashing after extended use. Keeping this for future reference.
-  
-  Change from PulseAudio to Pipewire by [following these instructions](https://trendoceans.com/enable-pipewire-and-disable-pulseaudio-in-ubuntu/).
-  ```sh
-  # First check and see if it's already installed and running
-  systemctl --user status pipewire pipewire-session-manager
-  
-  # If it's not installed
-  sudo apt install pipewire
-  # Install audio client and some libs
-  sudo apt install gstreamer1.0-pipewire libpipewire-0.3-{0,dev,modules} libspa-0.2-{bluetooth,dev,jack,modules} pipewire{,-{audio-client-libraries,pulse,bin,tests}}
-  # Install WirePlumber
-  sudo apt install wireplumber gir1.2-wp-0.4 libwireplumber-0.4-{0,dev}
-  
-  # Kill PulseAudio
-  systemctl --user --now disable pulseaudio.{socket,service}
-  systemctl --user mask pulseaudio
-  
-  # Copy over Pipewire configs
-  sudo cp -vRa /usr/share/pipewire /etc/
-  
-  # Start up Pipewire
-  systemctl --user --now enable pipewire{,-pulse}.{socket,service}
-  
-  # Your system may require a log-off/in, or a reboot
-  ```
-  If you need/want Pipewire's equivelant to PulseEffects
-  ```sh
-  flatpak install flathub com.github.wwmm.easyeffects
   ```
 </details>
 

@@ -20,15 +20,12 @@ function notify {
 }
 
 # NOTE: for `help`
-# # from within <REPO>/distro/arch/bin
-# ./dist/user-script.sh --install "${PWD}/dist/backup.sh"
-# ./dist/user-script.sh --uninstall "backup"
+# # from within <REPO>/distro/mint-cinnamon/bin 
+# ./user-script.sh --install "${PWD}/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
+# ./user-script.sh --uninstall "lan-shares"
 # 
-# ./dist/user-script.sh --install "${PWD}/dist/lan-shares.sh" "LAN Shares" "Utility to mount or unmount network shares" "drive-multidisk" "-gui"
-# ./dist/user-script.sh --uninstall "lan-shares"
-# 
-# ./dist/user-script.sh --install "${PWD}/dist/user-script.sh"
-# ./dist/user-script.sh --uninstall "user-script"
+# ./user-script.sh --install "${PWD}/user-script.sh"
+# ./user-script.sh --uninstall "user-script"
 
 if [[ "${1}" == '--install' ]]; then
   # parse ordered args
@@ -37,12 +34,13 @@ if [[ "${1}" == '--install' ]]; then
   LAUNCHER__COMMENT="${4}"
   LAUNCHER__ICON="${5}"
   LAUNCHER__CMD_FLAGS="${6}"
+  LAUNCHER__CMD_PREFIX="${7}"
   
   NAME__SCRIPT="$(stripExt "$(basename "${PATH__SCRIPT}")")"
   PATH__USR_SCRIPT="$(absScriptPath "${NAME__SCRIPT}")"
   
   # symlink source to a global path for easy access via terminal
-  sudo ln -s "${PATH__SCRIPT}" "${PATH__USR_SCRIPT}"
+  sudo ln -sfn "${PATH__SCRIPT}" "${PATH__USR_SCRIPT}"
   # ensure script permissions
   sudo chmod +x "${PATH__USR_SCRIPT}"
   
@@ -55,7 +53,7 @@ if [[ "${1}" == '--install' ]]; then
       echo "Version=1.0"
       echo "Name=${LAUNCHER__NAME}"
       echo "Comment=${LAUNCHER__COMMENT}"
-      echo "Exec=${PATH__USR_SCRIPT} ${LAUNCHER__CMD_FLAGS}"
+      echo "Exec=${LAUNCHER__CMD_PREFIX}${PATH__USR_SCRIPT} ${LAUNCHER__CMD_FLAGS}"
       echo "Icon=${LAUNCHER__ICON}"
       echo "Terminal=false"
       echo "Type=Application"
@@ -64,9 +62,13 @@ if [[ "${1}" == '--install' ]]; then
     
     # set launcher permissions
     chmod +x "${PATH__USER_APPS_LAUNCHER}"
+    # account for "Checksum-based launcher trusts - new functionality added in Thunar 4.17.4"
+    if hash gio 2>/dev/null; then
+      gio set -t string "${PATH__USER_APPS_LAUNCHER}" metadata::xfce-exe-checksum "$(sha256sum "${PATH__USER_APPS_LAUNCHER}" | awk '{print $1}')"
+    fi
     
     # add launcher shortcut to Dekstop
-    ln -s "${PATH__USER_APPS_LAUNCHER}" "${HOME}/Desktop/"
+    ln -sfn "${PATH__USER_APPS_LAUNCHER}" "${HOME}/Desktop/"
   fi
   
   if [ $? -eq 0 ]; then

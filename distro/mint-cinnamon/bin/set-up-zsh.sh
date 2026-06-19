@@ -48,7 +48,7 @@ sed -i -E 's|ZSH_THEME=".*"|ZSH_THEME="zsh-theme-boom/skin"|' "${RCFILE}"
 # add custom fonts
 TTF_DIR=/usr/share/fonts/truetype
 sudo mkdir -p "${TTF_DIR}"
-sudo cp "${PATH__ZSH_THEME}/fonts/Fantasque Sans Mono Regular Nerd Font Complete Mono Windows Compatible.ttf" "${TTF_DIR}"
+sudo find "${PATH__ZSH_THEME}/fonts" -name '*.ttf' -exec cp {} "${TTF_DIR}/" \;
 # update font cache (headless systems likely won't have this)
 if command -v fc-cache &> /dev/null; then
   sudo fc-cache -fv

@@ -26,9 +26,11 @@
     <FolderPairs>
         <Pair>
             <Left>/etc</Left>
-            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/etc</Right>
+            <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/etc</Right>
             <Filter>
                 <Include>
+                    <Item>libvirt/qemu</Item>
+                    <Item>netplan</Item>
                     <Item>pulse/daemon.conf</Item>
                     <Item>sddm.conf.d</Item>
                 </Include>
@@ -40,11 +42,11 @@
         </Pair>
         <Pair>
             <Left>/var/lib/AccountsService/icons</Left>
-            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/var</Right>
+            <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/var</Right>
         </Pair>
         <Pair>
             <Left>/usr/share/sddm/themes/breeze</Left>
-            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/usr</Right>
+            <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/usr</Right>
             <Filter>
                 <Include>
                     <Item>theme.conf.user</Item>

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# NOTE: https://specifications.freedesktop.org/desktop-entry/latest/recognized-keys.html
+
 ##
 # Debug script:
 # - Run `tail -f ~/.xsession-errors`
@@ -9,6 +11,7 @@
 
 import os, sys
 from pathlib import Path
+from shutil import which
 
 filePath = sys.argv[1]
 parentPath = os.path.dirname(filePath)
@@ -20,10 +23,10 @@ KEY__NAME = 'name'
 KEY__VERSION = 'version'
 inputs = [
   f"Version|{KEY__VERSION}",
-  f"Bin Path|{KEY__BIN_PATH}",
+  f"Exec|{KEY__BIN_PATH}",
   f"Name|{KEY__NAME}",
   f"Comment|{KEY__COMMENT}",
-  f"Icon Path|{KEY__ICON_PATH}"
+  f"Icon|{KEY__ICON_PATH}"
 ]
 
 # Build input fields ===========================================================
@@ -74,6 +77,8 @@ payload = (
 fP = f"{parentPath}/{vals[KEY__NAME].lower().replace(' ', '-')}.desktop"
 with open(fP, 'w') as f: f.write(payload)
 os.chmod(fP, 0o775) # `0o` converts it to an octal
+# account for "Checksum-based launcher trusts - new functionality added in Thunar 4.17.4"
+if which('gio') is not None: os.system(f'gio set -t string "{fP}" metadata::xfce-exe-checksum \"$(sha256sum "{fP}" | awk \'{{print $1}}\')\"')
 
 # Inform User where to place the file ==========================================
 # I could automate this, but this gives the User the ability to make edits, and

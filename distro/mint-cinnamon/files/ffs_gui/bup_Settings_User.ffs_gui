@@ -131,8 +131,8 @@
     </Filter>
     <FolderPairs>
         <Pair>
-            <Left>%HOME%</Left>
-            <Right>/media/%USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/user</Right>
+            <Left>%FFS_HOME%</Left>
+            <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/user</Right>
         </Pair>
     </FolderPairs>
     <Errors Ignore="false" Retry="0" Delay="5"/>
