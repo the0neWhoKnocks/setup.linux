@@ -596,7 +596,6 @@ Here are some sources for finding alternatives to software you may have used on 
     solaar \
     soundconverter \
     sqlitebrowser \
-    vlc \
     xclip \
     xserver-xorg-input-synaptics
 )
@@ -660,7 +659,6 @@ sudo apt install -y \
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sqlitebrowser](https://sqlitebrowser.org/) | GUI to browse/edit SQL database files |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
-  | [vlc](https://www.videolan.org/vlc/) | Multimedia player |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
   | [xclip](https://github.com/astrand/xclip) | Copy from CLI to clipboard |
   | [xserver-xorg-input-synaptics](https://packages.ubuntu.com/bionic/xserver-xorg-input-synaptics) | Enables smooth/inertial/kinetic scroll for touchpads on long documents/webpages (requires reboot) |
@@ -743,6 +741,7 @@ flatpak install flathub --system --noninteractive -y \
   org.kde.iconexplorer \
   org.kde.kdenlive \
   org.localsend.localsend_app \
+  org.videolan.VLC \
   rs.ruffle.Ruffle
 
 (
@@ -782,6 +781,7 @@ flatpak install flathub --system --noninteractive -y \
   | [org.kde.iconexplorer](https://develop.kde.org/docs/features/additional-features/icons/) | Icon Explorer (Cuttlefish) | Simple GUI to look up icon names. |
   | [org.kde.kdenlive](https://kdenlive.org/features/) | Kdenlive | Video editor |
   | [org.localsend.localsend_app](https://localsend.org/) | LocalSend | Cross-platform file sharing |
+  | [org.videolan.VLC](https://www.videolan.org/vlc/) | VLC | Multimedia player |
   | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
   | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
 </details>
@@ -867,6 +867,47 @@ flatpak install flathub --system --noninteractive -y \
       Image editing: /var/lib/flatpak/app/org.gimp.GIMP/current/active/export/bin/org.gimp.GIMP
       Audio editing: /usr/bin/audacity
       Animation editing: /usr/bin/glaxnimate
+  ```
+</details>
+
+<details>
+  <summary>Expand for VLC</summary>
+  
+  I'm using the flatpak because there were issues with the `apt install` utilizing the NVidia GPU for hardware accelerated playback. Once I switched to the flatpak AV1 videos played (with hardware acceleration), and there were no errors in the CLI (if VLC was started via CLI).
+  
+  Note: I would prefer to use a custom skin, but all the skins have their tops hidden when the window is maximized.
+  
+  Customize Interface:
+  ```
+  Expanding Spacer
+  [FB] Extended Panel
+  [FB] Snapshot
+  [FB] Information
+  [FB] Playlist
+  [FB] Fullscreen
+  Spacer
+  [FB] Previous
+  [FB][BB] Play
+  [FB] Next
+  Spacer
+  [FB] Loop / Repeat
+  [FB] Random
+  Expanding Spacer
+  Volume
+  ```
+  
+  Preferences:
+  ```
+  ┎───────────┒
+  ┃ Interface ┃
+  ┖───────────┚
+    [ ] Use only one instance when started from file manager
+
+  ┎───────┒
+  ┃ Video ┃
+  ┖───────┚
+    Video snapshots
+      Directory: ~/Pictures/vlc
   ```
 </details>
 
@@ -2176,31 +2217,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   [ Automatic Start ]
     [x] Start automatically
-  ```
-</details>
-
-<details>
-  <summary>Expand for VLC Settings</summary>
-  
-  Download custom skin (I've stopped doing this because the skins don't always behave. Leaving for reference.)
-  ```sh
-  mkdir ~/.config/vlc/skins
-  wget http://www.videolan.org/vlc/download-skins2-go.php?url=subX.vlt -O ~/.config/vlc/skins/
-  ```
-  
-  Preferences
-  ```
-  ┎───────────┒
-  ┃ Interface ┃
-  ┖───────────┚
-    Use custom skin: ~/.config/vlc/skins/subX.vlt
-
-  ┎───────┒
-  ┃ Video ┃
-  ┖───────┚
-    Video snapshots
-      Directory: ~/Pictures/vlc
-      Format: jpg
   ```
 </details>
 
