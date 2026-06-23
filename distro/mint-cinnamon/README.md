@@ -2672,6 +2672,7 @@ Followed [steps from this guide](https://linuxconfig.org/usb-stick-encryption-us
 | ------- | ----------- |
 | `sudo apt autoremove <PACKAGE>` | Can be used after a `apt remove <PACKAGE>` or in place of. A reason to use it after a `remove` would be to ensure that you don't accidentally remove something because a dependency wasn't tracked properly. But if you just added something and know that there won't be any conflicts use `autoremove`. |
 | `sudo add-apt-repository --remove <REPO>` | It's a common one, but I always forget the syntax. You'd think there'd be a `remove-apt-repository`. |
+| `apt search <QUERY>` | Search for available packages. There are [single letter codes](https://www.debian.org/doc/manuals/aptitude/ch02s02s02.en.html) next to the package names that tell you if something is already installed. Generally you'll only care about `i` (installed) or `p` (not installed) |
 | `xev | grep keycode` | Prints out keycodes as you type |
 | `xprop | grep WM_CLASS` | (click on an open window) prints the window class of an app. Aids in finding things on the system |
 
