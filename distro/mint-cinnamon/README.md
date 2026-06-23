@@ -1459,7 +1459,7 @@ dconf load / < ~/settings.dconf
 If you have any self-signed certificates that your browsers utilize, you'll need to install them now.
 ```sh
 sudo apt-get install -y ca-certificates
-sudo cp <CERT_NAME>.pem /usr/local/share/ca-certificates
+sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates  # NOTE: I had a .pem file and when I checked if it was added in 'Passwords and Keys > Certificates > System Trust' - I couldn't find it. I rename the .pem to .crt, re-ran update-ca-certificates, and it showed up.
 sudo update-ca-certificates
 
 # Bring in certs for browsers, can be a '.crt' or '.pem' file
