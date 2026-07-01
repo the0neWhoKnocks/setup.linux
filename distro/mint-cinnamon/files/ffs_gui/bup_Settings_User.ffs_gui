@@ -30,6 +30,7 @@
             <Item>.steam/debian-installation/userdata</Item>
             <Item>.vimrc</Item>
             <Item>.zshrc</Item>
+            <Item>settings.dconf</Item>
             <Item>Pictures/avatars</Item>
             <Item>Pictures/wallpapers</Item>
             <Item>pkgs.list</Item>
@@ -121,8 +122,10 @@
             <Item>*/.Trash-*/</Item>
             <Item>*/.recycle/</Item>
             <Item>*cache*|*Cache*</Item>
+            <Item>*.git*</Item>
             <Item>*/logs</Item>
             <Item>*.log</Item>
+            <Item>/.config/Code/User/History/</Item>
             <Item>/.steam/debian-installation/steamapps/compatdata/</Item>
         </Exclude>
         <SizeMin Unit="None">0</SizeMin>

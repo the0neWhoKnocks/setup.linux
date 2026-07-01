@@ -7,10 +7,13 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Initial Boot](#initial-boot)
 - [Set Up Display](#set-up-display)
 - [Installing / Updating the Kernel](#installing--updating-the-kernel)
+- [Software Sources](#software-sources)
 - [System Tweaks](#system-tweaks)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
+  - [How to download packages from Launchpad](#how-to-download-packages-from-launchpad)
+  - [How to set up a local mirror for packages](#how-to-set-up-a-local-mirror-for-packages)
 - [Clone This Repo](#clone-this-repo)
 - [Set Up Shell](#set-up-shell)
 - [Set Up Repos](#set-up-repos)
@@ -194,6 +197,13 @@ The theory is that after a kernel upgrade the new kernel is not active before th
 
 ---
 
+## Software Sources
+
+1. Open `Software Sources` and set your Main and Base to the fastest/closest source.
+1. Click the `Update the APT cache` button.
+
+---
+
 ## System Tweaks
 
 - There's a limit of 15 characters for the `hostname` for `netbios`. You can run `testparm -s` to see if your hostname length is ok (when it's not you'll see `WARNING: The 'netbios name' is too long`).
@@ -206,7 +216,16 @@ The theory is that after a kernel upgrade the new kernel is not active before th
     # pulseaudio gets installed automatically during the removal.
     systemctl enable --user pulseaudio
     sudo reboot
-    ````
+    ```
+    The above should just work, but in case it doesn't:
+    ```sh
+    # Verify it's running
+    systemctl status --user pulseaudio
+    # If it's not running
+    systemctl start --user pulseaudio
+    
+    # Try rebooting again
+    ```
 - If you want to stick with the default Display Manager (`lightDM`) and you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
     ```sh
     sudo mkdir -p /etc/systemd/logind.conf.d
@@ -243,6 +262,8 @@ echo "${USER} ALL = NOPASSWD: ALL" | (sudo EDITOR='tee -a' visudo)
 
 ## Install Base Software
 
+Note: If you're not able to add extra repositories via `add-apt-repository`, refer to the troubleshooting section below.
+
 ```sh
 sudo add-apt-repository -y ppa:git-core/ppa
 sudo apt update && sudo apt install -y apt-transport-https git tilix vim
@@ -257,6 +278,32 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   | [git](https://git-scm.com/about) | Version control |
   | [tilix](https://github.com/gnunn1/tilix) | A tiling terminal emulator for Linux using GTK+ 3 |
   | [vim](https://www.vim.org/) | Configurable text editor for CLI |
+</details>
+
+<details>
+  <summary>Expand for add-apt-repository Troubleshooting</summary>
+  
+  The repositories may be down. You can check these URLs to see if it's a you or them problem:
+  - https://launchpad.net
+  - https://status.canonical.com/
+
+  If launchpad appears to be down, you can try connecting via a VPN and see if it's down in other locales. I've had luck connecting through France.
+  
+  Once launchpad does come back up for you, you can future proof things a bit by either downloading the packages from launchpad or setting up an `apt-mirror`.
+  
+  ### How to download packages from Launchpad
+  
+  1. [Open up launchpad](https://launchpad.net/)
+  1. Search for the ppa name, in this case we'll use `git-core`. The ppa name pattern is often `A/B` (`git-core/ppa`), when searching, use the `A` part of the name.
+  1. There should be a `Personal package archives` section. In that section there'll be a list of links, in this case I chose the `Git stable releases`, but there may be other links available based on the ppa.
+  1. Click on the `View package details` link in the `Overview of published packages` section.
+  1. There'll be a `Series` column. If you don't know the codename of your OS, run `cat /etc/os-release | grep "UBUNTU_CODENAME"`. Mine is currently `Noble`, so I'll click the top-most package for that row.
+  1. It should expand and there should be a list of `Package files` that you can download (`.deb` files). If it specifies an architecture I usually go for the `amd64` version.
+  1. I download the files to `~/Downloads/debs/ppa`.
+
+  ### How to set up a local mirror for packages
+  
+  It's actually quite involved and seems to eat up a lot of space, but [here are instructions](https://www.tecmint.com/setup-local-repositories-in-ubuntu/) on how to do it.
 </details>
 
 <details>
@@ -342,7 +389,7 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
   # The next step will prompt for a restart, skip it.
   sudo ~/Downloads/Targus/displaylink-driver-*.run
   # Patch udev entry, otherwise the system will freeze during boot
-  sudo vim /opt/displaylink/udev.sh
+  sudo nano /opt/displaylink/udev.sh
   ```
   ```diff
   # find the `start_service` function around line 104, and change to:
@@ -563,7 +610,6 @@ Here are some sources for finding alternatives to software you may have used on 
 
 ```sh
 (
-  sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
   sudo apt-add-repository -y ppa:lucioc/sayonara
   sudo apt-add-repository -y ppa:remmina-ppa-team/remmina-next
   sudo apt update
@@ -574,10 +620,9 @@ Here are some sources for finding alternatives to software you may have used on 
     dconf-editor \
     featherpad \
     flameshot \
-    git git-gui \
+    git-gui \
     gparted \
     grsync \
-    grub-customizer \
     guvcview \
     inkscape \
     libnss3-tools \
@@ -588,7 +633,7 @@ Here are some sources for finding alternatives to software you may have used on 
     p7zip-full \
     pavucontrol \
     peek \
-    python-is-python3 python3-notify2 \
+    python-is-python3 \
     redshift redshift-gtk \
     remmina remmina-plugin-rdp remmina-plugin-secret remmina-plugin-vnc \
     sayonara \
@@ -609,11 +654,14 @@ sudo apt install \
 
 Optional
 ```sh
+sudo add-apt-repository -y ppa:danielrichter2007/grub-customizer
 sudo apt install -y \
   figlet \
+  grub-customizer \
   kid3-qt \
   obs-studio \
   plasma-sdk \
+  python3-notify2 \
   sddm sddm-theme-breeze \
   steam \
   sticky
@@ -639,7 +687,6 @@ sudo apt install -y \
   | [git-gui](https://git-scm.com/docs/git-gui/) | Handy when wanting to do per-line commit-staging |
   | [gparted](https://gparted.org/) | Disk partitioning |
   | [grsync](https://community.linuxmint.com/software/view/grsync) | A simple GUI for the `rsync` |
-  | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [guvcview](https://community.linuxmint.com/software/view/guvcview) | Capture images or video with webcam. (It's the only thing I've found that gives the option to mirror video) |
   | [inkscape](https://inkscape.org/) | Tool to create vector images (Adobe Illustrator alternative) |
   | [libnss3-tools](https://packages.ubuntu.com/focal/libnss3-tools) | Network Security Service tools (installs `certutil` which I use to install certs for Browsers) |
@@ -650,7 +697,6 @@ sudo apt install -y \
   | [p7zip-full](https://p7zip.sourceforge.net/) | Adds 7zip binaries for CLI |
   | [pavucontrol](https://freedesktop.org/software/pulseaudio/pavucontrol/) | PulseAudio Volume Control |
   | `python-is-python3` | This ensures the symlink for `python3` to `python` stays up to date during updates. |
-  | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [redshift](https://remmina.org/) | Adjusts the color temperature of your screen. |
   | [remmina](https://remmina.org/) | Remote Desktop client |
   | [sayonara](https://sayonara-player.com/) | Music player |
@@ -666,9 +712,11 @@ sudo apt install -y \
   | Package | Description |
   | ------- | ----------- |
   | [figlet](http://www.figlet.org/) | Generate text banners for CLI |
+  | [grub-customizer](https://launchpad.net/grub-customizer) | Easily change and compile grub config |
   | [kid3-qt](https://kid3.kde.org/) | Audio tag editor (TagScanner alternative) |
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
+  | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
   | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
   | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
@@ -693,7 +741,7 @@ sudo apt install -y \
   
   Create a shortcut:
   ```sh
-  sudo vim /usr/share/applications/git-gui.desktop
+  sudo nano /usr/share/applications/git-gui.desktop
   ```
   ```
   [Desktop Entry]
@@ -791,7 +839,7 @@ flatpak install flathub --system --noninteractive -y \
   
   To make Discord not prompt for updates all the time
   ```sh
-  vim ~/.var/app/com.discordapp.Discord/config/discord/settings.json
+  nano ~/.var/app/com.discordapp.Discord/config/discord/settings.json
   
   # add:
   "SKIP_HOST_UPDATE": true
@@ -803,7 +851,7 @@ flatpak install flathub --system --noninteractive -y \
   
   Dunno how they came up with that name, but it doesn't cut it when searching in an App launcher.
   ```sh
-  sudo vim /var/lib/flatpak/exports/share/applications/codes.merritt.FeelingFinder.desktop
+  sudo nano /var/lib/flatpak/exports/share/applications/codes.merritt.FeelingFinder.desktop
   ```
   ```diff
   - Name=Feeling Finder
@@ -1143,11 +1191,41 @@ For packages that require more than a simple `apt install`.
   )
   ```
   
+  Move Docker's data folder (I create the `extra_data` mount later in this doc)
+  ```sh
+  sudo mkdir -p /mnt/extra_data/docker-data/containerd
+  sudo docker stop $(docker ps -q) 2>/dev/null
+  sudo systemctl stop docker docker.socket containerd
+  sudo nano /etc/docker/daemon.json
+  ```
+  ```json
+  {
+    "data-root": "/mnt/extra_data/docker-data",
+    "log-driver": "json-file",
+    "log-opts": {
+      "max-size": "10m",
+      "max-file": "3"
+    }
+  }
+  ```
+  ```sh
+  sudo nano /etc/containerd/config.toml
+  ```
+  ```diff
+  - #root = "/var/lib/containerd"
+  + root = "/mnt/extra_data/docker-data/containerd"
+  ```
+  ```sh
+  sudo systemctl daemon-reload
+  sudo systemctl start docker
+  ```
+  
   Verify install
   ```sh
   systemctl is-enabled docker
   systemctl status docker
   sudo docker run hello-world
+  sudo docker info | grep "Docker Root Dir"
   ```
   
   Notes:<br/>
@@ -1199,6 +1277,13 @@ For packages that require more than a simple `apt install`.
   
   Since I'm running Kodi on different devices and they're all pointing to a central database, I have to be careful when updating to ensure the DB doesn't get updated to something the other devices can't support. This process allows me to install a specific version of a back up.
   
+  1. If you already have installed and created a flatpak of the version you want:
+      ```sh
+      (
+        cd ~/Downloads/flatpak
+        flatpak install --user kodi_v21.3.flatpak
+      )
+      ```
   1. This is the initial install. If the version matches what you're running, you won't have to install from the backup.
       ```sh
       # When installing for a User, the remote may not be available yet, so add it.
@@ -1435,7 +1520,7 @@ dmesg | grep -i "error\|warn\|fail"
       
       Apparently this has been [a known issue](https://forums.linuxmint.com/viewtopic.php?f=42&t=371358) and can be ignored. 
       ```sh
-      sudo vim /etc/default/grub
+      sudo nano /etc/default/grub
       # Replace `quiet` in the GRUB_CMDLINE_LINUX_DEFAULT with `loglevel=3`
       
       sudo update-grub
@@ -1459,7 +1544,7 @@ dconf load / < ~/settings.dconf
 If you have any self-signed certificates that your browsers utilize, you'll need to install them now.
 ```sh
 sudo apt-get install -y ca-certificates
-sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates  # NOTE: I had a .pem file and when I checked if it was added in 'Passwords and Keys > Certificates > System Trust' - I couldn't find it. I rename the .pem to .crt, re-ran update-ca-certificates, and it showed up.
+sudo cp <CERT_NAME>.crt /usr/local/share/ca-certificates  # NOTE: I had a .pem file and when I checked if it was added in 'Passwords and Keys > Certificates > System Trust' - I couldn't find it. I renamed the .pem to .crt, re-ran update-ca-certificates, and it showed up.
 sudo update-ca-certificates
 
 # Bring in certs for browsers, can be a '.crt' or '.pem' file
@@ -1548,7 +1633,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       ```
       Kill the tumbler session via `pkill tumblerd`
   - To [use `folder.jpg` for folders](https://docs.xfce.org/xfce/thunar/4.14/tumbler#customized_thumbnailer_for_folders)
-      - `sudo vim /usr/share/thumbnailers/folder.thumbnailer`
+      - `sudo nano /usr/share/thumbnailers/folder.thumbnailer`
           ```
           [Thumbnailer Entry]
           Version=1.0
@@ -1558,7 +1643,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
           MimeType=inode/directory;
           Exec=/usr/bin/folder-thumbnailer %s %i %o %u
           ```
-      - `sudo vim /usr/bin/folder-thumbnailer`
+      - `sudo nano /usr/bin/folder-thumbnailer`
           ```
           #!/bin/bash
           
@@ -1749,8 +1834,13 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [Applets]
       [Download]
         CinnVIIStartMenu
+        Direct
         Lock keys indicator with notifications (betterlock)
+        Panel Launchers
+        Trash
+        User Applet
         Weather
+        Wireguard
       
       [Manage]
         (select and Add the downloaded items)
@@ -1785,8 +1875,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
             
         
         [Lock keys indicator with notifications]
-          Show caps lock indicator: (checked)
           Show num lock indicator: (checked)
+          Show caps lock indicator: (checked)
           
         [Notifications]
           Show empty tray: (checked)
@@ -1833,7 +1923,6 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     
     [Startup Applications]
       Albert (check)
-      Cairo-Dock (check)
       mintwelcome (uncheck)
       Notes (check)
       Print Queue Applet (uncheck)
@@ -1887,9 +1976,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
     [Login Window] (only effects re-login from Suspend)
       [Appearance]
+        Alignment: Center
         Background: /usr/share/backgrounds/linuxmint-wallpapers/mpiwnicki_sparkling.jpg
-        GTK theme: Mint-Y-Aqua
-        Icon theme: Mint-Y-Aqua
+        GTK theme: Mint-L-Aqua
+        Icon theme: Mint-L-Aqua
       
       [Users]
         Allow guest sessions: (checked)
@@ -2029,7 +2119,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   You can use **Grub Customizer** or CLI
   ```sh
-  sudo vim /etc/default/grub
+  sudo nano /etc/default/grub
   ```
   ```diff
   # Decrease duration that grub menu displays
@@ -2188,7 +2278,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   # HDMI-0 is my secondary vertical monitor to the right of my primary DP-3. DP-1 is the closed laptop.
   
   # add rules so the login behaves
-  sudo vim /usr/share/sddm/scripts/Xsetup
+  sudo nano /usr/share/sddm/scripts/Xsetup
   # -------------------------------------
   xrandr --output DP-3 --auto --primary
   xrandr --output HDMI-0 --right-of DP-3 --rotate left --noprimary
@@ -2449,7 +2539,7 @@ Now that things are set up, you should:
    ```
 - Change Grub to something less noisy
    ```sh
-   sudo vim /etc/default/grub
+   sudo nano /etc/default/grub
    ```
    ```diff
    - GRUB_CMDLINE_LINUX_DEFAULT="quiet nosplash loglevel=3"
@@ -2476,6 +2566,21 @@ For the most part, the install was smooth, but there was a small hiccup.
     - In `Settings`, for the `Make and Model`, click `Change`.
     - It'll scan for drivers for a bit, it seems to default to an HP printer. Scroll the list until you find `LabelRange`.
 
+Printer settings are stored here:
+```
+/etc/cups/ppd/*.ppd
+/etc/cups/printers.conf
+```
+You can back up files with no problem, but if you want to restore files, you should take the cups server down first.
+```sh
+# Check if it's running
+sudo service cups status
+# Stop the server
+sudo service cups stop
+# Start the server
+sudo service cups start
+```  
+
 ---
 
 ## Make Extra Internal Drives Available
@@ -2486,7 +2591,7 @@ If you have extra internal drives, you'll need to format them, and then set them
 - Select the allocated/unallocated space and Delete (if it's allocated), New (if it's unallocated). Format it to `ext4` (or whatever you feel like), and add a name/label to it.
 - Apply the changes (the bottom should read `0 operations pending`).
 - Get the `UUID` of a disk by running `blkid`.
-- `sudo vim /etc/fstab`
+- `sudo nano /etc/fstab`
 - Add something like `UUID=<UUID>  /mnt/extra_data  ext4  defaults  0  0`
     ```
     <UUID>           The unique id of the disk (you can see the names in gparted)
@@ -2496,7 +2601,7 @@ If you have extra internal drives, you'll need to format them, and then set them
     0 0              Dump, check disk priority (zero is off)
     ```
 - Create the mount folder `sudo mkdir -p /mnt/extra_data`.
-- Verify the mount will work `sudo mount -a`.
+- Verify the mount will work `sudo systemctl daemon-reload && sudo mount -a`.
 - Take ownership of the mount `sudo chown "$USER:$USER" /mnt/extra_data`.
 
 
@@ -2977,15 +3082,15 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
      sudo chroot /mnt
      
      # if you can't install packages due to mirrors not being resolvable
-     sudo vim /etc/resolv.conf
+     sudo nano /etc/resolv.conf
        # add
        nameserver 8.8.8.8
      
      # if mirrors are out of date
-     sudo vim /etc/apt/sources.list.d/official-packages-repositories.list
+     sudo nano /etc/apt/sources.list.d/official-packages-repositories.list
      
      # patch initramfs to keep it's file size down (fix 'out of memory')
-     sudo vim /etc/initramfs-tools/initramfs.conf
+     sudo nano /etc/initramfs-tools/initramfs.conf
        # update existing items to:
        MODULES=dep
        COMPRESS=xz
@@ -3077,7 +3182,7 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
       ```
   - Open `mount_options.conf` and add the appropriate value.
       ```sh
-      sudo vim /etc/udisks2/mount_options.conf
+      sudo nano /etc/udisks2/mount_options.conf
       ```
       ```
       [defaults]

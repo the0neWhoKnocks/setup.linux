@@ -365,7 +365,7 @@ function mountShare {
       SMB_DIALECT=3.11
       
       err="$(sudo mount -t cifs \
-        -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",dir_mode=$USER_ACCESS,file_mode=$USER_ACCESS,domain="${SHARE__DOMAIN}",vers=$SMB_DIALECT,iocharset=utf8,echo_interval=5 \
+        -o uid="${SHARE__LOCAL_UID}",gid="${SHARE__LOCAL_UID}",username="${SHARE__USER}",password="${SHARE__PASS}",dir_mode=$USER_ACCESS,file_mode=$USER_ACCESS,domain="${SHARE__DOMAIN}",vers=$SMB_DIALECT,iocharset=utf8,x-systemd.automount,x-systemd.idle-timeout=2 \
         "//${SHARE__SERVER_IP}/${SHARE__SHARE_NAME}" \
         "${SHARE__MOUNT_DIR}" 2>&1 > /dev/null)"
       

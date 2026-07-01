@@ -29,6 +29,8 @@
             <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/etc</Right>
             <Filter>
                 <Include>
+                    <Item>cups/ppd/*.ppd</Item>
+                    <Item>cups/printers.conf</Item>
                     <Item>libvirt/qemu</Item>
                     <Item>netplan</Item>
                     <Item>pulse/daemon.conf</Item>
