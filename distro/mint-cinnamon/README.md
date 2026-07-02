@@ -1601,6 +1601,13 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
   
   Launch **Startup Applications**, find **Update Manager** and uncheck it.
+  
+  If you choose to ignore all updates for a package, and later you choose that you want to start getting updates again:
+  ```
+  [Edit > Preferences]
+    [Packages]
+      - Select an item from the 'Blocked packages' section, and click the '-' button.
+  ```
 </details>
 
 <details>
