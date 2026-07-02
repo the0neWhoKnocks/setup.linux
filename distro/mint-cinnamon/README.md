@@ -1849,6 +1849,7 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         Direct
         Lock keys indicator with notifications (betterlock)
         Panel Launchers
+        Timeshift Spy 
         Trash
         User Applet
         Weather
