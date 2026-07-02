@@ -28,12 +28,22 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via Archives](#via-archives)
   - [Via CLI (slightly complex)](#via-cli-slightly-complex)
 - [Configure Software](#configure-software)
+  - [General System Settings](#general-system-settings)
+  - [Panel Settings](#panel-settings)
+    - [Back up Panels](#back-up-panels)
+    - [Restore Panels](#restore-panels)
+    - [Reset Panels](#reset-panels)
+  - [Headset Settings](#headset-settings)
 - [Install Hardware](#install-hardware)
   - [Label Printer](#label-printer)
 - [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Back Up or Restore Data](#back-up-or-restore-data)
   - [Backing up data](#backing-up-data)
+    - [Back up with TimeShift (system files)](#back-up-with-timeshift-system-files)
+    - [Back up with FreeFileSync (granular, any files you want)](#back-up-with-freefilesync-granular-any-files-you-want)
   - [Restoring data](#restoring-data)
+    - [Restore with TimeShift](#restore-with-timeshift)
+    - [Restore with FreeFileSync](#restore-with-freefilesync)
     - [Reset repos after restore](#reset-repos-after-restore)
   - [Create an encrypted USB drive to back up sensitive data](#create-an-encrypted-usb-drive-to-back-up-sensitive-data)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
@@ -1794,6 +1804,8 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
 <details>
   <summary>Expand for System Settings</summary>
   
+  ### General System Settings
+  
   ```
   [Appearance]
     
@@ -1895,14 +1907,20 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
             Forecast length (days): 7
           
           [Location]
-              [Location settings]
-                Manual Location: (checked)
-              
-              [Saved Locations]
-                (add locations)
-                (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
-                City: <CITY>
-                Country: <ABBREVIATED_STATE>
+            [Location settings]
+              Manual Location: (checked)
+            
+            [Saved Locations]
+              (add locations)
+              (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
+              City: <CITY>
+              Country: <ABBREVIATED_STATE>
+          
+          [Presentation]
+            Display current temperature in panel: (uncheck)
+          
+          [Other options]
+            Temperature units: Fahrenheit
   
     [Desktop]
       Desktop Layout: No desktop icons
@@ -1984,6 +2002,20 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       [Users]
         Allow guest sessions: (checked)
   ```
+  
+  ---
+  
+  ### Panel Settings
+  
+  For the main Panel, I had an issue where icons randomly scaled up in size and couldn't be reset. To ensure the same sizes I:
+  - Right-click the Panel and choose `Panel Settings`.
+  - In the `Panel Appearance` section I click on `Right Zone`.
+      ```
+      Font Size: 12.0pt
+      Colored Icon Size: 22px
+      Symbolic Icon Size: 18
+      ```
+      Oddly, all those different sizes equate to the icons looking the same scale.
   
   Instead of installing a dock, you can create something similar via a Panel:
   - Right-click an empty area of the main bar, and choose `Add a new Panel`.
@@ -2087,6 +2119,39 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       ```
       Type of display: Simple buttons
       ```
+  
+  #### Back up Panels
+  
+  ```sh
+  dconf dump /org/cinnamon/ > ~/cinnamon_backup.conf
+  ```
+  Custom launchers on your panel are not saved in the general dconf/settings backup and must be exported manually.
+  - Right-click the custom launcher icon on your panel.
+  - Select **Applet preferences** > **Configure**.
+  - Click the three horizontal lines (more options) icon in the top right corner.
+  - Select **Export to a file** and save it.
+  You'd have to do this one at a time for everything, or just copy the `~/.config/cinnamon/spices` folder.
+  
+  #### Restore Panels
+  
+  First copy over the contents of your `~/.config/cinnamon/spices` backup, then:
+  ```sh
+  dconf load /org/cinnamon/ < ~/cinnamon_backup.conf
+  ```
+  
+  #### Reset Panels
+  
+  If you completely deleted your panel and just want to fix it, run
+  ```sh
+  gsettings reset-recursively org.cinnamon
+  # OR
+  dconf reset -f /org/cinnamon/
+  ```
+  This will wipe custom settings and bring back the default panel.
+  
+  ---
+  
+  ### Headset Settings
   
   If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. There are a couple ways to disable it:
       - Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
@@ -2611,6 +2676,30 @@ If you have extra internal drives, you'll need to format them, and then set them
 
 ### Backing up data
 
+#### Back up with TimeShift (system files)
+
+1. Setup
+    ```
+    [Snapshot Type]
+      RSYNC
+      
+    [Snapshot Location]
+      (kept default root partition)
+    
+    [Snapshot Levels]
+      Monthly: 1
+      Weekly: 2
+      Daily: 5
+    
+    [User Home Directories]
+      (keep defaults)
+    ```
+1. Once the GUI comes up, click `Create`. Every snapshot after this will only be for changed folders and files.
+
+The above settings keep 5 daily, 2 weekly, and 1 monthly snapshot. This gives you a 30-day rolling recovery window without consuming excessive disk space.
+
+#### Back up with FreeFileSync (granular, any files you want)
+
 Note: You may get `EACCESS` errors for certain system files/folders if not running as `root`. One way to get around that is to disable locking.
 ```sh
 # run
@@ -2664,6 +2753,18 @@ This could have unexpected syncing results if applications are running in the ba
 
 
 ### Restoring data
+
+#### Restore with TimeShift
+
+If your system still boots, you can restore directly from the Timeshift GUI:
+1. Select the snapshot you want.
+1. Click Restore, and follow the prompts. The system will restart and apply the snapshot.
+
+If your system will not boot:
+1. Boot from a Linux Mint live USB.
+1. Install Timeshift in the live environment, and use it to restore the snapshot to your installed system. The key is selecting the correct target partition during the restore wizard.
+
+#### Restore with FreeFileSync
 
 1. Load and select a config.
 1. There's a `Swap Sides` button separating the Compare and Synchronization columns. Click on that to have your data go from the backup to the source.

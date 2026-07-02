@@ -31,6 +31,7 @@
                 <Include>
                     <Item>cups/ppd/*.ppd</Item>
                     <Item>cups/printers.conf</Item>
+                    <Item>fstab</Item>
                     <Item>libvirt/qemu</Item>
                     <Item>netplan</Item>
                     <Item>pulse/daemon.conf</Item>
@@ -45,19 +46,6 @@
         <Pair>
             <Left>/var/lib/AccountsService/icons</Left>
             <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/var</Right>
-        </Pair>
-        <Pair>
-            <Left>/usr/share/sddm/themes/breeze</Left>
-            <Right>/media/%FFS_USER%/Ventoy/backup/Linux_Mint__Laptop__Pred/settings/system/usr</Right>
-            <Filter>
-                <Include>
-                    <Item>theme.conf.user</Item>
-                </Include>
-                <Exclude/>
-                <SizeMin Unit="None">0</SizeMin>
-                <SizeMax Unit="None">0</SizeMax>
-                <TimeSpan Type="None">0</TimeSpan>
-            </Filter>
         </Pair>
     </FolderPairs>
     <Errors Ignore="false" Retry="0" Delay="5"/>
