@@ -2,6 +2,8 @@
 
 I've switched to Plasma because Cinnamon was having some random lag issues that would crop up after little use. It was very noticeable when moving windows and scrolling.
 
+- [Install KDE](#install-kde)
+- [Remove Cinnamon](#remove-cinnamon)
 - [System Settings](#system-settings)
   - [Appearance](#appearance)
     - [Global Theme](#global-theme)
@@ -32,9 +34,41 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
     - [Display Configuration](#display-configuration)
     - [Night Color](#night-color)
 - [Task Bar](#task-bar)
+- [Desktop Appearance](#desktop-appearance)
+  - [Wallpaper](#wallpaper)
+  - [Icons](#icons-1)
+- [Add a Dock](#add-a-dock)
 - [Tweaks](#tweaks)
+  - [Get Pipewire re-installed](#get-pipewire-re-installed)
   - [Don't start Discover on boot](#dont-start-discover-on-boot)
 - [Sources](#sources)
+
+---
+
+## Install KDE
+
+1. Install KDE:
+    ```sh
+    sudo apt install kde-plasma-desktop
+    ```
+    When the installer asks which display manager to use, pick `sddm`. If you later decide that you want to use a different Display Manager, run: `sudo dpkg-reconfigure sddm` (`sddm` is mentioned here because you have to input the current DM).
+1. Reboot
+1. Before logging in, choose `Plasma` for the session type.
+1. Install Wayland support:
+    ```sh
+    sudo apt install plasma-workspace-wayland
+    ```
+
+---
+
+## Remove Cinnamon
+
+Once you're happy with things, you can remove Cinnamon and any Apps that were automatically installed.
+```sh
+sudo apt remove --purge cinnamon*
+sudo apt remove nemo* xed* mint-meta-cinnamon
+sudo apt autoremove
+``` 
 
 ---
 
@@ -166,9 +200,9 @@ If you have multiple monitors, this is where you configure their layout and posi
 #### Night Color
 
 ```
-Switching times: Always on night color
-Night color temperature: 4,000K 
+Switching times: Always off
 ```
+It doesn't enable itself at login. RedShift seems to be consistent so I'm still using it here.
 
 
 ---
@@ -185,7 +219,62 @@ Night color temperature: 4,000K
 
 ---
 
+## Desktop Appearance
+
+Right-click an empty area of a screen, pick **Configure Desktop and Wallpaper**.
+
+### Wallpaper
+
+Note that each screen has to be configured seperately (so right-click and configure each screen).
+1. Click **Add Image**.
+1. Pick the image you want for that screen.
+1. Apply
+
+### Icons
+
+```
+             Arrangement: Top to Bottom
+                 Sorting: Manual
+               Icon size: (3rd tick from the left, closer to Small)
+             Label width: Narrow
+              Text lines: 1
+When hovering over icons: [ ] Show folder prefiew popups
+                Previews: [ ] Show preview thumbnails
+```
+
+---
+
+## Add a Dock
+
+```sh
+# Issue with Impulse plugin (wouldn't install with pipewire), requires install from weekly PPA (https://github.com/Cairo-Dock/cairo-dock-plug-ins/issues/19)
+sudo add-apt-repository ppa:cairo-dock-team/weekly
+sudo apt update
+sudo apt install cairo-dock cairo-dock-plug-ins cairo-dock-gnome-session
+```
+
+---
+
 ## Tweaks
+
+### Get Pipewire re-installed
+
+```sh
+sudo apt install pipewire pipewire-bin
+# Enable Pipewire and verify it's running
+systemctl enable --user pipewire
+systemctl status --user pipewire
+# Verify PulseAudio is now disabled
+systemctl status --user pulseaudio
+# Remove PulseAudio
+apt purge pulseaudio
+
+# Was seeing some errors in the PipeWire services so I installed this stuff
+sudo apt install pipewire-audio-client-libraries pipewire-libcamera
+systemctl --user --now restart pipewire pipewire-pulse wireplumber
+systemctl --user status pipewire{,-pulse} wireplumber
+```
+The speaker icon in the system tray would blink on and off, it was switching from **Speakers** and **Headphones (unplugged)**. So I changed the **Profile** from `Analog Stereo Duplex` to `Pro Audio`.
 
 ### Don't start Discover on boot
 
@@ -203,4 +292,5 @@ Hidden=true
 ## Sources
 
 - https://linuxcapable.com/how-to-install-kde-plasma-on-linux-mint/
+- https://zonatsolutions.com/switch-from-cinnamon-to-kde-plasma-on-linux-mint-complete-step-by-step-guide/
 - https://paranoidix.dk/blog/kde-discover-notification
