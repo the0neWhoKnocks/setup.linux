@@ -651,6 +651,7 @@ Here are some sources for finding alternatives to software you may have used on 
     solaar \
     soundconverter \
     sqlitebrowser \
+    synaptic \
     xclip \
     xserver-xorg-input-synaptics
 )
@@ -714,6 +715,7 @@ sudo apt install -y \
   | [solaar](https://pwr-solaar.github.io/Solaar/) | Logitech unifying reciever peripherals manager for Linux |
   | [soundconverter](https://soundconverter.org/) | Converter for audio files |
   | [sqlitebrowser](https://sqlitebrowser.org/) | GUI to browse/edit SQL database files |
+  | [synaptic](https://github.com/mvo5/synaptic/wiki) | A graphical package management tool based on GTK+ and APT. Synaptic enables you to install, upgrade and remove software packages in a user friendly way. |
   | [ttf-mscorefonts-installer](https://linuxhint.com/ttf-mscorefonts-installer/) | Installer for Microsoft TrueType core fonts. Needed to display fonts properly in browsers |
   | [wireshark](https://www.wireshark.org/) (meta-package) | Network traffic sniffer |
   | [xclip](https://github.com/astrand/xclip) | Copy from CLI to clipboard |
