@@ -28,14 +28,24 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via Archives](#via-archives)
   - [Via CLI (slightly complex)](#via-cli-slightly-complex)
 - [Configure Software](#configure-software)
-  - [General System Settings](#general-system-settings)
-  - [Panel Settings](#panel-settings)
-    - [Back up Panels](#back-up-panels)
-    - [Restore Panels](#restore-panels)
-    - [Reset Panels](#reset-panels)
-  - [Headset Settings](#headset-settings)
+  - [Self-Signed Certificates](#self-signed-certificates)
+  - [Limit you monitor's blue light (color temperature)](#limit-you-monitors-blue-light-color-temperature)
+  - [Update Manager](#update-manager)
+  - [File Manager](#file-manager)
+  - [Grub Settings](#grub-settings)
+  - [Inkscape Settings](#inkscape-settings)
+  - [LSD Settings](#lsd-settings)
+  - [Qemu Settings](#qemu-settings)
+  - [Remmina Settings](#remmina-settings)
+  - [Sayonara Settings](#sayonara-settings)
+  - [Sticky Settings](#sticky-settings)
+  - [VS Code Settings](#vs-code-settings)
+  - [Root User Settings](#root-user-settings)
+  - [Finalize Settings](#finalize-settings)
 - [Install Hardware](#install-hardware)
   - [Label Printer](#label-printer)
+- [Configure Hardware](#configure-hardware)
+  - [Headset Settings](#headset-settings)
 - [Make Extra Internal Drives Available](#make-extra-internal-drives-available)
 - [Back Up or Restore Data](#back-up-or-restore-data)
   - [Backing up data](#backing-up-data)
@@ -46,9 +56,9 @@ This setup is for creative/development tasks. Before blindly installing everythi
     - [Restore with FreeFileSync](#restore-with-freefilesync)
     - [Reset repos after restore](#reset-repos-after-restore)
   - [Create an encrypted USB drive to back up sensitive data](#create-an-encrypted-usb-drive-to-back-up-sensitive-data)
-- [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Useful Commands](#useful-commands)
 - [Useful Places](#useful-places)
+- [Session Managers](#session-managers)
 - [Theming](#theming)
   - [GTK Themes and Apps](#gtk-themes-and-apps)
   - [Icons](#icons)
@@ -58,7 +68,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
     - [Creating \& Adding Raster Icons](#creating--adding-raster-icons)
 - [Troubleshooting](#troubleshooting)
   - [System boots to blank screen after failed update](#system-boots-to-blank-screen-after-failed-update)
-  - [System going to sleep after a few seconds on the Login screen](#system-going-to-sleep-after-a-few-seconds-on-the-login-screen)
   - [Kernel Panic error after choosing "recommended" nvidia driver](#kernel-panic-error-after-choosing-recommended-nvidia-driver)
   - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
   - [Chrome Saved Passwords Not Showing Up in Settings](#chrome-saved-passwords-not-showing-up-in-settings)
@@ -236,21 +245,18 @@ The theory is that after a kernel upgrade the new kernel is not active before th
     
     # Try rebooting again
     ```
-- If you want to stick with the default Display Manager (`lightDM`) and you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
-    ```sh
-    sudo mkdir -p /etc/systemd/logind.conf.d
-    sudo nano /etc/systemd/logind.conf.d/90-ignore-lid-closed.conf
-    ```
-    ```
-    [Login]
-    HandleLidSwitchExternalPower=ignore
-    # Dictates how your Linux laptop behaves when the lid is closed while connected
-    # to a docking station or external monitor.
-    HandleLidSwitchDocked=ignore
-    ```
-    ```sh
-    sudo systemctl restart systemd-logind
-    ```
+- If you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
+    - First check what files are effecting `logind` (look for anything with `HandleLidSwitch`):
+        ```sh
+        systemd-analyze cat-config systemd/logind.conf
+        ```
+    - If there isn't anything already controlling `HandleLidSwitch*`, run:
+        ```sh
+        sudo mkdir -p /etc/systemd/logind.conf.d
+        sudo cp -i ./files/logind.conf.d/90-ignore-lid-closed.conf /etc/systemd/logind.conf.d/
+        sudo systemctl restart systemd-logind
+        ```
+    - Normally you'd go into **Power Management** and set what the system should do when the lid is closed. Turns out that it has no effect in the Login screen, rather it's controlled by `logind`.
 
 ---
 
@@ -673,7 +679,6 @@ sudo apt install -y \
   obs-studio \
   plasma-sdk \
   python3-notify2 \
-  sddm sddm-theme-breeze \
   steam \
   sticky
 ```
@@ -729,8 +734,6 @@ sudo apt install -y \
   | [obs-studio](https://obsproject.com/) (non-flatpak) | Record or stream video |
   | [plasma-sdk](https://github.com/KDE/plasma-sdk) | Applications useful for Plasma development. I use it for Cuttlefish (an icon viewer) |
   | [python3-notify2](https://pypi.org/project/notify2/) | Send Desktop notifications via Python |
-  | [sddm](https://github.com/sddm/sddm) | A modern display manager for X11 and Wayland. ( Alternate DM than the default lightdm) |
-  | [sddm-theme-breeze](https://packages.debian.org/sid/sddm-theme-breeze) | Clean centered theme with avatar |
   | [Steam](https://store.steampowered.com/) | PC Gaming platform |
   | [sticky](https://github.com/linuxmint/sticky) | Post-it note app for your Desktop |
 </details>
@@ -1539,19 +1542,10 @@ dmesg | grep -i "error\|warn\|fail"
       ```
     </details>
 </details>
-<br>
-<br>
 
+---
 
-If you have a previous backup that utilized `dconf`, you can restore it now which may save you some configuration time.
-```sh
-# Restore GNOME settings
-dconf load / < ~/settings.dconf
-
-# If you want to import keys for specific packages, the only thing I've found is to copy those sections to another `.dconf` file and run the same command above but with the new file. 
-```
-<br>
-
+### Self-Signed Certificates
 
 If you have any self-signed certificates that your browsers utilize, you'll need to install them now.
 ```sh
@@ -1575,23 +1569,19 @@ If you have any back-ups of your keyrings, you'll need to install those especial
 - Then open up **Passwords and Keys** and unlock the **Login** item. Then you can open up stuff like Chrome or anything that has locally saved passwords.
 <br>
 
+---
 
-Control your monitor's temperature (limit blue light).
+### Limit you monitor's blue light (color temperature)
+
 ```sh
-# NOTE: This file could conflict with the 'Inhibit' applet so just use 'Redshift'
+# NOTE: Redshift could conflict with 'Night Light' so just use 'Redshift'
 cp -i ./files/redshift.conf ~/.config/
 ```
 Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Right-click on it and check `Enabled` and `Autostart`.
-<br>
 
+---
 
-<details>
-  <summary>Expand for Session Management</summary>
-
-  XFCE has this exposed where you can choose to save sessions and delete the ones that exist. Cinnamon has it hidden away.
-  
-  Launch **dconf Editor** and navigate to `/org/cinnamon/cinnamon-session/` toggle on the `auto-save-session` option.
-</details>
+### Update Manager
 
 <details>
   <summary>Expand for Update Manager</summary>
@@ -1612,17 +1602,22 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
 </details>
 
+---
+
+### File Manager
+
 <details>
   <summary>Expand for File Manager</summary>
   
   I've tried `dolphin`, `nemo`, and `thunar`.
-  - `dolphin` had the benefit of natural sorting which all othe managers seem to lack currently, but it's slow to load and currently doesn't allow for excluding paths from thumbnail generation.
+  - `dolphin` had the benefit of natural sorting which all the managers seem to lack currently, but it's slow to load and currently doesn't allow for excluding paths from thumbnail generation.
   - `nemo` ships with Cinnamon but it currently suffers from thumbnail generation issues (sometimes works, sometimes doesn't, or doesn't generate thumbs for all types).
       - Note that Nemo manages Cinnamon's desktop, so even if you're using a different file manager, Nemo can't be uninstalled. Also, if you need to restart it (like you may have restarted `explorer` on Windows), you can run:
           ```sh
           pkill nemo-desktop && nohup nemo-desktop &
           ```
   - `thunar` ships with XFCE. It's snappy, allows for **Custom Actions** via context menus that you can easily write yourself, and allows for defining rules for thumbnail generation.
+      - [Smart (natural) sorting](https://docs.xfce.org/xfce/thunar/hidden-settings) will be enabled in `4.21.3`.
   
   ---
   
@@ -1810,384 +1805,9 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   - You may have to change the current view to Compact View. Then I `CTRL++` or `CTRL+-` to get the icons and text to a size I like.
 </details>
 
-<details>
-  <summary>Expand for System Settings</summary>
-  
-  ### General System Settings
-  
-  ```
-  [Appearance]
-    
-    [Backgrounds]
-      [Images]
-        (ignore this and set it via HydraPaper)
-    
-    [Font Selection]
-      Default font: Ubuntu Regular 12
-      Desktop font: Ubuntu Bold 12
-      Document font: Sans Regular 12
-      Monospace font: Monospace Regular 12
-      Window title font: Ubuntu Medium 12
-      Text scaling factor: 1.0
-  
-    [Themes]
-      [Themes]
-        Mouse Pointer: Bibata-Modern-Classic
-        Applications: Mint-Y-Dark-Aqua
-        Icons: Mint-L-Aqua
-        Desktop: Mint-L-Dark-Aqua
-        
-      [Settings]
-        Jump to position when clicking in a trough: (checked)
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  [Preferences]
-    
-    [Accessibility]
-      [Keyboard]
-        Use visual indicator on Caps and Num Lock (check) (if you don't want to use the 'betterlock' applet)
-  
-    [Account Details]
-      Picture: (choose avatar)
-      Name: (change to a preferred display name)
-  
-    [Applets]
-      [Download]
-        CinnVIIStartMenu
-        Direct
-        Lock keys indicator with notifications (betterlock)
-        Panel Launchers
-        Timeshift Spy 
-        Trash
-        User Applet
-        Weather
-        Wireguard
-      
-      [Manage]
-        (select and Add the downloaded items)
-        
-        [Calendar]
-          Use a custom date format: (checked)
-          Date format: 【 %a.  %b. %e 】【%l: %M %p 】
-        
-        [CinnVIIStartMenu] (disable the Menu applet, and replace it with this by going into 'Panel edit mode' in the taskbar)
-          [Menu]
-            Menu layout: MATE-Menu
-          
-          [Panel]
-            Use a custom icon and label: (checked)
-            Icon: linuxmint-logo-simple-symbolic
-            Text: enu
-          
-          [Sidebar]
-            Separator below user account info box: (checked)
-          
-          [Quicklauncher]
-            [Quicklauncher Applications]
-              (Create a Tilix item, move it below the default Terminal, disable the default Terminal)
-        
-        [Grouped window list]
-          [General]
-            Group windows by applications: (uncheck)
-          
-          [Panel]
-            Button label: Window title
-            Show window count badges: (uncheck)
-            
-        
-        [Lock keys indicator with notifications]
-          Show num lock indicator: (checked)
-          Show caps lock indicator: (checked)
-          
-        [Notifications]
-          Show empty tray: (checked)
-          (click 'Open notification settings')
-            Remove notifications after their timeout is reached: (checked)
-            Show notifications on the bottom: (checked)
-            Notification duration (seconds): 2
-            Media keys OSD size: Small
-        
-        [Power Manager]
-          Display: Show percentage  
-        
-        [Weather]
-          [Weather]
-            Data service: Open-Mateo
-            Forecast length (days): 7
-          
-          [Location]
-            [Location settings]
-              Manual Location: (checked)
-            
-            [Saved Locations]
-              (add locations)
-              (get the lat/lon from Google Maps, just right-click it'll be the first item, you only need to the 6th decimal for each value)
-              City: <CITY>
-              Country: <ABBREVIATED_STATE>
-          
-          [Presentation]
-            Display current temperature in panel: (uncheck)
-          
-          [Other options]
-            Temperature units: Fahrenheit
-  
-    [Desktop]
-      Desktop Layout: No desktop icons
-    
-    [Hot Corners]
-      Enable top left: Show the desktop
-    
-    [Preferred Applications]
-      [Preferred applications]
-        Web: Google Chrome
-        Music: Sayonara Player
-        Video: VLC media player
-        File Manager: Thunar File Manager
-        Terminal: Tilix
-    
-    [Screensaver]
-      Delay before starting the screensaver: Never  (nothing else really works when running long CLI commands, I don't want it to lock in the middle of a process)
-    
-    [Startup Applications]
-      Albert (check)
-      mintwelcome (uncheck)
-      Notes (check)
-      Print Queue Applet (uncheck)
-      Redshift (check)
-      Solaar (check)
-      Support for NVIDIA Prime (uncheck)
-    
-    [Windows]
-      [Behavior]
-        Location of newly opened windows: Center
-        
-      [Alt-Tab]
-        Alt-Tab switcher style: Icons and window preview  (the 3D options seem to cause screen freezing issues)
-        Delay before displaying: 100
-      
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  [Hardware]
-  
-    [Mouse and Touchpad]
-      [Touchpad]
-        Click actions: Use multiple fingers for right and middle click
-        Reverse scrolling direction: (uncheck)
-        Speed: Roughly 65%
-    
-    [Network]
-      [Wi-Fi]
-        (disable while wired)
-    
-    [Power Management]
-      [Power]
-                                              |   on A/C   | on Battery
-        ---------------------------------------------------------------
-        Turn off the screen when inactive for:  15 minutes | 15 minutes
-        Suspend when inactive for:                   Never | Never
-        When the lid is closed:                 Do Nothing | Suspend
-        ---------------------------------------------------------------
-        When the battery is critically low: Shut down immediately
-    
-    [Sound]
-      [Input]
-        (Internal Microphone Built-in Audio)
-          (click the speaker icon to mute/disable it)
-      
-      [Sounds]
-        (customize system sounds)
-  
-  ──────────────────────────────────────────────────────────────────────────────
-  
-  [Administration]
-  
-    [Login Window] (only effects re-login from Suspend)
-      [Appearance]
-        Alignment: Center
-        Background: /usr/share/backgrounds/linuxmint-wallpapers/mpiwnicki_sparkling.jpg
-        GTK theme: Mint-L-Aqua
-        Icon theme: Mint-L-Aqua
-      
-      [Users]
-        Allow guest sessions: (checked)
-  ```
-  
-  ---
-  
-  ### Panel Settings
-  
-  For the main Panel, I had an issue where icons randomly scaled up in size and couldn't be reset. To ensure the same sizes I:
-  - Right-click the Panel and choose `Panel Settings`.
-  - In the `Panel Appearance` section I click on `Right Zone`.
-      ```
-      Font Size: 12.0pt
-      Colored Icon Size: 22px
-      Symbolic Icon Size: 18
-      ```
-      Oddly, all those different sizes equate to the icons looking the same scale.
-  
-  Instead of installing a dock, you can create something similar via a Panel:
-  - Right-click an empty area of the main bar, and choose `Add a new Panel`.
-  - I clicked on the top Panel slot (highlighted in red).
-  - Right-click the new Panel, choose `Panel Settings`.
-      ```
-      [ Panel Visibility ]
-        Auto-hide panel: Intelligently hide panel
-      
-      [ Customize ]
-        Panel height: 50
-      ```
-  - Right-click the Panel and toggle `Panel Edit Mode`, and then click `Applets`.
-  - Go to the `Download` tab and search/add `Direct`. Then go back to the `Manage` tab.
-  - I added these Applets, and dragged them to the specified Panel areas:
-      ```
-      (center)
-        Panel Launchers
-        Seperator
-        Panel Launchers
-        Direct
-        Direct
-        Direct
-        Direct
-        Direct
-        Direct
-        Seperator
-        Panel Launchers
-        Seperator
-        Panel Launchers
-      
-      (right)
-        User Applet
-        Workspace Switcher
-      ```
-  - Configuration for the Panel Launcher is a bit glitchy. I tried to add custom items via the GUI but nothing appeared (*). Turns out you can import a JSON file with the items you want.
-      - Create some `launchers-<NUMBER>.json` files on your Desktop (can be named anything and placed anywhere) (also, maybe create one with the proper formatting, then just copy and alter).
-      - To get the names of the launchers, I mostly looked up items in the main system menu, right-clicked and chose `Add to desktop`. Then I'd run `ls -la ~/Desktop` to see the actual file names.
-          - For location launchers (Home, Trash, etc), I had to create custom launchers.
-              ```sh
-              cd ~/.local/share/applications
-              ```
-              I'm using my custom Thunar action to create a launcher. Right-click any file, choose `Create Launcher`. You can also right-click on the Desktop and choose `Create a new launcher here` and then move it to `~/.local/share/applications`.
-              ```
-              Version: 1.0
-              Exec: xdg-open trash:///
-              Name: open_trash
-              Comment: Opens a User's Trash folder
-              Icon: user-trash-full
-              ```
-              ```
-              Version: 1.0
-              Exec: bash -c "xdg-open $HOME"
-              Name: open_home
-              Comment: Opens a User's Home folder
-              Icon: user-home
-              ```
-              ```
-              Version: 1.0
-              Exec: bash -c "xdg-open $HOME/Music"
-              Name: open_music
-              Comment: Opens a User's Music folder
-              Icon: folder-music
-              ```
-              ```
-              Version: 1.0
-              Exec: bash -c "xdg-open $HOME/Projects"
-              Name: open_projects
-              Comment: Opens a User's Projects folder
-              Icon: mine__folders
-              ```
-              ```
-              Version: 1.0
-              Exec: systemctl suspend
-              Name: sys_suspend
-              Comment: Puts the system to sleep
-              Icon: system-shutdown
-              ```
-      - After some trial and error, this format worked for me:
-          ```json
-          {
-              "launcherList": {
-                  "value": [
-                      "<NAME1>.desktop",
-                      "<NAME2>.desktop",
-                      "<NAME3>.desktop:flatpak"
-                  ]
-              }
-          }
-          ```
-          - Note: The import will fail silently if you have any malformed JSON. You can [validate on this site](https://jsonlint.com/).
-          - Note: If you're adding a launcher for a Flatpak, you need to suffix it with `:flatpak`.
-      - Right-click on an empty area of the Applet, you should see `Applet Preferences`. Click on that and then click `Configure`. Click the `More options` menu button (3 lines), then click `Import from a file`.
-      - You should see your items replace the old items. The config files are stored in `~/.config/cinnamon/spices/panel-launchers@cinnamon.org/`.
-      - (*) While troubleshooting something else, I found `~/.local/share/cinnamon/panel-launchers/` which had some orphaned custom launchers that were created. If I try to edit a launcher it generates the altered version there, but doesn't update the GUI. If I drag items around within the applet it seems to refresh then.
-  - Configuration for the User Applet:
-      ```
-      Display the user Image on the Panel: On
-      ```
-  - Configuration for the Workspace Applet:
-      ```
-      Type of display: Simple buttons
-      ```
-  
-  #### Back up Panels
-  
-  ```sh
-  dconf dump /org/cinnamon/ > ~/cinnamon_backup.conf
-  ```
-  Custom launchers on your panel are not saved in the general dconf/settings backup and must be exported manually.
-  - Right-click the custom launcher icon on your panel.
-  - Select **Applet preferences** > **Configure**.
-  - Click the three horizontal lines (more options) icon in the top right corner.
-  - Select **Export to a file** and save it.
-  You'd have to do this one at a time for everything, or just copy the `~/.config/cinnamon/spices` folder.
-  
-  #### Restore Panels
-  
-  First copy over the contents of your `~/.config/cinnamon/spices` backup, then:
-  ```sh
-  dconf load /org/cinnamon/ < ~/cinnamon_backup.conf
-  ```
-  
-  #### Reset Panels
-  
-  If you completely deleted your panel and just want to fix it, run
-  ```sh
-  gsettings reset-recursively org.cinnamon
-  # OR
-  dconf reset -f /org/cinnamon/
-  ```
-  This will wipe custom settings and bring back the default panel.
-  
-  ---
-  
-  ### Headset Settings
-  
-  If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. There are a couple ways to disable it:
-      - Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
-      - If nothing in the Sound Settings worked, you can try the CLI tool `alsamixer`. Once it's running in your CLI, hit `F6` to choose your sound device. Then arrow Left/Right to choose an output channel, and arrow Up/Down to change the volume.
-</details>
+---
 
-<details>
-  <summary>Expand for Cairo-Dock Settings</summary>
-  
-  If you want to switch from OpenGL go into `~/.config/cairo-dock/.cairo-dock` and update:
-  ```diff
-  - default_backend=opengl
-  + default_backend=cairo
-  ```
-  
-  To have it start on boot go into **Startup Applications**. `Add > Choose Applications > pick Cairo-Dock`.
-  
-  In order to add launchers to the dock, I go into the taskbar menu and search for the application. Once I find the application you can sometimes just drag it right to the dock, but more often than not I just right-click the app and choose `Add to desktop`. Then I can drag that launcher to the dock.
-  
-  Note that when a launcher is added to the dock, a copy of it is added to `~/.config/cairo-dock/current_theme/launchers`. So if a launcher needs to be updated, I'll generally just delete it and add the new one, but you can go in and manually edit the launcher in that folder.
-  
-  When manually creating a launcher I look to see if there's a good system icon via `cuttlefish` instead of pointing to an image. Some apps like system binaries may not have an icon, so you can find/create one and add it to the appropriate folder in `~/.local/share/icons`. More info on that in the [Theming](#theming) section.
-    - After an update in Mint, I noticed some icons I was previously using were no longer available in the current theme. You can see what icon theme is in use under `Cairo-dock > Configuration > Appearance > Icons`. It seems to default to `_Custom Icons_` which is located at `/home/<USER>/.config/cairo-dock/current_theme/icons/`, and allows you to drop custom icons (SVG or PNG) directly in there. You can reference the files the same way as system icons, for example if you have `code.svg` you can reference it as `code` in the Launcher `Icon > Image's name or path` section. Missing icons may still exist within a different theme, so in a file browser you can open up `/usr/share/icons/` and search for the name that was previously being used, then just copy that file over to `<CAIRO>/current_theme/icons/`.
-  
-  Had an issue where Cairo wasn't using my default File Manager to open folders. It must be caching it somewhere because after I went into Default Applications, and changed my File Manager to something else, and then back to what I wanted, it started behaving.
-</details>
+### Grub Settings
 
 <details>
   <summary>Expand for Grub Settings</summary>
@@ -2196,15 +1816,20 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```sh
   sudo nano /etc/default/grub
   ```
+  If `GRUB_TIMEOUT_STYLE` is set to `hidden`, change it to `menu`.
   ```diff
   # Decrease duration that grub menu displays
   - GRUB_TIMEOUT=10
-  + GRUB_TIMEOUT=2
+  + GRUB_TIMEOUT=3
   ```
   ```sh
   sudo update-grub
   ```
 </details>
+
+---
+
+### Inkscape Settings
 
 <details>
   <summary>Expand for Inkscape Settings</summary>
@@ -2230,6 +1855,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
 </details>
 
+---
+
+### LSD Settings
+
 <details>
   <summary>Expand for LSD Settings</summary>
   
@@ -2240,6 +1869,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   )
   ```
 </details>
+
+---
+
+### Qemu Settings
 
 <details>
   <summary>Expand for Qemu Settings</summary>
@@ -2260,6 +1893,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
         ```
 </details>
 
+---
+
+### Remmina Settings
+
 <details>
   <summary>Expand for Remmina Settings</summary>
   
@@ -2272,6 +1909,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
       [X] No tray icon (To close the app when you've closed all windows. May require you to kill the process the first time if you change this setting from the tray icon and all windows are already closed).
   ```
 </details>
+
+---
+
+### Sayonara Settings
 
 <details>
   <summary>Expand for Sayonara Settings</summary>
@@ -2317,55 +1958,9 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
 </details>
 
-<details>
-  <summary>Expand for SDDM Settings</summary>
-  
-  ```sh
-  (
-    # To configure the theme, create a custom config for sddm
-    sudo mkdir -p /etc/sddm.conf.d
-    sudo cp -i ./files/sddm/10-custom.conf /etc/sddm.conf.d/
-    
-    # Then a custom config for the theme, adjust values as you see fit (these changes will persist after theme updates)
-    sudo cp -i ./files/sddm/theme.conf.user /usr/share/sddm/themes/breeze/
-  )
-  ```
-  
-  You can test the theme via: `sddm-greeter --test-mode --theme /usr/share/sddm/themes/breeze`. If there are errors, you may want to pick a different theme. To get out of the preview, `ALT + TAB` to your terminal and `CTRL + C` to kill the process.
-  
-  The backgrounds for a theme are set in `/usr/share/sddm/themes/<THEME>/theme.conf` on the `background=` line.
-  Generally themes point to the global wallpapers so an image can be displayed for any user. Those wallpapers are in `/usr/share/wallpapers`.
-  To more easily view all wallpapers I open that directory with a file manager, and do a search for `screenshot.jpg`, then I can just browse through the results, and find the path for the wallpaper I want.
-  Once you have a wallpaper you like, create/update your config's background line, and you'll see the new image after a reboot. Note that you'll see your User wallpaper on the lock screen.
-  
-  If your user icon isn't showing up, look in `/var/lib/AccountsService/icons/` and see if an icon exists with your user name. If not, try picking and choosing an icon again from **Account Details**.
-  
-  If you have multiple monitors hooked up, things will likely be jacked up when the login screen appears. Here's how to fix it:
-  ```sh
-  # get info about connected monitors
-  xrandr | grep -w connected
-  # In my case the output was:
-  # --------------------------
-  ## HDMI-0 connected 1080x1920+1920+0 left (normal left inverted right x axis y axis) 531mm x 299mm
-  ## DP-1 connected (normal left inverted right x axis y axis)
-  ## DP-3 connected primary 1920x1080+0+423 (normal left inverted right x axis y axis) 531mm x 299mm
-  # --------------------------
-  # HDMI-0 is my secondary vertical monitor to the right of my primary DP-3. DP-1 is the closed laptop.
-  
-  # add rules so the login behaves
-  sudo nano /usr/share/sddm/scripts/Xsetup
-  # -------------------------------------
-  xrandr --output DP-3 --auto --primary
-  xrandr --output HDMI-0 --right-of DP-3 --rotate left --noprimary
-  # -------------------------------------
-  ```
-  
-  If `sddm` isn't behaving, you can revert to the default with `sudo dpkg-reconfigure lightdm`.
-  
-  Configuration doc: https://wiki.archlinux.org/title/SDDM#Configuration
-  
-  View the default config: `sddm --example-config | bat`
-</details>
+---
+
+### Sticky Settings
 
 <details>
   <summary>Expand for Sticky Settings</summary>
@@ -2384,6 +1979,10 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
     [x] Start automatically
   ```
 </details>
+
+---
+
+### VS Code Settings
 
 <details>
   <summary>Expand for VS Code Settings</summary>
@@ -2551,45 +2150,9 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
      - `~/.vscode/argv.json`, add `"disable-hardware-acceleration": true`
 </details>
 
-<details>
-  <summary>Expand for Xed (Text Editor) Settings</summary>
-  
-  I was using `notepadqq` but it started taking a very long time to open.
+---
 
-  Xed comes default with Mint, but it requires a little customization.
-
-  - Styles will come from https://github.com/trusktr/gedit-color-schemes
-     - There are a few places where styles could possibly go. Run `ls -la /usr/share/gtksourceview-*/styles`, and take note of the folders that have a `styles.rng` file. For each one of those folders, you'll need to create a `.local` version where you'll dump the custom styles.
-        ```sh
-        # currently these folders match the above criteria
-        mkdir -p ~/.local/share/{gtksourceview-3.0,gtksourceview-4}/styles
-        ```
-     - Now you can copy the contents of the repo's `gtksourceview-3.0/styles` folder over to the new folders.
-        ```sh
-        (
-          wget https://github.com/trusktr/gedit-color-schemes/archive/refs/heads/master.zip -O ~/Downloads/geditcolors.zip
-          unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-3.0/styles/
-          unzip -j ~/Downloads/geditcolors.zip "gedit-color-schemes-master/gtksourceview-3.0/styles/*" -d ~/.local/share/gtksourceview-4/styles/
-          rm ~/Downloads/geditcolors.zip
-        )
-        ```
-  - Open a file with Xed (Text Editor)
-     - Go to Edit > Preferences
-        ```
-        [Editor]
-          (check) Display line numbers
-          (check) Display overview map
-          (check) Display right margin (set to 80)
-          (check) Highlight the current line
-          (check) Highlight matching brackets
-          Tab width: 2
-          (check) Automatic indentation
-          (uncheck) Allow mouse wheel scrolling to change tabs
-          
-        [Theme]
-          Twilight
-        ```
-</details>
+### Root User Settings
 
 <details>
   <summary>Expand for root Settings</summary>
@@ -2603,26 +2166,27 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   ```
 </details>
 
-<br>
-<br>
+---
+
+### Finalize Settings
 
 Now that things are set up, you should:
 - Back things up
-   ```sh
-   # Back up GNOME settings
-   dconf dump / > ~/settings.dconf
-   ```
+    ```sh
+    # Back up GNOME settings
+    dconf dump / > ~/settings.dconf
+    ```
 - Change Grub to something less noisy
-   ```sh
-   sudo nano /etc/default/grub
-   ```
-   ```diff
-   - GRUB_CMDLINE_LINUX_DEFAULT="quiet nosplash loglevel=3"
-   + GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"
-   ```
-   ```sh
-   sudo update-grub
-   ```
+    ```sh
+    sudo nano /etc/default/grub
+    ```
+    ```diff
+    - GRUB_CMDLINE_LINUX_DEFAULT="quiet nosplash loglevel=3"
+    + GRUB_CMDLINE_LINUX_DEFAULT="quiet splash loglevel=3"
+    ```
+    ```sh
+    sudo update-grub
+    ```
 
 ---
 
@@ -2655,6 +2219,18 @@ sudo service cups stop
 # Start the server
 sudo service cups start
 ```  
+
+---
+
+## Configure Hardware
+
+### Headset Settings
+  
+If you have a headset plugged in with a mic and you're hearing yourself in the headphones when you talk - that's loopback. 
+
+There are a couple ways to disable it:
+- Open up the Sound Settings. In the Output tab, there'll likely be two sound devices for your headset. One will have a soundcard icon and the other will have a headset icon. You can click the speaker icon to mute a channel. Talk into your mic while muting a channel to see if you can still hear other sounds but not your own. If you still hear yourself, try the other device and repeat the talk/mute steps.
+- If nothing in the Sound Settings worked, you can try the CLI tool `alsamixer`. Once it's running in your CLI, hit `F6` to choose your sound device. Then arrow Left/Right to choose an output channel, and arrow Up/Down to change the volume.
 
 ---
 
@@ -2871,17 +2447,6 @@ Followed [steps from this guide](https://linuxconfig.org/usb-stick-encryption-us
 
 ---
 
-## Useful Keyboard Shortcuts
-
-| Keys | Action |
-| ---- | ------ |
-| `ALT + click on a window + drag` | Moves a window |
-| `ALT + right-click near window edge + drag up/down or left/right` | Resize a window |
-| `CTRL+ALT+ESC` | Restart Cinnamon (keeps current session, may jumble window positions) |
-| `CTRL+ALT+BACKSPACE` | Restart XOrg (exits to login) |
-
----
-
 ## Useful Commands
 
 | Command | Description |
@@ -2909,6 +2474,18 @@ Followed [steps from this guide](https://linuxconfig.org/usb-stick-encryption-us
 
 # System audio
 /usr/share/sounds
+```
+
+---
+
+## Session Managers
+
+If you later choose that you want to try out a different Session Manager, install the appropriate package below via `apt install`, log out, and choose the new manager before you login (there should be a drop-down).
+```sh
+kde-plasma-desktop
+mint-meta-cinnamon
+mint-meta-mate
+mint-meta-xfce
 ```
 
 ---
@@ -3060,28 +2637,6 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   - This should get you back into a functional state where you can log in.
   - I then opened a terminal and ran `sudo dpkg --configure -a` to finish the updates that previously failed. Some may take a while, just let them do their thing.
   - Reboot and verify that the new kernel is being used after you log in again.
-</details>
-<br>
-<br>
-
-### System going to sleep after a few seconds on the Login screen
-<details>
-  <summary>Expand for Solution</summary>
-  
-  The issue only happened when my system was docked and the lid was closed and I was using an external monitor.
-  
-  Normally you'd go into **Power Management** and set what the system should do when the lid is closed. Turns out that it has no effect in the Login screen, rather it's controlled by `logind`.
-  
-  First check what files are effecting `logind`:
-  ```sh
-  systemd-analyze cat-config systemd/logind.conf
-  ```
-  If you don't see any files with settings pertaining to `HandleLidSwitchExternalPower`, create a new one:
-  ```sh
-  sudo cp -i ./files/laptop-login.conf /usr/lib/systemd/logind.conf.d/
-  # Save changes and run
-  sudo systemctl restart systemd-logind
-  ```
 </details>
 <br>
 <br>
