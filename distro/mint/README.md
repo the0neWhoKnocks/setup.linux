@@ -27,6 +27,15 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [Via deb](#via-deb)
   - [Via Archives](#via-archives)
   - [Via CLI (slightly complex)](#via-cli-slightly-complex)
+    - [Albert](#albert)
+    - [Docker](#docker)
+    - [FreeFileSync](#freefilesync)
+    - [Kodi](#kodi)
+    - [NodeJS Version Manager](#nodejs-version-manager)
+    - [QEMU / Virt Manager](#qemu--virt-manager)
+      - [How to Create a Linux Mint VM](#how-to-create-a-linux-mint-vm)
+      - [How to Create a Windows VM](#how-to-create-a-windows-vm)
+    - [Lutris](#lutris)
 - [Configure Software](#configure-software)
   - [Self-Signed Certificates](#self-signed-certificates)
   - [Limit you monitor's blue light (color temperature)](#limit-you-monitors-blue-light-color-temperature)
@@ -1146,6 +1155,9 @@ For packages that require more than a simple `apt install`.
 | [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-container-toolkit) | Configure containers to leverage NVIDIA GPUs |
 | [qemu](https://www.qemu.org/) | A machine emulator and virtualizer |
 
+---
+
+#### Albert
 
 <details>
   <summary>Albert</summary>
@@ -1190,6 +1202,9 @@ For packages that require more than a simple `apt install`.
   ```
 </details>
 
+---
+
+#### Docker
 
 <details>
   <summary>Docker</summary>
@@ -1257,6 +1272,10 @@ For packages that require more than a simple `apt install`.
   `docker-compose` has [been replaced](https://docs.docker.com/compose/compose-v2/) with `docker compose`. The new [compose spec](https://github.com/compose-spec/compose-spec/blob/master/spec.md) is more universal but it also deprecates some fields.
 </details>
 
+---
+
+#### FreeFileSync
+
 <details>
   <summary>FreeFileSync</summary>
   
@@ -1286,6 +1305,10 @@ For packages that require more than a simple `apt install`.
   + Exec=sudo bash -c "export FFS_USER=<USER>; export FFS_HOME=/home/$FFS_USER; dconf dump / > ~/settings.dconf; /opt/FreeFileSync/FreeFileSync %F"
   ```
 </details>
+
+---
+
+#### Kodi
 
 <details>
   <summary>Kodi</summary>
@@ -1351,6 +1374,10 @@ For packages that require more than a simple `apt install`.
       ```
 </details>
 
+---
+
+#### NodeJS Version Manager
+
 <details>
   <summary>'n' NodeJS version manager</summary>
   
@@ -1393,6 +1420,10 @@ For packages that require more than a simple `apt install`.
   ```
 </details>
 
+---
+
+#### QEMU / Virt Manager
+
 <details>
   <summary>Qemu / Virt Manager (Virtual Machine Manager)</summary>
   
@@ -1407,8 +1438,77 @@ For packages that require more than a simple `apt install`.
   sudo virt-manager
   ```
   
-  Creating a Windows VM:
-  - Create folders for VMs: `mkdir -p ~/VMs/pool`.
+  Preferences:
+  ```
+  [General]
+    [ ] Enable system tray icon
+  ```
+  
+  ##### How to Create a Linux Mint VM
+  
+  1. Click the **Create a new virtual machine** button.
+      ```
+      [ Step 1 ]
+        [x] Local install media (ISO image or CDROM)
+      
+      [ Step 2 ]
+        Choose ISO:
+          - Click Browse
+          - Click 'Browse Local' and pick the Mint .iso file
+          - Deselect "Automatically detect from the installed media / source" and type `Ubuntu` in the input above the checkbox. Mint 22.3 is based off of Ubuntu 24.04 so pick that from the list. Doing this helps Mint optimize performance.
+      
+      [ Step 3 ]
+        Memory: 8192  (4GB or higher - multiply by 1024 per GB)
+        CPU: 4  (2 or more CPU cores)
+      
+      [ Step 4 ]
+        [x] Select or create custom storage, click 'Manage'
+          - Select the 'default' pool and click 'Stop Pool' (just doing this to prevent myself from creating stuff in there).
+          - If the 'VMs' pool doesn't exist create it by clicking the `Add Pool` button (bottom left)
+            ---
+            Name: VMs
+            Type: dir: Filesystem Directory
+            Target Path: /home/<USER>/VMs
+            ---
+          - Select the 'VMs' pool and click 'Create new volume'
+            Name: Mint_<VERSION>  (current version is 22.3)
+            Format: qcow2
+            Capacity: 40.0 GiB  (Ensures you'll have enough space for updates and software)
+          - Select the new volume in the list, click 'Choose Volume'.
+      
+      [ Step 5 ]
+        Name: Mint_<VERSION>
+        (Activate virtual network 'default' if prompted to.)
+      ```
+  1. Once the VM starts you may want to click on **View** > **Resize to VM**, in the virt-manager window.
+  1. Double-click the **Install Linux Mint** desktop link.
+  1. Once it gets done installing, it'll prompt to **remove the installation medium**. Click the **Show virtual hardware details** button in virt-manager, select **Boot Options**, and uncheck **SATA CDROM 1** (or whatever CDROM has the Mint ISO). Click **Apply**.
+  1. Once it's booted and you've logged in, click the **Manage VM Snapshots** button in virt-manager.
+      ```
+      Name: 00-initial-install
+      ```
+  1. Shut down the VM. In the VM's hardware details:
+      ```
+      [Display]
+        Ensure the type is set to 'Spice server' instead of VNC.
+      
+      Check that you have a Channel device present with the target name 'com.redhat.spice.0' (Device type spicevmc). If not, click Add Hardware -> Channel, and set the name to 'com.redhat.spice.0'.
+      
+      [Video]
+        Ensure the model is set to Virtio (or QXL if Virtio doesn't work).
+      ```
+      Boot up the VM and install the SPICE agent:
+      ```sh
+      sudo apt install spice-vdagent
+      ```
+      Reboot the VM.
+  1. Run updates, reboot, click the **Manage VM Snapshots** button in virt-manager.
+      ```
+      Name: 01-updates-applied
+      ```
+  
+  ##### How to Create a Windows VM
+  
   - Download the drivers `.iso` so virtio can communicate with Windows. [This page](https://pve.proxmox.com/wiki/Windows_VirtIO_Drivers) had a good overview of the drivers. That page led me to [a github page](https://github.com/virtio-win/virtio-win-pkg-scripts/blob/master/README.md) with links to possible downloads. From there I found an [archive page with all the downloads](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/). There's also a section with a link to the [latest stable version](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/) (`stable-virtio`), which changes with each release.
   - Download the Windows `.iso` [from here](https://www.microsoft.com/en-us/software-download/windows11).
   - Open Virt Manager
@@ -1428,9 +1528,14 @@ For packages that require more than a simple `apt install`.
       
       [ Step 4 ]
         [x] Select or create custom storage, click 'Manage'
-          - Click the 'VMs' pool in the left column (should be auto-created after selecting the .iso in Step 1)
           - Select the 'default' pool and click 'Stop Pool' (just doing this to prevent myself from creating stuff in there).
-          - Click 'Create new volume'
+          - If the 'VMs' pool doesn't exist create it by clicking the `Add Pool` button (bottom left)
+            ---
+            Name: VMs
+            Type: dir: Filesystem Directory
+            Target Path: /home/<USER>/VMs
+            ---
+          - Select the 'VMs' pool and click 'Create new volume'
             Name: Win11_<VERSION>  (current version is 25H2)
             Format: qcow2
             Capacity: 80.0 GiB  (Minimum disk space required to install Windows 11 is 64GiB, so assign 80GiB)
@@ -1503,6 +1608,10 @@ For packages that require more than a simple `apt install`.
 | Software | Description |
 | -------- | ----------- |
 | [lutris](https://lutris.net/) | Allows for playing games on Linux. Use to install [Origin](https://lutris.net/games/origin/) |
+
+---
+
+#### Lutris
 
 <details>
   <summary>Lutris</summary>
