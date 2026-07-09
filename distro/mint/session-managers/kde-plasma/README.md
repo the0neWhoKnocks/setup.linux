@@ -45,7 +45,6 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
 - [Add a Dock](#add-a-dock)
   - [Cairo-Dock Settings](#cairo-dock-settings)
 - [Tweaks](#tweaks)
-  - [Get Pipewire re-installed](#get-pipewire-re-installed)
   - [Don't start Discover on boot](#dont-start-discover-on-boot)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Sources](#sources)
@@ -472,32 +471,6 @@ sudo apt install cairo-dock cairo-dock-plug-ins cairo-dock-gnome-session
 ---
 
 ## Tweaks
-
-### Get Pipewire re-installed
-
-```sh
-sudo apt install pipewire pipewire-bin
-# Enable Pipewire and verify it's running
-systemctl --user enable pipewire
-systemctl --user status pipewire{,-pulse} wireplumber
-# Verify PulseAudio is now disabled
-systemctl --user status pulseaudio
-# Remove PulseAudio
-apt purge pulseaudio
-
-# Was seeing some errors in the PipeWire services so I installed this stuff.
-#   jackd2 - Pipewire looks for a jackd* server on start. When it asks if you want to enable `realtime process priority` say 'No'.
-#   pipewire-audio-client-libraries - Contains client libraries allowing programs designed for the ALSA, JACK and PulseAudio APIs to use a PipeWire server for audio playback and recording. They are not used by default, and are currently considered to be experimental.
-#   pipewire-libcamera - Think it was detecting the laptop camera and that it didn't have the proper lib installed to handle it.
-sudo apt install \
-  jackd2 \
-  pipewire-audio-client-libraries \
-  pipewire-libcamera
-systemctl --user --now restart pipewire{,-pulse} wireplumber
-systemctl --user status pipewire{,-pulse} wireplumber
-```
-Speaker icon in the system tray would blink on and off, it was switching from **Speakers** and **Headphones (unplugged)**. I found these posts ([1](https://studiofuga.com/blog/2023-10-30-alsa-audio-headphones/), [2](https://bugs.launchpad.net/ubuntu/+source/alsa-driver/+bug/874535)) that describe the same issue, but with no fixes.
-- I changed the **Profile** from `Analog Stereo Duplex` to `Pro Audio`, and that fixed the speaker icon toggling, but it limited the volume output (quiet volume in Browsers even at 100%).
 
 ### Don't start Discover on boot
 

@@ -9,6 +9,10 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Installing / Updating the Kernel](#installing--updating-the-kernel)
 - [Software Sources](#software-sources)
 - [System Tweaks](#system-tweaks)
+  - [Setting hostname](#setting-hostname)
+  - [Fix Audio Switching From Speaker to Unplugged Headphone Jack](#fix-audio-switching-from-speaker-to-unplugged-headphone-jack)
+  - [Fix Pipewire systemctl Errors/Warnings](#fix-pipewire-systemctl-errorswarnings)
+  - [Fix System Going to Sleep on Login Screen](#fix-system-going-to-sleep-on-login-screen)
 - [Create Common Directories](#create-common-directories)
 - [Don't Require Password for Sudo](#dont-require-password-for-sudo)
 - [Install Base Software](#install-base-software)
@@ -234,38 +238,59 @@ The theory is that after a kernel upgrade the new kernel is not active before th
 
 ## System Tweaks
 
-- There's a limit of 15 characters for the `hostname` for `netbios`. You can run `testparm -s` to see if your hostname length is ok (when it's not you'll see `WARNING: The 'netbios name' is too long`).
+### Setting hostname
+
+There's a limit of 15 characters for the `hostname` for `netbios`. You can run `testparm -s` to see if your hostname length is ok (when it's not you'll see `WARNING: The 'netbios name' is too long`).
+```sh
+hostnamectl set-hostname '<NEW_NAME>'
+```
+
+### Fix Audio Switching From Speaker to Unplugged Headphone Jack
+
+Since Mint 22, they've swapped out the audio driver from `pulseaudio` to `pipewire`. Unfortunately, using `pipewire` was causing my audio to quickly flip from speaker to the unplugged headphone jack. When I was playing audio it behaved as expected (so long as it was on the speaker channel when I started to play something), the rest of the time the speaker icon was constantly blinking.
+
+I found this info from an openSUSE forum:
+> Often, the ALSA module puts your sound card's `snd_hda_intel` driver into a low-power "sleep" state when no audio is playing, which breaks headphone-jack detection.
+
+1. Open a terminal and create a new modprobe configuration file: `sudo nano /etc/modprobe.d/audio_disable_powersave.conf`
+1. Add the following line to turn off power saving entirely: `options snd_hda_intel power_save=0`. Save the file and exit.
+1. Reboot your system to apply the change.
+
+### Fix Pipewire systemctl Errors/Warnings
+
+1. Check for errors/warnings
     ```sh
-    hostnamectl set-hostname '<NEW_NAME>'
+    systemctl --user status pipewire{,-pulse} wireplumber
     ```
-- Since Mint 22, they've swapped out the audio driver from `pulseaudio` to `pipewire`. Unfortunately, using `pipewire` causes my audio to quickly flip from speaker to headphones, even when no headphones are plugged in. When I was playing audio it behaved as expected, the rest of the time the speaker icon was constantly blinking. This is how you roll back to `pulseaudio`.
+1. Was seeing some errors in the PipeWire services so I installed this stuff.
     ```sh
-    apt purge pipewire pipewire-bin
-    # pulseaudio gets installed automatically during the removal.
-    systemctl enable --user pulseaudio
-    sudo reboot
-    ```
-    The above should just work, but in case it doesn't:
-    ```sh
-    # Verify it's running
-    systemctl status --user pulseaudio
-    # If it's not running
-    systemctl start --user pulseaudio
+    # jackd2 - Pipewire looks for a jackd* server on start. When it asks if you want to enable 'realtime process priority' say 'No'.
+    # pipewire-audio-client-libraries - Contains client libraries allowing programs designed for the ALSA, JACK and PulseAudio APIs to use a PipeWire server for audio playback and recording. They are not used by default, and are currently considered to be experimental.
+    # pipewire-libcamera - Think it was detecting the laptop camera and that it didn't have the proper lib installed to handle it.
+    sudo apt install \
+      jackd2 \
+      pipewire-audio-client-libraries \
+      pipewire-libcamera
     
-    # Try rebooting again
+    systemctl --user --now restart pipewire{,-pulse} wireplumber
+    systemctl --user status pipewire{,-pulse} wireplumber
     ```
-- If you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
-    - First check what files are effecting `logind` (look for anything with `HandleLidSwitch`):
-        ```sh
-        systemd-analyze cat-config systemd/logind.conf
-        ```
-    - If there isn't anything already controlling `HandleLidSwitch*`, run:
-        ```sh
-        sudo mkdir -p /etc/systemd/logind.conf.d
-        sudo cp -i ./files/logind.conf.d/90-ignore-lid-closed.conf /etc/systemd/logind.conf.d/
-        sudo systemctl restart systemd-logind
-        ```
-    - Normally you'd go into **Power Management** and set what the system should do when the lid is closed. Turns out that it has no effect in the Login screen, rather it's controlled by `logind`.
+
+### Fix System Going to Sleep on Login Screen
+
+If you work with monitors hooked up to a closed laptop, you'll want to make these changes. If you don't, anytime the login comes up after a reboot you'll have about 15 seconds before the system suspends, or if you Log Off or Switch User the system suspends immediately.
+
+1. Check what files are effecting `logind` (look for anything with `HandleLidSwitch`):
+    ```sh
+    systemd-analyze cat-config systemd/logind.conf
+    ```
+1. If there isn't anything already controlling `HandleLidSwitch*`, run:
+    ```sh
+    sudo mkdir -p /etc/systemd/logind.conf.d
+    sudo cp -i ./files/logind.conf.d/90-ignore-lid-closed.conf /etc/systemd/logind.conf.d/
+    sudo systemctl restart systemd-logind
+    ```
+1. Normally you'd go into **Power Management** and set what the system should do when the lid is closed. Turns out that it has no effect in the Login screen, rather it's controlled by `logind`.
 
 ---
 
