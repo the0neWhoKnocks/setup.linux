@@ -36,7 +36,9 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
   - [Display and Monitor](#display-and-monitor)
     - [Display Configuration](#display-configuration)
     - [Night Color](#night-color)
+- [Start Menu](#start-menu)
 - [Task Bar](#task-bar)
+  - [Task Bar Icons](#task-bar-icons)
 - [Desktop Appearance](#desktop-appearance)
   - [Wallpaper](#wallpaper)
   - [Icons](#icons-1)
@@ -96,7 +98,7 @@ Breeze
 
 #### Plasma Style
 
-Breeze
+Breeze Dark
 
 #### Colors
 
@@ -119,7 +121,7 @@ Window title: Noto Sans 10pt
 
 #### Icons
 
-Breeze Dark
+Custom Breeze-Dark  (I created to handle icon rendering issues)
 
 #### Cursors
 
@@ -281,6 +283,18 @@ It doesn't enable itself at login. RedShift seems to be consistent so I'm still 
 
 ---
 
+## Start Menu
+
+Right-click icon > **Configure Application Launcher**
+```
+[General]
+  Icon: linuxmint-logo-leaf-badge-symbolic
+  Genearl: [x] Always sort applications alphabetically
+  Show other applications: [x] In a grid
+```
+
+---
+
 ## Task Bar
 
 - Right-click bottom bar in empty area, select **Configure Icons-only Task Manager**.
@@ -293,9 +307,10 @@ It doesn't enable itself at login. RedShift seems to be consistent so I'm still 
 - Click the (Up) arrow by the clock (Show Hidden Icons):
     - Click the **Configure System Tray** button.
         ```
-             IBus Panel | Always Hidden
-        Lock Key Status | Always Shown
-              Clipboard | Disabled
+             IBus Panel  | Always Hidden
+               Bluetooth | Always Shown
+        Lock Keys Status | Always Shown
+              Clipboard  | Disabled
         ```
     - If the **Lock Key Status** widget is missing
         ```sh
@@ -307,6 +322,84 @@ It doesn't enable itself at login. RedShift seems to be consistent so I'm still 
     Show when activated: [x] Caps Lock
                          [x] Num Lock
     ```
+- Right-click the time > **Configure Digital Clock**
+    ```
+    [Appearance]
+      Information: [x] Show Date (Always Beside Time)
+      Date Format: ISO Date
+      Text Display: Manuel - 14pt Ubuntu Mono
+    
+    [Calendar]
+      Available Plugins: [x] Holidays
+    
+    [Holidays]
+      [x] us_en-us
+    ```
+
+### Task Bar Icons
+
+For the most part I was happy with the **Breeze-Dark** icon theme, except for some icons in the system tray. Some were pixelated or were ignoring theme colors and were just black.
+
+1. First thing I did was try out different icon themes to see if any made the bad icons display better.
+1. If I found good icons, I'd find the icons in `/usr/share/icons/<THEME>` - in this case I'll continue to use `breeze-dark` for a majority of icons and just extend my custom icon theme from `breeze-dark` - so I'll copy the good icon(s) to `~/.local/share/icon/custom-breeze-dark/apps/scalable/<ICON>.svg`.
+1. Create `~/.local/share/icon/custom-breeze-dark/index.theme`
+    ```
+    [Icon Theme]
+    Name=Custom Breeze-Dark
+    Comment=Inherits Breeze-Dark, and overrides the icons that have styling issues.
+    DisplayDepth=32
+    Inherits=breeze-dark,hicolor
+    # Setting `FollowsColorScheme=true` is a KDE Plasma extension that instructs the icon engine to inspect SVG files for elements with the CSS class ColorScheme-Text and recolor them to match the system's active text color. This is a per-file mechanism distinct from the bulk variant symlinks created by configure. See Dark and Light Variants for the symlink mechanism.
+    FollowsColorScheme=true
+
+    Example=folder
+
+    KDE-Extensions=.svg
+
+    ########## Directories
+    ########## ordered by category and alphabetically
+    Directories=apps/scalable
+
+    [apps/scalable]
+    Context=Applications
+    Size=16
+    MinSize=8
+    MaxSize=512
+    Type=Scalable
+    ```
+    The key bits that matter are:
+    - `Inherits`: Which tells the system to fallback on `breeze-dark` and then `hicolor` if my icon theme doesn't provide an icon that's been requested.
+    - `FollowsColorScheme`: Tells the render engine to render the icon using system/theme colors.
+    - `Directories`: Where the system should look for icons in the custom theme.
+    - `[apps/scalable]`: Tells the render engine that icons in this folder are `Scalable` and don't require a bunch of hard-coded size folders.
+1. Here's the basic markup for an SVG
+    ```html
+    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style id="current-color-scheme" type="text/css">
+          .ColorScheme-Text { color:purple; }
+        </style>
+      </defs>
+      <path class="ColorScheme-Text" fill="currentColor" d="M9.14 11.094H4.04l2.55-4.418z" />
+    </svg>
+    ```
+    The key bits that matter are:
+    - `id="current-color-scheme"`: If this is omitted, the icon will use the color defined for the `.ColorScheme-Text` class. Otherwise the system will set this color to what ever the system's theme requires - so in a dark theme the icons will likely be white, and black in a light theme. There's [more detail on this page](https://develop.kde.org/docs/plasma/theme/theme-colors/).
+        - Before the SVG is rendered by Plasma, if the CSS classes used inside the `<style>` element match a given name, the `color`: attribute is set to the corresponding system color. The following CSS classes can be used:
+            ```
+            ColorScheme-Background
+            ColorScheme-ButtonBackground
+            ColorScheme-ButtonFocus
+            ColorScheme-ButtonHover
+            ColorScheme-ButtonText
+            ColorScheme-Highlight
+            ColorScheme-ViewBackground
+            ColorScheme-ViewFocus
+            ColorScheme-ViewHover
+            ColorScheme-ViewText
+            ColorScheme-Text
+            ```
+    - `class="ColorScheme-Text" fill="currentColor"`: This shape will use the `currentColor` assigned by the `ColorScheme-Text` class.
 
 ---
 
@@ -385,19 +478,26 @@ sudo apt install cairo-dock cairo-dock-plug-ins cairo-dock-gnome-session
 ```sh
 sudo apt install pipewire pipewire-bin
 # Enable Pipewire and verify it's running
-systemctl enable --user pipewire
-systemctl status --user pipewire
+systemctl --user enable pipewire
+systemctl --user status pipewire{,-pulse} wireplumber
 # Verify PulseAudio is now disabled
-systemctl status --user pulseaudio
+systemctl --user status pulseaudio
 # Remove PulseAudio
 apt purge pulseaudio
 
-# Was seeing some errors in the PipeWire services so I installed this stuff
-sudo apt install pipewire-audio-client-libraries pipewire-libcamera
-systemctl --user --now restart pipewire pipewire-pulse wireplumber
+# Was seeing some errors in the PipeWire services so I installed this stuff.
+#   jackd2 - Pipewire looks for a jackd* server on start. When it asks if you want to enable `realtime process priority` say 'No'.
+#   pipewire-audio-client-libraries - Contains client libraries allowing programs designed for the ALSA, JACK and PulseAudio APIs to use a PipeWire server for audio playback and recording. They are not used by default, and are currently considered to be experimental.
+#   pipewire-libcamera - Think it was detecting the laptop camera and that it didn't have the proper lib installed to handle it.
+sudo apt install \
+  jackd2 \
+  pipewire-audio-client-libraries \
+  pipewire-libcamera
+systemctl --user --now restart pipewire{,-pulse} wireplumber
 systemctl --user status pipewire{,-pulse} wireplumber
 ```
-The speaker icon in the system tray would blink on and off, it was switching from **Speakers** and **Headphones (unplugged)**. So I changed the **Profile** from `Analog Stereo Duplex` to `Pro Audio`.
+Speaker icon in the system tray would blink on and off, it was switching from **Speakers** and **Headphones (unplugged)**. I found these posts ([1](https://studiofuga.com/blog/2023-10-30-alsa-audio-headphones/), [2](https://bugs.launchpad.net/ubuntu/+source/alsa-driver/+bug/874535)) that describe the same issue, but with no fixes.
+- I changed the **Profile** from `Analog Stereo Duplex` to `Pro Audio`, and that fixed the speaker icon toggling, but it limited the volume output (quiet volume in Browsers even at 100%).
 
 ### Don't start Discover on boot
 
