@@ -26,6 +26,8 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
     - [Login Screen](#login-screen)
     - [Autostart](#autostart)
     - [Desktop Session](#desktop-session)
+  - [Notifications](#notifications)
+    - [Plasma Workspace](#plasma-workspace)
   - [Applications](#applications)
     - [Default Applications](#default-applications)
     - [KDE Wallet](#kde-wallet)
@@ -232,6 +234,17 @@ Add/remove any applications you want at login.
 On login, launch apps that were open: Start with an empty session
 ```
 Was getting an error from **Albert** after I rebooted `Failed creating IPC server: QLocalServer::listen: Address in use`. Seems it was trying to start the same session and was conflicting with the already assigned port.
+
+---
+
+### Notifications
+
+#### Plasma Workspace
+
+Configure Events
+```
+Login: /usr/share/sounds/freedesktop/stereo/service-login.oga
+```
 
 ---
 
