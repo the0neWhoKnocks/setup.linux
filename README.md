@@ -8,3 +8,4 @@ Distros
    - [Cinnamon](distro/mint/session-managers/cinnamon)
    - [KDE Plasma](distro/mint/session-managers/kde-plasma)
    - [XFCE](distro/mint/session-managers/xfce)
+- [NixOS](distro/nixos)

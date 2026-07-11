@@ -1,0 +1,6 @@
+set autoindent
+set indicator
+set linenumbers
+set mouse
+set tabsize 2
+set tabstospaces
