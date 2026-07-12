@@ -3,9 +3,8 @@
 - [Install OS](#install-os)
 - [Install Software](#install-software)
 - [Modules](#modules)
-  - [Apps (Nix)](#apps-nix)
-  - [Apps (Flatpak)](#apps-flatpak)
-  - [Docker](#docker)
+  - [System](#system)
+  - [User](#user)
 - [Sources](#sources)
 
 ---
@@ -42,14 +41,45 @@ During the install it'll ask which Installer to use, I chose `Plasma (Linux LTS)
 
 ## Install Software
 
-https://github.com/NixOS/nixpkgs/pull/77960
+There are a couple ways to check for configurable programs.
+1. https://search.nixos.org/packages?channel=26.05
+    - Search for a package name.
+    - Click on package.
+    - Click on the **NixOS Configuration** tab.
+        - There'll be a code snippet you can copy and apply to your `configuration.nix` file.
+        - Scroll down to the **NixOS options** section and click the link to view the options.
+        - The options page will likely have a `program.<NAME>.enable` option. Click that option to expand and view it's source from the **Declared in** section - it's a good way to learn how to write your own modules by looking at all the other modules that exist.
+1. Via the CLI:
+    ```sh
+    # List all available programs
+    nixos-option programs
+    
+    # Target a specific program
+    nixos-option programs.zsh
+    ```
 
-If you run `nixos-option programs` you will get a complete listing of all of the programs configurable in this fashion. There's also `nixos-option services`, which has a lot more stuff in it.
+Check if there are configurable services.
+```sh
+nixos-option services
+```
 
-https://search.nixos.org/packages?channel=26.05&query=docker#show=docker
-https://search.nixos.org/options?channel=26.05&query=zsh.ohmyzsh
-
-https://nixos.wiki/wiki/Docker
+How to get files from git repo and apply them
+```nix
+{ pkgs, ... }: 
+let
+  gitRepo = builtins.fetchGit {
+    url = "https://github.com/<USER>/<REPO>.git";
+    # rev = "<COMMIT_SHA>";
+    ref = "<BRANCH_NAME>";
+  };
+in {
+  # Link the fetched git repository into a specific folder in /etc
+  environment.etc."target-folder".source = gitRepo;
+  
+  # Copy contents of repo file to `/etc/custom-config.conf`.
+  environment.etc."custom-config.conf".text = builtins.readFile "${gitRepo}/config/tmpl.conf";
+}
+```
 
 ---
 
@@ -71,33 +101,16 @@ sudo nano /etc/nixos/configuration.nix
 sudo nixos-rebuild switch
 ```
 
-### Apps (Nix)
+### System
 
 Update `/etc/nixos/configuration.nix`
 ```diff
 imports = [
   # my stuff
 + ./modules/apps_nix.nix
-];
-```
-
-### Apps (Flatpak)
-
-Update `/etc/nixos/configuration.nix`
-```diff
-imports = [
-  # my stuff
 + ./modules/apps_flatpak.nix
-];
-```
-
-### Docker
-
-Update `/etc/nixos/configuration.nix`
-```diff
-imports = [
-  # my stuff
 + ./modules/docker.nix
++ ./modules/shell.nix
 ];
 ```
 ```diff
@@ -107,6 +120,12 @@ imports = [
 ```
 
 After `rebuild`, a reboot will be required to access `docker` without `sudo`.
+```sh
+sudo reboot
+```
+
+### User
+
 
 
 ---
