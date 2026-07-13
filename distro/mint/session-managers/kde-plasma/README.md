@@ -48,6 +48,7 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
   - [Cairo-Dock Settings](#cairo-dock-settings)
 - [Tweaks](#tweaks)
   - [Don't start Discover on boot](#dont-start-discover-on-boot)
+  - [Chrome not remembering passwords](#chrome-not-remembering-passwords)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
 - [Sources](#sources)
 
@@ -495,6 +496,18 @@ At the bottom of the file add
 ```sh
 Hidden=true
 ```
+
+### Chrome not remembering passwords
+
+I think there were some leftover items from Cinnamon that were conflicting somehow.
+1. Close Chrome.
+1. Run:
+    ```sh
+    cd ~/.config/google-chrome/Default
+    mkdir _tmp
+    mv "Login Data"* ./_tmp/
+    ```
+1. Open Chrome, try password related stuff.
 
 ---
 
