@@ -13,7 +13,6 @@
       gitFull  # git, git gui, git-lfs
       kdePackages.plasma-sdk  # for cuttlefish (iconexplorer)
       sticky
-      tilix
       thunar
       wget
     ];

@@ -40,6 +40,7 @@ in {
       sudo="sudo ";  # Make aliases available while using `sudo`.
       # nix specific
       build-conf = "sudo nixos-rebuild switch --show-trace";
+      build-home = "home-manager switch";
     };
 
     programs.nano = {

@@ -135,6 +135,7 @@ sudo nano /etc/nixos/configuration.nix
 
 # Build config
 sudo nixos-rebuild switch
+# or alias `build-config`
 ```
 
 ### System
@@ -162,7 +163,16 @@ sudo reboot
 
 ### User
 
-
+1. Copy over repo files:
+    ```sh
+    mkdir -p ~/.config/home-manager
+    cp <REPO>/distro/nixos/home/home.nix ~/.config/home-manager/
+    ```
+1. Apply customizations:
+    ```sh
+    home-manager switch
+    # or alias `build-home`
+    ```
 
 ---
 
