@@ -124,7 +124,7 @@ Note: I was trying to create a symlink within a store path and it wasn't being c
 ```sh
 # Copy over modules from this repo
 sudo mkdir -p /etc/nixos/modules
-sudo cp ./modules/*.nix /etc/nixos/modules/
+sudo cp ./system/modules/*.nix /etc/nixos/modules/
 
 # Configure text editor
 cp ./files/.nanorc ~/
