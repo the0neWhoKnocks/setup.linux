@@ -2,6 +2,8 @@
 
 - [Install OS](#install-os)
 - [Install Software](#install-software)
+  - [How to get files from a git repo and apply them](#how-to-get-files-from-a-git-repo-and-apply-them)
+  - [Create files/folders with tmpfiles](#create-filesfolders-with-tmpfiles)
 - [Modules](#modules)
   - [System](#system)
   - [User](#user)
@@ -63,7 +65,9 @@ Check if there are configurable services.
 nixos-option services
 ```
 
-How to get files from git repo and apply them
+### How to get files from a git repo and apply them
+
+Fetches an entire repo. Setting `source` creates a symlink to the downloaded resource that's stored in `/nix/store`.
 ```nix
 { pkgs, ... }: 
 let
@@ -80,6 +84,38 @@ in {
   environment.etc."custom-config.conf".text = builtins.readFile "${gitRepo}/config/tmpl.conf";
 }
 ```
+
+Fetch a specific file from a repo. When using `fetchurl` you have to provide `hash` or `sha256`. There are two ways you can get the value:
+- Use `sha256 = lib.fakeSha256`, build the main nix config file, wait for it to fail and display the actual value.
+- Or run `nix hash convert --hash-algo sha256 --to sri $(nix-prefetch-url <FILE_URL>)`.
+    - You may have to add this to your main config file to use raw `nix` commands:
+        ```nix
+        nix.settings.experimental-features = [ "nix-command" ];
+        ```
+```nix
+{ lib, pkgs, ... }:
+
+# ...
+
+environment.etc = {
+  "folder/file.conf" = {
+    source = pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/<USER>/<REPO>/refs/heads/<BRANCH>/folder/file.conf";
+      sha256 = <SHA>;
+    };
+  };
+};
+```
+
+### Create files/folders with tmpfiles
+
+```nix
+systemd.tmpfiles.rules = [
+  # Create a symlink to a store resource.
+  "L+ /var/some/folder - - - - ${STORE_VAR}"
+];
+```
+Note: I was trying to create a symlink within a store path and it wasn't being created but there weren't any errors. You can run `sudo systemd-tmpfiles --create` which will execute the same thing the build command does, but it'll actually output an error if there's something wrong.
 
 ---
 

@@ -21,15 +21,25 @@ in {
       lsd
     ];
     
-    # TODO: lsd config
+    # Add global config for `lsd`
+    environment.etc = {
+      "lsd/config.yaml" = {
+        source = pkgs.fetchurl {
+          url = "https://raw.githubusercontent.com/the0neWhoKnocks/setup.linux/refs/heads/main/files/lsd/config.yaml";
+          sha256 = "VWYbnF4ntDLztBIFuvImP0Csz4cDmLya5K74OEgAm34=";
+        };
+      };
+    };
     
     environment.shellAliases = {
       d = "docker";
       dc = "docker compose";
       ll = "lsd -la";
+      lsd = "lsd --config-file /etc/lsd/config.yaml";  # lsd doesn't seem to check for a global config, so make all lsd calls use a custom config path
       ss = "exec $SHELL";
+      sudo="sudo ";  # Make aliases available while using `sudo`.
       # nix specific
-      build-conf = "sudo nixos-rebuild switch";
+      build-conf = "sudo nixos-rebuild switch --show-trace";
     };
 
     programs.nano = {
@@ -52,6 +62,10 @@ in {
       "L+ ${CUSTOM_PATH_THEMES}/${OMZ_THEME} - - - - ${zshThemeBoom}"
     ];
     
+    # NOTE: Adding zsh via `programs` adds files like `.zshrc` to `/etc/`.
+    # `oh-my-zsh`'s folder can be found with `echo $ZSH`. I tried to create a
+    # symlink into `$ZSH/custom/themes` but it's a read-only system so I'm
+    # pointing `custom` to a path that is accessible by all.
     programs.zsh = {
       enable = true;
       autosuggestions = {
@@ -81,9 +95,10 @@ in {
       shellFonts
     ];
     
+    # Prevent the new user dialog in zsh
+    system.userActivationScripts.zshrc = "touch .zshrc";
     # Set zsh as the default shell for all users
     users.defaultUserShell = pkgs.zsh;
-    
     # Allow GDM/display managers to detect users with zsh
     environment.shells = with pkgs; [ zsh ];
   };
