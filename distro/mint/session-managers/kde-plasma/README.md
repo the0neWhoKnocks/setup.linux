@@ -339,7 +339,7 @@ Right-click icon > **Configure Application Launcher**
     ```
     [Appearance]
       Information: [x] Show Date (Always Beside Time)
-      Date Format: ISO Date
+      Date Format: Custom = 【 ddd. dd 】
       Text Display: Manuel - 14pt Ubuntu Mono
     
     [Calendar]
