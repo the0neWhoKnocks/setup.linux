@@ -1322,11 +1322,31 @@ For packages that require more than a simple `apt install`.
   )
   ```
   
-  Edit the `FreeFileSync.desktop` file that was created on the Desktop.
-  ```diff
-  - Exec="/opt/FreeFileSync/FreeFileSync" %F
-  + Exec=sudo bash -c "export FFS_USER=<USER>; export FFS_HOME=/home/$FFS_USER; dconf dump / > ~/settings.dconf; /opt/FreeFileSync/FreeFileSync %F"
-  ```
+  I created a custom launcher to ensure that any pre-backup items are generated before running a backup.
+  1. Create a copy of the current `FreeFileSync` launcher (search for it and choose `Add to Desktop`).
+  1. Move that launcher to `~/.local/share/applications/` and rename it to `FreeFileSync_Mine.desktop`.
+  1. Edit the launcher:
+      ```diff
+      - Name=FreeFileSync
+      - Exec=/opt/FreeFileSync/FreeFileSync %F
+      + Name=FreeFileSync (Mine)
+      + Exec=/home/nox/.local/share/applications/ffs.sh
+      ```
+  1. In that folder, create `ffs.sh`, and add this:
+      ```bash
+      #!/usr/bin/env bash
+
+      export FFS_USER=$USER;
+      export FFS_HOME=$HOME;
+
+      # Create a backup of dconf settings.
+      dconf dump / > $HOME/settings.dconf;
+      
+      # Run with sudo so certain top-level config files can be backed up.
+      sudo --preserve-env=FFS_USER,FFS_HOME freefilesync
+      ```
+      Make the file executable with `chmod +x ./ffs.sh`.
+  1. Double click the new launcher, make it executable, and verify that the paths are populating correctly.
 </details>
 
 ---
