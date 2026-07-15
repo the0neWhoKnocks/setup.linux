@@ -4,14 +4,53 @@
 
 { config, pkgs, ... }:
 let
+  OMZ_CUSTOM_PATH = ".config/home-manager/omz";
+  OMZ_CUSTOM_PATH_THEMES = "${OMZ_CUSTOM_PATH}/themes";
+  OMZ_THEME = "zsh-theme-boom";
   USER = builtins.getEnv "USER";
+  
+  zshThemeBoom = builtins.fetchGit {
+    url = "https://github.com/the0neWhoKnocks/zsh-theme-boom.git";
+    # rev = "079c158e66372971355ac5f39f3c22ea8de12e97";
+    ref = "linux";
+  };
 in {
+  # Ensure fontconfig can discover user fonts
+  fonts.fontconfig.enable = true;
+  
   home.username = "${USER}";
   home.homeDirectory = "/home/${USER}";
   
-  # home.packages = with pkgs; [
-  #   # 
-  # ];
+  home.file."${OMZ_CUSTOM_PATH_THEMES}/${OMZ_THEME}".source = zshThemeBoom;
+  
+  home.packages = with pkgs; [
+    lolcat
+    # Package shell fonts into a Nix derivation
+    (pkgs.runCommandLocal "shell-fonts" {} ''
+      mkdir -p $out/share/fonts/truetype
+      cp -r ${zshThemeBoom}/fonts/* $out/share/fonts/truetype/
+    '')
+  ];
+  
+  programs = {
+    # TODO
+    # git = {
+    #   userName = "<USERNAME>";
+    #   userEmail = "<EMAIL>";
+    # };
+    
+    zsh = {
+      enable = true;
+      oh-my-zsh = {
+        enable = true;
+        custom = "${config.home.homeDirectory}/${OMZ_CUSTOM_PATH}";
+        extraConfig = ''
+          zstyle ':omz:update' mode disabled  # disable omz automatic updates
+        '';
+        theme = "zsh-theme-boom/skin";
+      };
+    };
+  };
   
   dconf.settings = {
     "com/gexperts/Tilix" = {
@@ -54,8 +93,6 @@ in {
       visible-name = "Default";
     };
   };
-  
-  programs.home-manager.enable = true;
   
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage

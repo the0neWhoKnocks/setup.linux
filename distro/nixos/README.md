@@ -1,10 +1,10 @@
 # NixOS
 
 - [Install OS](#install-os)
-- [Install Software](#install-software)
+- [Common Commands](#common-commands)
   - [How to get files from a git repo and apply them](#how-to-get-files-from-a-git-repo-and-apply-them)
   - [Create files/folders with tmpfiles](#create-filesfolders-with-tmpfiles)
-- [Modules](#modules)
+- [Install Software \& Settings](#install-software--settings)
   - [System](#system)
   - [User](#user)
 - [Sources](#sources)
@@ -41,7 +41,24 @@ During the install it'll ask which Installer to use, I chose `Plasma (Linux LTS)
 
 ---
 
-## Install Software
+## Common Commands
+
+```sh
+# Build the config and switch to that build
+sudo nixos-rebuild switch
+
+# list generations
+sudo nix-env --list-generations -p /nix/var/nix/profiles/system
+
+# switch to specific generation
+sudo nix-env --switch-generation <GEN> -p /nix/var/nix/profiles/system
+
+# Switch to previous generation
+sudo nixos-rebuild switch --rollback
+
+# Fix corrupted Nix Store files
+nix-store --verify --check-contents --repair
+```
 
 There are a couple ways to check for configurable programs.
 1. https://search.nixos.org/packages?channel=26.05
@@ -119,59 +136,75 @@ Note: I was trying to create a symlink within a store path and it wasn't being c
 
 ---
 
-## Modules
+## Install Software & Settings
 
+First, get this repo's contents
 ```sh
-# Copy over modules from this repo
-sudo mkdir -p /etc/nixos/modules
-sudo cp ./system/modules/*.nix /etc/nixos/modules/
+# Run a shell that has git available (since it's not installed yet)
+nix-shell -p git
+# Clone the repo
+git clone https://github.com/the0neWhoKnocks/setup.linux.git
+exit
+cd setup.linux/distro/nixos
 
-# Configure text editor
-cp ./files/.nanorc ~/
-sudo cp ~/.nanorc /root/
-
-# Edit main config file
-sudo nano /etc/nixos/configuration.nix
-
-# Build config
-sudo nixos-rebuild switch
-# or alias `build-config`
+# Copy over system modules
+sudo mkdir -p /etc/nixos/modules && sudo cp ./system/modules/*.nix /etc/nixos/modules/
+# Copy over user modules
+mkdir -p ~/.config/home-manager && cp ./home/home.nix ~/.config/home-manager/
 ```
 
 ### System
 
-Update `/etc/nixos/configuration.nix`
+```sh
+# Edit main config file
+sudo nano /etc/nixos/configuration.nix
+```
 ```diff
 imports = [
   # my stuff
 + ./modules/apps_nix.nix
 + ./modules/apps_flatpak.nix
-+ ./modules/docker.nix
 + ./modules/shell.nix
++ ./modules/terminal.nix
 ];
 ```
+In `apps_nix.nix` update `users.groups.docker.members` with your username:
 ```diff
-+ mine.docker.enable = true;
-+ #mine.docker.dataRoot = "/some/other/path";
-+ mine.docker.users = [ "<USER>" ];
+- #users.groups.docker.members = [ "<USER1>" "<USER2>" ];
++ users.groups.docker.members = [ "jondoe" ];
 ```
-
-After `rebuild`, a reboot will be required to access `docker` without `sudo`.
 ```sh
-sudo reboot
+# Build config
+sudo nixos-rebuild switch
+# or alias `build-config`
 ```
 
 ### User
 
-1. Copy over repo files:
+1. Run:
     ```sh
-    mkdir -p ~/.config/home-manager
-    cp <REPO>/distro/nixos/home/home.nix ~/.config/home-manager/
+    # Get the current NixOS version (split on dot, return sections 1 through 2).
+    export NIX_VERSION=$(nixos-version | cut -d'.' -f1-2)
+    ```
+1. Add channels:
+    ```sh
+    # Add ability for Users to configure their home folders: https://nix-community.github.io/home-manager/installation/nixos.html
+    nix-channel --add "https://github.com/nix-community/home-manager/archive/release-${NIX_VERSION}.tar.gz" home-manager
+    
+    # Update channels
+    nix-channel --update
+    
+    # List/Verify the channels were added
+    nix-channel --list
     ```
 1. Apply customizations:
     ```sh
     home-manager switch
     # or alias `build-home`
+    ```
+1. After a rebuild, a reboot will be required to access `docker` without `sudo`.
+    ```sh
+    sudo reboot
     ```
 
 ---
@@ -182,3 +215,4 @@ sudo reboot
     - https://wiki.nixos.org/wiki/NixOS_system_configuration#Modularizing_your_configuration_with_modules
         - https://wiki.nixos.org/wiki/NixOS_modules
         - https://nixos.wiki/wiki/Declaration#Types
+- https://discourse.nixos.org/t/how-to-100-reinstall-nixos-in-place/61962/3

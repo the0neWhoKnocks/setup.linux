@@ -7,6 +7,6 @@
       vte  # for tilix
     ];
     
-    programs.zsh.vteIntegration = true;
+    programs.zsh.vteIntegration = true; # Fix for Tilix
   };
 }
