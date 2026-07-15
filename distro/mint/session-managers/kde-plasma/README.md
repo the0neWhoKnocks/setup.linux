@@ -422,6 +422,8 @@ Right-click an empty area of a screen, pick **Configure Desktop and Wallpaper**.
 
 ### Wallpaper
 
+Layout: `Desktop` (hides icons) | `Folder View` (shows icons)
+
 Note that each screen has to be configured seperately (so right-click and configure each screen).
 1. Click **Add Image**.
 1. Pick the image you want for that screen.
