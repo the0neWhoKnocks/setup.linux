@@ -8,7 +8,7 @@
     </Compare>
     <Synchronize>
         <Differences LeftOnly="right" LeftNewer="right" RightNewer="right" RightOnly="right"/>
-        <DeletionPolicy>RecycleBin</DeletionPolicy>
+        <DeletionPolicy>Permanent</DeletionPolicy>
         <VersioningFolder Style="Replace"/>
     </Synchronize>
     <Filter>
