@@ -21,6 +21,7 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
     - [Screen Locking](#screen-locking)
     - [Recent Files](#recent-files)
   - [Window Management](#window-management)
+    - [Window Behavior](#window-behavior)
     - [Task Switcher](#task-switcher)
   - [Startup and Shutdown](#startup-and-shutdown)
     - [Login Screen](#login-screen)
@@ -161,6 +162,16 @@ Remember opened documents: Do not remember
 ---
 
 ### Window Management
+
+#### Window Behavior
+
+```
+[Focus]
+  Focus stealing prevention: None  (new windows always appear on top)
+
+[Advanced]
+  Window placement: Centered
+```
 
 #### Task Switcher
 
