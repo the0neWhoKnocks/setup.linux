@@ -81,7 +81,6 @@ This setup is for creative/development tasks. Before blindly installing everythi
   - [System boots to blank screen after failed update](#system-boots-to-blank-screen-after-failed-update)
   - [Kernel Panic error after choosing "recommended" nvidia driver](#kernel-panic-error-after-choosing-recommended-nvidia-driver)
   - ["error: out of memory" on boot right after grub menu](#error-out-of-memory-on-boot-right-after-grub-menu)
-  - [Chrome Saved Passwords Not Showing Up in Settings](#chrome-saved-passwords-not-showing-up-in-settings)
   - [How to Free Up Space?](#how-to-free-up-space)
   - [File Managers randomly freeze when transfering CIFS files](#file-managers-randomly-freeze-when-transfering-cifs-files)
   - [System Freezes/Locks When Entering Suspend](#system-freezeslocks-when-entering-suspend)
@@ -1055,14 +1054,44 @@ flatpak install flathub --system --noninteractive -y \
   I'm sticking with a locked version for the time being so that I can keep using my extensions. If I want to go back to installing the newest, I'd need to switch to https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb.
   You can specify a versioned download by following this pattern: `https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_<VERSION>-1_amd64.deb`. Also found this repo which seems to maintain old versions: https://github.com/NDViet/google-chrome-stable/releases.
   
-  To stop making it prompt for updates:
-  - Update all shortcuts and add
-    ```sh
-    --simulate-outdated-no-au="Tue, 31 Dec 2099 23:59:59 GMT"
-    ```
-    There may be a shortcut on your desktop and in `/usr/share/applications/google-chrome.desktop`.
-    
-    Search for `Exec` and add the argument to every instance. For the one that ends in `%U`, put it before `%U`.
+  
+  Sometimes Chrome needs some coaxing to behave.
+  - Search for `chrome` and `Add to Desktop`.
+  - Move that new Desktop launcher to `~/.local/share/applications/`.
+  - Edit that file:
+      ```diff
+      - Name=Google Chrome
+      + Name=Google Chrome [Patched]
+      ```
+      - To stop making it prompt for updates:
+          Search for `Exec` and add the below argument to every instance. For the one that ends in `%U`, put it before `%U`.
+          ```diff
+          - Exec=/usr/bin/google-chrome-stable %U
+          + Exec=/usr/bin/google-chrome-stable --simulate-outdated-no-au="Tue, 31 Dec 2099 23:59:59 GMT" %U
+          ```
+      - If you're running KDE Plasma and opted not to use KDE Wallet, you'll have to make Chrome use the default password store, otherwise passwords won't be saved and you'll always be prompted to save a password even after you've said not to.
+          - Make sure Chrome is closed.
+          - Search for `Exec` and add the below argument to every instance.
+              ```diff
+              - Exec=/usr/bin/google-chrome-stable <OTHER_ARGS> %U
+              + Exec=/usr/bin/google-chrome-stable <OTHER_ARGS> --password-store=basic %U
+              ```
+          - Open Chrome and try to save/ignore a password. Close and re-open to verify the password was saved/ignored. If it wasn't, close Chrome, open a terminal and run:
+              ```sh
+              # If you don't use a logged in profile, run for Default.
+              rm "${HOME}/.config/google-chrome/Default/Login Data"*
+              
+              # If you have a logged in User, update '<#>' to be your profile's number.
+              rm "${HOME}/.config/google-chrome/Profile <#>/Login Data"*
+              ```
+  
+  
+  If you ported over your profile from another install, and passwords aren't showing up, try these troubleshooting steps.
+  - Close Chrome before trying to edit anything because Chrome may be locking a file.
+  - The `Login Data` file is missing from `~/.config/google-chrome/<Default|Profile>/` or it's read/write protected. Look at the other file permissions in a folder you haven't touched, and copy those. 
+  - The passwords in the database (`Login Data` is a sqlite3 file) were encoded with a system key that aren't on your new system. It should be stored in `~/.local/share/keyrings`.
+      - There's some more keyring troubleshooting steps in the [Self-Signed Certificates](#self-signed-certificates) section.
+  - There's a corrupted value in `Login Data`. If Chrome can't read a value, it automatically considers everything broken and won't display anything. If you run [fix-chrome-creds.py](./bin/fix-chrome-creds.py) it'll create a fixed file on your desktop, and output all the values so you can see what may be broken, or worse case manually input the passwords. Example `./bin/fix-chrome-creds.py -f "~/.config/google-chrome/<PROFILE>/Login Data" -p "<KEY>"`. `<KEY>` would come from `Passwords and Keys > Login > Chrome Safe Storage`.
 </details>
 
 <details>
@@ -2669,18 +2698,6 @@ For better compatibility (like having it show up in `cuttlefish`) I created a GI
   ```
   
   If that doesn't work, I also purged all nvidia packages via Synaptic Package Manager. Had to manually find all `nvidia` packages with a `version` matching what was installed. Rebooted, and the system should now be using the `nouveau` driver. Use Driver Manager to install the `nvidia` driver again.
-</details>
-
-### Chrome Saved Passwords Not Showing Up in Settings
-<details>
-  <summary>Expand for Solution</summary>
-  
-  First, close Chrome while you're troubleshooting.
-  
-  Possible reasons for this:
-  1. The `Login Data` file is missing from `~/.config/google-chrome/<Default|Profile>/` or it's read/write protected. Look at the other file permissions in a folder you haven't touched, and copy those. 
-  1. The passwords in the database (`Login Data` is a sqlite3 file) were encoded with a system key that aren't on your new system. It should be stored in `~/.local/share/keyrings`.
-  1. There's a corrupted value in `Login Data`. If Chrome can't read a value, it automatically considers everything broken and won't display anything. If you run [fix-chrome-creds.py](./bin/fix-chrome-creds.py) it'll create a fixed file on your desktop, and output all the values so you can see what may be broken, or worse case manually input the passwords. Example `./bin/fix-chrome-creds.py -f "~/.config/google-chrome/<PROFILE>/Login Data" -p "<KEY>"`. `<KEY>` would come from `Passwords and Keys > Login > Chrome Safe Storage`.
 </details>
 
 ### How to Free Up Space?
