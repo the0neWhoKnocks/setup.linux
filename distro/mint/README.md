@@ -653,6 +653,11 @@ Here are some sources for finding alternatives to software you may have used on 
 - https://alternativeto.net/platform/linux/
 - https://www.linuxalt.com/
 
+Make sure that your `*rc` file exposes binaries from the `~/.local/bin` folder. For example, add this at the top of your `~/.zshrc` file:
+```sh
+export PATH=$HOME/.local/bin:$PATH
+```
+
 ### Via Software Manager or CLI
 
 ```sh
@@ -1125,7 +1130,7 @@ flatpak install flathub --system --noninteractive -y \
   urls=(
     'https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-x86_64-unknown-linux-musl.tar.gz'
     'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
-    'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
+    'https://github.com/godotengine/godot/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip'
     'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
     'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
   )
@@ -1178,8 +1183,23 @@ flatpak install flathub --system --noninteractive -y \
   ```
   
   ```sh
+  #####################
+  # For every install #
+  #####################
+  
+  # rename the versioned binary
+  bash -c 'f=$(echo ~/.local/bin/Godot/*); mv $f/{Godot*,godot}'  # using bash because it allows glob with expansion
+  # create a symlink so system look-ups can find it
+  ln -s ~/.local/bin/Godot/*/godot ~/.local/bin/godot
+  
+  ####################
+  # Only needed once #
+  ####################
+  
+  # create a launcher
   cp files/godot/godot.desktop ~/.local/share/applications/
   chmod +x ~/.local/share/applications/godot.desktop
+  # add system icon
   cp files/godot/godot.svg ~/.icons/
   ```
   
