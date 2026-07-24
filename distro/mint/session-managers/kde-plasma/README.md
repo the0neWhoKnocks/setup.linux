@@ -47,6 +47,7 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
   - [Icons](#icons-1)
 - [Add a Dock](#add-a-dock)
   - [Cairo-Dock Settings](#cairo-dock-settings)
+- [Install Software](#install-software)
 - [Tweaks](#tweaks)
   - [Don't start Discover on boot](#dont-start-discover-on-boot)
   - [Chrome not remembering passwords](#chrome-not-remembering-passwords)
@@ -331,10 +332,11 @@ Right-click icon > **Configure Application Launcher**
 - Click the (Up) arrow by the clock (Show Hidden Icons):
     - Click the **Configure System Tray** button.
         ```
-             IBus Panel  | Always Hidden
+              IBus Panel | Always Hidden
+                 blueman | Always Hidden
                Bluetooth | Always Shown
         Lock Keys Status | Always Shown
-              Clipboard  | Disabled
+               Clipboard | Disabled
         ```
     - If the **Lock Key Status** widget is missing
         ```sh
@@ -497,6 +499,32 @@ sudo apt install cairo-dock cairo-dock-plug-ins cairo-dock-gnome-session
 
 ---
 
+## Install Software
+
+```sh
+(
+  sudo apt update
+  sudo apt install -y \
+    pix
+)
+```
+
+<details>
+  <summary>Expand for Software Details</summary>
+  
+  | Package | Description |
+  | ------- | ----------- |
+  | [pix](https://github.com/linuxmint/pix) | Image viewer (since the default Mint one gets uninstalled) |
+</details>
+
+<details>
+  <summary>Expand for Pix</summary>
+  
+  Preferences > Extensions > (uncheck) Audio/Video support
+</details>
+
+---
+
 ## Tweaks
 
 ### Don't start Discover on boot
@@ -506,8 +534,9 @@ cp /etc/xdg/autostart/org.kde.discover.notifier.desktop ~/.config/autostart/
 nano ~/.config/autostart/org.kde.discover.notifier.desktop
 ```
 At the bottom of the file add
-```sh
-Hidden=true
+```diff
+- Exec=/usr/lib/x86_64-linux-gnu/libexec/DiscoverNotifier
++ #Exec=/usr/lib/x86_64-linux-gnu/libexec/DiscoverNotifier
 ```
 
 ### Chrome not remembering passwords
