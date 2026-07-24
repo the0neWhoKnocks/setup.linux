@@ -834,7 +834,9 @@ flatpak install flathub --system --noninteractive -y \
   org.kde.glaxnimate \
   org.kde.iconexplorer \
   org.kde.kdenlive \
+  org.kde.krita \
   org.localsend.localsend_app \
+  org.torproject.torbrowser-launcher \
   org.videolan.VLC \
   rs.ruffle.Ruffle
 
@@ -874,7 +876,9 @@ flatpak install flathub --system --noninteractive -y \
   | [org.kde.glaxnimate](https://glaxnimate.mattbas.org/) | Glaxnimate | A simple and fast vector graphics animation program (alternative to Adobe Animate/Flash). |
   | [org.kde.iconexplorer](https://develop.kde.org/docs/features/additional-features/icons/) | Icon Explorer (Cuttlefish) | Simple GUI to look up icon names. |
   | [org.kde.kdenlive](https://kdenlive.org/features/) | Kdenlive | Video editor |
+  | [org.kde.krita](https://krita.org/en/) | Krita | Digital art studio |
   | [org.localsend.localsend_app](https://localsend.org/) | LocalSend | Cross-platform file sharing |
+  | [org.torproject.torbrowser-launcher](https://gitlab.torproject.org/tpo/applications/torbrowser-launcher) | Tor Browser | Browser for viewing tor site links |
   | [org.videolan.VLC](https://www.videolan.org/vlc/) | VLC | Multimedia player |
   | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
   | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
@@ -1021,6 +1025,7 @@ flatpak install flathub --system --noninteractive -y \
     'https://github.com/subhra74/snowflake/releases/download/v1.0.4/snowflake-1.0.4-setup-amd64.deb'
     'https://update.code.visualstudio.com/1.124.0/linux-deb-x64/stable'
     'https://updates.torguard.biz/Software/Linux/torguard-latest-amd64.deb'
+    'https://github.com/marktext/marktext/releases/download/v0.19.1/marktext-linux-0.19.1.deb'
   )
   for url in "${urls[@]}"; do
     wget --content-disposition "${url}" -P "${DEBS_DIR}/"
@@ -1043,6 +1048,7 @@ flatpak install flathub --system --noninteractive -y \
   | [git lfs](https://git-lfs.com/) | Allows for storing large files outside of git repos. |
   | [Insomnia](https://insomnia.rest/) | API development |
   | [lsd](https://github.com/Peltoche/lsd) | A Deluxe version of the `ls` command |
+  | [MarkText](https://github.com/marktext/marktext) | Simple open-source markdown editor (I just use it for viewing) |
   | [Muon (Snowflake)](https://github.com/subhra74/snowflake) | SFTP Client (alternative to WinSCP) |
   | [TorGuard](https://torguard.net/downloads.php) | VPN client |
   | [VS Code](https://code.visualstudio.com/) | IDE, advanced text editor |
