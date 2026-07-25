@@ -1120,30 +1120,7 @@ flatpak install flathub --system --noninteractive -y \
 ### Via Archives
 
 ```sh
-(
-  ARCH_DIR=~/Downloads/archives
-  urls=(
-    'https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-x86_64-unknown-linux-musl.tar.gz'
-    'https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip'
-    'https://github.com/godotengine/godot/releases/download/4.0-stable/Godot_v4.0-stable_linux.x86_64.zip'
-    'https://www.blender.org/download/release/Blender3.4/blender-3.4.1-linux-x64.tar.xz/'
-    'https://github.com/timminator/VideOCR/releases/download/v1.2.1/VideOCR-GPU-v1.2.1-Linux.tar.xz'
-  )
-  for url in "${urls[@]}"; do
-    wget --no-clobber "${url}" -P "${ARCH_DIR}/"
-    file="$(basename "${url}")"
-    version="$(basename $(dirname "${url}"))"
-    pkg="$(echo "${file}" | awk -F '[-_]' -v name=1 '{print $name}')"
-    outputPath="${HOME}/.local/bin/${pkg}/${version}/"
-    mkdir -p "${outputPath}"
-    
-    if [[ "${file}" == *.zip ]]; then
-      unzip "${ARCH_DIR}/${file}" -d "${outputPath}"
-    else
-      tar --strip 1 --extract --file "${ARCH_DIR}/${file}" --directory="${outputPath}"
-    fi
-  done
-)
+./files/install-archives.sh
 ```
 
 <details>
@@ -1159,36 +1136,73 @@ flatpak install flathub --system --noninteractive -y \
 </details>
 
 <details>
-  <summary>Expand for Tweaks</summary>
+  <summary>Expand for Blender</summary>
+  
+  Udpate the launcher
+  ```sh
+  nano ~/.local/lib/Blender/*/blender.desktop
+  ```
+  ```diff
+  - Exec=blender %f
+  + Exec=bash -c "$HOME/.local/bin/blender"
+  ```
+  
+  ```sh
+  cp ~/.local/lib/Blender/*/blender.desktop ~/.local/share/applications/
+  chmod +x ~/.local/share/applications/blender.desktop
+  cp ~/.local/lib/Blender/*/blender.svg ~/.local/share/icons/hicolor/scalable/apps/
+  cp ~/.local/lib/Blender/*/blender-symbolic.svg ~/.local/share/icons/hicolor/symbolic/apps/
+  ln -s ~/.local/lib/Blender/*/blender ~/.local/bin/blender
+  ```
+</details>
+
+<details>
+  <summary>Expand for BTop</summary>
   
   Have to run the install script for btop from within the directory
   ```sh
-  (
-    cd ~/.local/bin/btop/v1.4.7/
-    ./install.sh
-  )
+  (cd ~/.local/lib/BTop/<VERSION>/btop && ./install.sh)
+  
+  # if you need to remove it
+  (cd ~/.local/lib/BTop/<VERSION>/btop && ./uninstall.sh)
   ```
+</details>
+
+<details>
+  <summary>Expand for Godot</summary>
+  
+  For every install:
+  ```sh
+  # rename the versioned binary
+  bash -c 'f=$(echo ~/.local/lib/Godot/*); mv $f/{Godot*,godot}'  # using bash because it allows glob with expansion
+  # create a symlink so system look-ups can find it
+  ln -s ~/.local/lib/Godot/*/godot ~/.local/bin/godot
+  ```
+  
+  Only needed once:
+  ```sh
+  # create a launcher
+  cp files/godot/godot.desktop ~/.local/share/applications/
+  chmod +x ~/.local/share/applications/godot.desktop
+  # add system icon
+  cp files/godot/godot.svg ~/.local/share/icons/hicolor/scalable/apps/
+  ```
+</details>
+
+<details>
+  <summary>Expand for JMKVPropEdit</summary>
   
   Has to be executable to run
   ```sh
-  chmod +x ~/.local/bin/jmkvpropedit/v1.5.2/JMkvpropedit.jar
+  chmod +x ~/.local/lib/JMKVPropEdit/*/JMkvpropedit.jar
   
   # create a launcher
-  user-script --install "${HOME}/.local/bin/jmkvpropedit/v1.5.2/JMkvpropedit.jar" "JMKVPropEdit" "Batch edit metadata for MKV files" "mkv-gui" "" "java -jar "
+  user-script --install $HOME/.local/lib/JMKVPropEdit/*/JMkvpropedit.jar "JMKVPropEdit" "Batch edit metadata for MKV files" "mkvpropedit" "" "java -jar "
   ```
-  
-  ```sh
-  cp files/godot/godot.desktop ~/.local/share/applications/
-  chmod +x ~/.local/share/applications/godot.desktop
-  cp files/godot/godot.svg ~/.icons/
-  ```
-  
-  ```sh
-  # may have to update the version path for `Exec=` in `.desktop`
-  cp files/blender/blender.desktop ~/.local/share/applications/
-  chmod +x ~/.local/share/applications/blender.desktop
-  cp files/blender/blender.svg ~/.icons/
-  ```
+</details>
+
+<details>
+  <summary>Expand for VideOCR-GPU</summary>
   
   ```sh
   mv ~/.local/bin/VideOCR-GPU-v1.2.1 ~/.local/lib/
