@@ -45,6 +45,7 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
 - [Desktop Appearance](#desktop-appearance)
   - [Wallpaper](#wallpaper)
   - [Icons](#icons-1)
+- [Persistent Clipboard](#persistent-clipboard)
 - [Add a Dock](#add-a-dock)
   - [Cairo-Dock Settings](#cairo-dock-settings)
 - [Install Software](#install-software)
@@ -336,7 +337,6 @@ Right-click icon > **Configure Application Launcher**
                  blueman | Always Hidden
                Bluetooth | Always Shown
         Lock Keys Status | Always Shown
-               Clipboard | Disabled
         ```
     - If the **Lock Key Status** widget is missing
         ```sh
@@ -453,6 +453,14 @@ Note that each screen has to be configured seperately (so right-click and config
 When hovering over icons: [ ] Show folder prefiew popups
                 Previews: [ ] Show preview thumbnails
 ```
+
+---
+
+## Persistent Clipboard
+
+In order to have copied text persist even after you've closed a program you've copied text from - you need to install `Klipper` and configure it. It's bundled in the `plasma-workspace` package.
+
+I had mistakenly disabled this in the system tray thinking it was an extra widget to have a selectable clipboard history. Didn't realize that it needs to be enabled to allow for persistent copy-paste functionality.
 
 ---
 
