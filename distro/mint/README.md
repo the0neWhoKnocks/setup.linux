@@ -1753,17 +1753,13 @@ Launch **Redshift** (it starts `redshift-gtk` and adds it to the bottom bar). Ri
   
   Prepare custom actions:
   - You can add your own in Thunar by adding commands directly, but I prefer to use files
-     ```sh
-     mkdir -p ~/.config/Thunar/actions
-     ```
+      ```sh
+      mkdir -p ~/.config/Thunar/actions
+      ```
   - Add your scripts (I symlink to ensure things keep in sync):
-     ```sh
-     ln -s "${PWD}/files/thunar/copy-filename.sh" ~/.config/Thunar/actions/
-     ln -s "${PWD}/files/thunar/copy-full-path.sh" ~/.config/Thunar/actions/
-     ln -s "${PWD}/files/thunar/create-desktop-shortcut.py" ~/.config/Thunar/actions/
-     ln -s "${PWD}/files/thunar/open-as-root.sh" ~/.config/Thunar/actions/
-     ln -s "${PWD}/files/thunar/view-metadata.py" ~/.config/Thunar/actions/
-     ```
+      ```sh
+      ln -sfn "${PWD}/files/thunar/"* ~/.config/Thunar/actions/
+      ```
   - If you need to debug scripts, run `tail -f ~/.xsession-errors`, and try using your action.
   
   ---
