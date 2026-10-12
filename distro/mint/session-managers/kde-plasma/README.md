@@ -53,6 +53,7 @@ I've switched to Plasma because Cinnamon was having some random lag issues that 
   - [Don't start Discover on boot](#dont-start-discover-on-boot)
   - [Chrome not remembering passwords](#chrome-not-remembering-passwords)
 - [Useful Keyboard Shortcuts](#useful-keyboard-shortcuts)
+- [Useful Commands](#useful-commands)
 - [Sources](#sources)
 
 ---
@@ -568,6 +569,14 @@ I think there were some leftover items from Cinnamon that were conflicting someh
 | Keys | Action |
 | ---- | ------ |
 | `OPT/START + click on a window + drag` | Moves a window (other `OPT` key doesn't work) |
+
+---
+
+## Useful Commands
+
+```sh
+alias restart-kde="kquitapp5 plasmashell && kstart5 plasmashell &"
+```
 
 ---
 
