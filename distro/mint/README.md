@@ -18,6 +18,7 @@ This setup is for creative/development tasks. Before blindly installing everythi
 - [Install Base Software](#install-base-software)
   - [How to download packages from Launchpad](#how-to-download-packages-from-launchpad)
   - [How to set up a local mirror for packages](#how-to-set-up-a-local-mirror-for-packages)
+- [Make your folder of wallpapers automatically show up in the Desktop wallpaper picker](#make-your-folder-of-wallpapers-automatically-show-up-in-the-desktop-wallpaper-picker)
 - [Clone This Repo](#clone-this-repo)
 - [Set Up Shell](#set-up-shell)
 - [Set Up Repos](#set-up-repos)
@@ -464,6 +465,14 @@ sudo apt update && sudo apt install -y apt-transport-https git tilix vim
 
 ---
 
+## Make your folder of wallpapers automatically show up in the Desktop wallpaper picker
+
+```sh
+ln -s ~/Pictures/wallpapers ~/.local/share/wallpapers/mine
+```
+
+---
+
 ## Clone This Repo
 
 This is only required if you want to use the helper scripts.
@@ -840,6 +849,8 @@ flatpak install flathub --system --noninteractive -y \
   org.videolan.VLC \
   rs.ruffle.Ruffle
 
+flatpak install --user flathub org.upscayl.Upscayl
+
 (
   cd ~/Downloads/flatpak
   flatpak install --user \
@@ -879,6 +890,7 @@ flatpak install flathub --system --noninteractive -y \
   | [org.kde.krita](https://krita.org/en/) | Krita | Digital art studio |
   | [org.localsend.localsend_app](https://localsend.org/) | LocalSend | Cross-platform file sharing |
   | [org.torproject.torbrowser-launcher](https://gitlab.torproject.org/tpo/applications/torbrowser-launcher) | Tor Browser | Browser for viewing tor site links |
+  | [org.upscayl.Upscayl](https://flathub.org/en/apps/org.upscayl.Upscayl) | Upscayl | AI Image Upscaler |
   | [org.videolan.VLC](https://www.videolan.org/vlc/) | VLC | Multimedia player |
   | [rs.ruffle.Ruffle](https://flathub.org/en/apps/rs.ruffle.Ruffle) | Ruffle | Plays old Flash games & movies |
   | [SubtitleEdit](https://www.nikse.dk/subtitleedit) | Subtitle editing toolbox. |
@@ -1060,6 +1072,12 @@ flatpak install flathub --system --noninteractive -y \
   I'm sticking with a locked version for the time being so that I can keep using my extensions. If I want to go back to installing the newest, I'd need to switch to https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb.
   You can specify a versioned download by following this pattern: `https://dl.google.com/linux/deb/pool/main/g/google-chrome-stable/google-chrome-stable_<VERSION>-1_amd64.deb`. Also found this repo which seems to maintain old versions: https://github.com/NDViet/google-chrome-stable/releases.
   
+  To lock an extension's version in Chrome:
+  - In Extensions, enable **Developer Mode**.
+  - Click **Details** for the extension.
+  - Take note of the the extension **ID**.
+  - Click the **Load unpacked** button.
+  - Right-click in the window, toggle **Show Hidden Files**, navigate to something like `~/.config/chromium/Default/Extensions/<EXT_ID>/<EXT_VERSION>`.
   
   Sometimes Chrome needs some coaxing to behave.
   - Search for `chrome` and `Add to Desktop`.
