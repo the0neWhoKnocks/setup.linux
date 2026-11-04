@@ -1137,6 +1137,7 @@ flatpak install --user flathub org.upscayl.Upscayl
 
 ### Via Archives
 
+I use this script to download and install the software into versioned folders. You'll have to update the `pkgs` variable at the top of the file when you want to update to a new version. Just specify the version number (name of folder), and the URL to download it from.
 ```sh
 ./files/install-archives.sh
 ```
@@ -1146,9 +1147,9 @@ flatpak install --user flathub org.upscayl.Upscayl
   
   | Software | Description |
   | -------- | ----------- |
-  | [Blender](https://www.blender.org) | 3D asset creation |
+  | [Blender](https://www.blender.org/download/) | 3D asset creation |
   | [btop](https://github.com/aristocratos/btop) | Resource monitor that shows usage and stats for processor, memory, disks, network and processes |
-  | [godot](https://godotengine.org/) | Game engine |
+  | [godot](https://godotengine.org/download/linux/) | Game engine |
   | [jmkvpropedit](https://github.com/BrunoReX/jmkvpropedit) | A batch GUI for mkvpropedit. Allows for editing headers of multiple mkv files |
   | [VideoOCR](https://github.com/timminator/VideOCR) | Rips hard-coded subs from video. |
 </details>
@@ -1158,7 +1159,7 @@ flatpak install --user flathub org.upscayl.Upscayl
   
   Udpate the launcher
   ```sh
-  nano ~/.local/lib/Blender/*/blender.desktop
+  nano ~/.local/lib/Blender/v<VERSION>/blender.desktop
   ```
   ```diff
   - Exec=blender %f
@@ -1166,11 +1167,14 @@ flatpak install --user flathub org.upscayl.Upscayl
   ```
   
   ```sh
-  cp ~/.local/lib/Blender/*/blender.desktop ~/.local/share/applications/
-  chmod +x ~/.local/share/applications/blender.desktop
-  cp ~/.local/lib/Blender/*/blender.svg ~/.local/share/icons/hicolor/scalable/apps/
-  cp ~/.local/lib/Blender/*/blender-symbolic.svg ~/.local/share/icons/hicolor/symbolic/apps/
-  ln -s ~/.local/lib/Blender/*/blender ~/.local/bin/blender
+  $(
+    ver="v<VERSION>"
+    cp ~/.local/lib/Blender/$ver/blender.desktop ~/.local/share/applications/
+    chmod +x ~/.local/share/applications/blender.desktop
+    cp ~/.local/lib/Blender/$ver/blender.svg ~/.local/share/icons/hicolor/scalable/apps/
+    cp ~/.local/lib/Blender/$ver/blender-symbolic.svg ~/.local/share/icons/hicolor/symbolic/apps/
+    ln -sf ~/.local/lib/Blender/$ver/blender ~/.local/bin/blender
+  )
   ```
 </details>
 
@@ -1190,12 +1194,11 @@ flatpak install --user flathub org.upscayl.Upscayl
   <summary>Expand for Godot</summary>
   
   For every install:
-  ```sh
-  # rename the versioned binary
-  bash -c 'f=$(echo ~/.local/lib/Godot/*); mv $f/{Godot*,godot}'  # using bash because it allows glob with expansion
-  # create a symlink so system look-ups can find it
-  ln -s ~/.local/lib/Godot/*/godot ~/.local/bin/godot
-  ```
+  1. Rename the versioned binary from `Godot_v*` to `godot`.
+  1. Create symlink
+      ```sh
+      ln -sf ~/.local/lib/Godot/v<VERSION>/godot ~/.local/bin/godot
+      ```
   
   Only needed once:
   ```sh
