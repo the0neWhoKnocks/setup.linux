@@ -1157,25 +1157,29 @@ I use this script to download and install the software into versioned folders. Y
 <details>
   <summary>Expand for Blender</summary>
   
-  Udpate the launcher
-  ```sh
-  nano ~/.local/lib/Blender/v<VERSION>/blender.desktop
-  ```
-  ```diff
-  - Exec=blender %f
-  + Exec=bash -c "$HOME/.local/bin/blender"
-  ```
-  
-  ```sh
-  $(
-    ver="v<VERSION>"
-    cp ~/.local/lib/Blender/$ver/blender.desktop ~/.local/share/applications/
-    chmod +x ~/.local/share/applications/blender.desktop
-    cp ~/.local/lib/Blender/$ver/blender.svg ~/.local/share/icons/hicolor/scalable/apps/
-    cp ~/.local/lib/Blender/$ver/blender-symbolic.svg ~/.local/share/icons/hicolor/symbolic/apps/
-    ln -sf ~/.local/lib/Blender/$ver/blender ~/.local/bin/blender
-  )
-  ```
+  1. Update the launcher
+      ```sh
+      nano ~/.local/lib/Blender/v<VERSION>/blender.desktop
+      ```
+      ```diff
+      - Exec=blender %f
+      + Exec=bash -c "$HOME/.local/bin/blender"
+      ```
+  1. Update pointers to launcher and icons
+      ```sh
+      $(
+        ver="v<VERSION>"
+        cp ~/.local/lib/Blender/$ver/blender.desktop ~/.local/share/applications/
+        chmod +x ~/.local/share/applications/blender.desktop
+        cp ~/.local/lib/Blender/$ver/blender.svg ~/.local/share/icons/hicolor/scalable/apps/
+        cp ~/.local/lib/Blender/$ver/blender-symbolic.svg ~/.local/share/icons/hicolor/symbolic/apps/
+        ln -sf ~/.local/lib/Blender/$ver/blender ~/.local/bin/blender
+      )
+      ```
+  1. Start Blender, verify it's the new version (should be at the top corner of the start splash screen).
+  1. If you had a previous version installed, there should be an **Import Preferences From Previous Version** section on the splash screen. Import the old settings and restart Blender.
+      - If you want to try the import again, delete `~/.config/blender/<VERSION>/`, boot Blender and it should prompt the import again.
+      - If you want to manually copy over previous settings, copy the contents of `~/.config/blender/<PREVIOUS_VERSION>/` to `~/.config/blender/<NEW_VERSION>/`. There may be transformations that occur during the built-in import, so that's recommended.
 </details>
 
 <details>

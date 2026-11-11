@@ -6,7 +6,7 @@ set -e
 # to see if it prints out a direct link.
 
 pkgs=(
-  "Blender, 5.2.3, https://mirror.blender.org/release/Blender5.2/blender-5.2.3-linux-x64.tar.xz" # Click the Download link, ignore the pop-up, click the 'download manually' link to expand and get an actual URL.
+  "Blender, 5.3.0, https://mirror.blender.org/release/Blender5.3/blender-5.3.0-linux-x64.tar.xz" # Click the Download link, ignore the pop-up, click the 'download manually' link to expand and get an actual URL.
   "BTop, 1.4.7, https://github.com/aristocratos/btop/releases/download/v1.4.7/btop-x86_64-unknown-linux-musl.tar.gz"
   "Godot, 4.7.2, https://godot-releases.nbg1.your-objectstorage.com/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip" # Open Network tab in DevTools, click Download button, the actual file URL should appear in the Network list.
   "JMKVPropEdit, 1.5.2, https://github.com/BrunoReX/jmkvpropedit/releases/download/v1.5.2/jmkvpropedit-v1.5.2.zip"
